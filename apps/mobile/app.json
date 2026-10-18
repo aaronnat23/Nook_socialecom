@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Lilac",
+    "slug": "lilac-spaces",
+    "scheme": "lilac",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "studio.lilac.commerce" },
+    "android": {
+      "package": "studio.lilac.commerce",
+      "adaptiveIcon": { "backgroundColor": "#EEE7FB" }
+    },
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": { "typedRoutes": false }
+  }
+}

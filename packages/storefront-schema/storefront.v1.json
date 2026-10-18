@@ -1,0 +1,1093 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://lilac.local/schema/storefront-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "shopId": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "pageId": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fontHeading": {
+          "enum": ["Inter", "Georgia", "Arial", "Courier New", "Trebuchet MS"]
+        },
+        "fontBody": {
+          "enum": ["Inter", "Georgia", "Arial", "Courier New", "Trebuchet MS"]
+        },
+        "colors": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "background": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "surface": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "text": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "accent": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            },
+            "muted": {
+              "type": "string",
+              "pattern": "^#[0-9a-fA-F]{6}$"
+            }
+          },
+          "required": ["background", "surface", "text", "accent", "muted"]
+        },
+        "contentWidth": {
+          "type": "integer",
+          "minimum": 280,
+          "maximum": 1440
+        },
+        "radius": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        }
+      },
+      "required": ["fontHeading", "fontBody", "colors", "contentWidth", "radius"]
+    },
+    "sections": {
+      "type": "array",
+      "maxItems": 80,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "type": {
+            "const": "section"
+          },
+          "style": {
+            "$ref": "#/$defs/style"
+          },
+          "children": {
+            "type": "array",
+            "maxItems": 80,
+            "items": {
+              "$ref": "#/$defs/block"
+            }
+          }
+        },
+        "required": ["id", "type", "children"]
+      }
+    }
+  },
+  "required": ["schemaVersion", "shopId", "pageId", "theme", "sections"],
+  "$defs": {
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "paddingTop": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 160
+        },
+        "paddingBottom": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 160
+        },
+        "paddingLeft": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 160
+        },
+        "paddingRight": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 160
+        },
+        "marginTop": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 160
+        },
+        "marginBottom": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 160
+        },
+        "gap": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 160
+        },
+        "fontFamily": {
+          "enum": ["Inter", "Georgia", "Arial", "Courier New", "Trebuchet MS"]
+        },
+        "fontSize": {
+          "type": "integer",
+          "minimum": 10,
+          "maximum": 96
+        },
+        "fontWeight": {
+          "enum": [400, 500, 600, 700, 800]
+        },
+        "lineHeight": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 2.2
+        },
+        "letterSpacing": {
+          "type": "number",
+          "minimum": -2,
+          "maximum": 10
+        },
+        "textAlign": {
+          "enum": ["left", "center", "right"]
+        },
+        "textColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "backgroundColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "borderColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "borderWidth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "borderRadius": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64
+        },
+        "columns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "maxWidth": {
+          "type": "integer",
+          "minimum": 280,
+          "maximum": 1440
+        },
+        "minHeight": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 800
+        },
+        "imageFit": {
+          "enum": ["cover", "contain"]
+        },
+        "aspectRatio": {
+          "enum": ["1:1", "4:3", "3:4", "16:9", "auto"]
+        },
+        "focalX": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "focalY": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "visibility": {
+          "enum": ["visible", "hidden"]
+        },
+        "shadow": {
+          "enum": ["none", "soft", "lifted"]
+        },
+        "gradient": {
+          "enum": ["none", "lilac", "sunset", "forest"]
+        },
+        "uppercase": {
+          "type": "boolean"
+        },
+        "width": {
+          "enum": ["full", "contained"]
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 80
+        }
+      },
+      "required": []
+    },
+    "block": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "hero"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "headline": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "subtitle": {
+                  "type": "string",
+                  "maxLength": 600
+                },
+                "imageAssetId": {
+                  "type": "string",
+                  "maxLength": 120,
+                  "pattern": "^(seed_[a-zA-Z0-9_-]+|[a-f0-9-]{36})$"
+                },
+                "alt": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "cta": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "maxLength": 80
+                    },
+                    "url": {
+                      "type": "string",
+                      "maxLength": 2048,
+                      "pattern": "^(https://[^\\s<>]+|/(shop|product|u)/[a-zA-Z0-9_.-]+|#[a-zA-Z0-9_-]+)$"
+                    }
+                  },
+                  "required": ["label", "url"]
+                }
+              },
+              "required": ["headline"]
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "profileHeader"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "headline": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "subtitle": {
+                  "type": "string",
+                  "maxLength": 600
+                },
+                "imageAssetId": {
+                  "type": "string",
+                  "maxLength": 120,
+                  "pattern": "^(seed_[a-zA-Z0-9_-]+|[a-f0-9-]{36})$"
+                },
+                "alt": {
+                  "type": "string",
+                  "maxLength": 300
+                }
+              },
+              "required": ["headline"]
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "announcement"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "maxLength": 600
+                }
+              },
+              "required": ["text"]
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "text"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "headline": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "text": {
+                  "type": "string",
+                  "maxLength": 6000
+                },
+                "nodes": {
+                  "type": "array",
+                  "maxItems": 100,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "enum": ["paragraph", "h2", "h3", "bold", "italic", "link", "listItem"]
+                      },
+                      "text": {
+                        "type": "string",
+                        "maxLength": 5000
+                      },
+                      "url": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^(https://[^\\s<>]+|/(shop|product|u)/[a-zA-Z0-9_.-]+|#[a-zA-Z0-9_-]+)$"
+                      }
+                    },
+                    "required": ["type", "text"]
+                  }
+                }
+              },
+              "required": []
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "image"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "imageAssetId": {
+                  "type": "string",
+                  "maxLength": 120,
+                  "pattern": "^(seed_[a-zA-Z0-9_-]+|[a-f0-9-]{36})$"
+                },
+                "alt": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "caption": {
+                  "type": "string",
+                  "maxLength": 300
+                }
+              },
+              "required": ["imageAssetId", "alt"]
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "gallery"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "headline": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "images": {
+                  "type": "array",
+                  "maxItems": 20,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "imageAssetId": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "pattern": "^(seed_[a-zA-Z0-9_-]+|[a-f0-9-]{36})$"
+                      },
+                      "alt": {
+                        "type": "string",
+                        "maxLength": 300
+                      }
+                    },
+                    "required": ["imageAssetId", "alt"]
+                  }
+                }
+              },
+              "required": ["images"]
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "productGrid"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "headline": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "source": {
+                  "enum": ["all", "collection"]
+                },
+                "collectionId": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "limit": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 24
+                },
+                "sort": {
+                  "enum": ["newest", "price_asc", "price_desc"]
+                }
+              },
+              "required": []
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "featuredProduct"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "headline": {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                "productId": {
+                  "type": "string",
+                  "maxLength": 80
+                }
+              },
+              "required": ["productId"]
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "button"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "url": {
+                  "type": "string",
+                  "maxLength": 2048,
+                  "pattern": "^(https://[^\\s<>]+|/(shop|product|u)/[a-zA-Z0-9_.-]+|#[a-zA-Z0-9_-]+)$"
+                }
+              },
+              "required": ["label", "url"]
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "divider"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {},
+              "required": []
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "spacer"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {},
+              "required": []
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "socialLinks"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "links": {
+                  "type": "array",
+                  "maxItems": 8,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "maxLength": 80
+                      },
+                      "url": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^(https://[^\\s<>]+|/(shop|product|u)/[a-zA-Z0-9_.-]+|#[a-zA-Z0-9_-]+)$"
+                      }
+                    },
+                    "required": ["label", "url"]
+                  }
+                }
+              },
+              "required": ["links"]
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            }
+          },
+          "required": ["id", "type", "props"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9_-]{1,80}$"
+            },
+            "type": {
+              "const": "columns"
+            },
+            "props": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "headline": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "required": []
+            },
+            "style": {
+              "$ref": "#/$defs/style"
+            },
+            "responsive": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mobile": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                },
+                "tablet": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "style": {
+                      "$ref": "#/$defs/style"
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "required": []
+            },
+            "children": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "$ref": "#/$defs/block"
+              }
+            }
+          },
+          "required": ["id", "type", "props"]
+        }
+      ]
+    }
+  }
+}

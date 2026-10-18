@@ -1,0 +1,1099 @@
+[
+  {
+    "id": "minimal-studio",
+    "name": "Minimal Studio",
+    "description": "Less, but lovelier.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_minimal-studio",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#FAF9F6",
+          "surface": "#FFFFFF",
+          "text": "#29252F",
+          "accent": "#7550B5",
+          "muted": "#77717F"
+        },
+        "contentWidth": 1100,
+        "radius": 8
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Minimal Studio",
+                "subtitle": "Independent design, from our corner of Malaysia."
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Everyday things, thoughtfully made.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_0",
+                "alt": "Independent creative studio collection",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "fontSize": 48,
+                "minHeight": 320,
+                "borderRadius": 12,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30,
+                    "minHeight": 240
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The latest little things",
+                "source": "all",
+                "limit": 12
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Behind the little things",
+                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+              },
+              "style": {
+                "textAlign": "center",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 680
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "From our studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_0",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_0",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "vintage-film",
+    "name": "Vintage Film",
+    "description": "Nostalgia, beautifully collected.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_vintage-film",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#F6EDE1",
+          "surface": "#FFFAF3",
+          "text": "#493725",
+          "accent": "#925E45",
+          "muted": "#786B60"
+        },
+        "contentWidth": 1100,
+        "radius": 4
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "announce",
+              "type": "announcement",
+              "props": {
+                "text": "Small batches. Good intentions. Made in Malaysia."
+              },
+              "style": {
+                "backgroundColor": "#925E45",
+                "textColor": "#FFFFFF",
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
+                "fontSize": 13
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Vintage Film",
+                "subtitle": "Independent design, from our corner of Malaysia."
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "A little old soul. A lot of character.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_1",
+                "alt": "Independent creative studio collection",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFAF3",
+                "fontSize": 48,
+                "minHeight": 320,
+                "borderRadius": 12,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30,
+                    "minHeight": 240
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The latest little things",
+                "source": "all",
+                "limit": 12
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Behind the little things",
+                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+              },
+              "style": {
+                "textAlign": "center",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 680
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "From our studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_1",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_3",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "y2k-diary",
+    "name": "Y2K Diary",
+    "description": "A playful corner of the internet.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_y2k-diary",
+      "theme": {
+        "fontHeading": "Trebuchet MS",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#F6EEFF",
+          "surface": "#FFFFFF",
+          "text": "#38234A",
+          "accent": "#8753CD",
+          "muted": "#7C688E"
+        },
+        "contentWidth": 1100,
+        "radius": 24
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Y2K Diary",
+                "subtitle": "Independent design, from our corner of Malaysia."
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Welcome to my little universe.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_2",
+                "alt": "Independent creative studio collection",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "fontSize": 48,
+                "minHeight": 320,
+                "borderRadius": 12,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30,
+                    "minHeight": 240
+                  }
+                }
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Behind the little things",
+                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+              },
+              "style": {
+                "textAlign": "center",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 680
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The latest little things",
+                "source": "all",
+                "limit": 12
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "From our studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_2",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_6",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "dark-editorial",
+    "name": "Dark Editorial",
+    "description": "Contrast with confidence.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_dark-editorial",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#18171B",
+          "surface": "#242229",
+          "text": "#F8F5FB",
+          "accent": "#C8ADFA",
+          "muted": "#B6AEBF"
+        },
+        "contentWidth": 1100,
+        "radius": 0
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Dark Editorial",
+                "subtitle": "Independent design, from our corner of Malaysia."
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Quiet objects. Bold intentions.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_3",
+                "alt": "Independent creative studio collection",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                }
+              },
+              "style": {
+                "backgroundColor": "#18171B",
+                "fontSize": 48,
+                "minHeight": 320,
+                "borderRadius": 12,
+                "paddingTop": 32,
+                "paddingBottom": 32,
+                "textColor": "#F8F5FB"
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30,
+                    "minHeight": 240
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The latest little things",
+                "source": "all",
+                "limit": 12
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Behind the little things",
+                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+              },
+              "style": {
+                "textAlign": "center",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 680
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "From our studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_3",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_9",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "handmade-market",
+    "name": "Handmade Market",
+    "description": "For the things made by hand.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_handmade-market",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#FFF7EE",
+          "surface": "#FFFFFF",
+          "text": "#493128",
+          "accent": "#BB694A",
+          "muted": "#836E60"
+        },
+        "contentWidth": 1100,
+        "radius": 16
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "announce",
+              "type": "announcement",
+              "props": {
+                "text": "Small batches. Good intentions. Made in Malaysia."
+              },
+              "style": {
+                "backgroundColor": "#BB694A",
+                "textColor": "#FFFFFF",
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
+                "fontSize": 13
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Handmade Market",
+                "subtitle": "Independent design, from our corner of Malaysia."
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Made slowly. Loved for a long time.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_4",
+                "alt": "Independent creative studio collection",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "fontSize": 48,
+                "minHeight": 320,
+                "borderRadius": 12,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30,
+                    "minHeight": 240
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The latest little things",
+                "source": "all",
+                "limit": 12
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Behind the little things",
+                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+              },
+              "style": {
+                "textAlign": "center",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 680
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "From our studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_4",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_12",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "streetwear-drop",
+    "name": "Streetwear Drop",
+    "description": "Your next drop starts here.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_streetwear-drop",
+      "theme": {
+        "fontHeading": "Arial",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#F0F0ED",
+          "surface": "#FFFFFF",
+          "text": "#171717",
+          "accent": "#5F35C9",
+          "muted": "#70706B"
+        },
+        "contentWidth": 1100,
+        "radius": 0
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Streetwear Drop",
+                "subtitle": "Independent design, from our corner of Malaysia."
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Wear your own story.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_5",
+                "alt": "Independent creative studio collection",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "fontSize": 64,
+                "minHeight": 320,
+                "borderRadius": 0,
+                "paddingTop": 32,
+                "paddingBottom": 32,
+                "uppercase": true,
+                "fontFamily": "Arial",
+                "fontWeight": 800
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30,
+                    "minHeight": 240
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The latest little things",
+                "source": "all",
+                "limit": 12
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Behind the little things",
+                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+              },
+              "style": {
+                "textAlign": "center",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 680
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "From our studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_5",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_15",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "botanical",
+    "name": "Botanical",
+    "description": "Rooted in the natural world.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_botanical",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#F0F4EA",
+          "surface": "#FAFCF6",
+          "text": "#2F432E",
+          "accent": "#55784D",
+          "muted": "#6B7E63"
+        },
+        "contentWidth": 1100,
+        "radius": 12
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "announce",
+              "type": "announcement",
+              "props": {
+                "text": "Small batches. Good intentions. Made in Malaysia."
+              },
+              "style": {
+                "backgroundColor": "#55784D",
+                "textColor": "#FFFFFF",
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
+                "fontSize": 13
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Botanical",
+                "subtitle": "Independent design, from our corner of Malaysia."
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "A slower kind of beautiful.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_6",
+                "alt": "Independent creative studio collection",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FAFCF6",
+                "fontSize": 48,
+                "minHeight": 320,
+                "borderRadius": 12,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30,
+                    "minHeight": 240
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The latest little things",
+                "source": "all",
+                "limit": 12
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Behind the little things",
+                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+              },
+              "style": {
+                "textAlign": "center",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 680
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "From our studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_6",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_18",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "art-gallery",
+    "name": "Art Gallery",
+    "description": "A canvas for your point of view.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_art-gallery",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#FCFAF8",
+          "surface": "#FFFFFF",
+          "text": "#29252A",
+          "accent": "#8D4B7B",
+          "muted": "#8C7C87"
+        },
+        "contentWidth": 1100,
+        "radius": 4
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Art Gallery",
+                "subtitle": "Independent design, from our corner of Malaysia."
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Objects with a point of view.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_7",
+                "alt": "Independent creative studio collection",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "fontSize": 48,
+                "minHeight": 320,
+                "borderRadius": 12,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30,
+                    "minHeight": 240
+                  }
+                }
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Behind the little things",
+                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+              },
+              "style": {
+                "textAlign": "center",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 680
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The latest little things",
+                "source": "all",
+                "limit": 12
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "From our studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_7",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_21",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

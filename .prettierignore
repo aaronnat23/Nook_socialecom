@@ -1,0 +1,13 @@
+node_modules
+.next
+.expo
+dist
+.local
+.venv
+pnpm-lock.yaml
+artifacts
+playwright-report
+test-results
+packages/api-client/src/openapi.d.ts
+SOCIAL_COMMERCE_APP_TECHNICAL_SPEC.md
+AGENT_IMPLEMENTATION_PROMPT.md

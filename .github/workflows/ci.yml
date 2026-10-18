@@ -1,0 +1,48 @@
+name: Verify Lilac
+on: [push, pull_request]
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: lilac_app
+          POSTGRES_PASSWORD: lilac_local_only
+          POSTGRES_DB: lilac_test
+        ports: ['55432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://lilac_app:lilac_local_only@127.0.0.1:55432/lilac_test
+      LOCAL_AUTH_SECRET: ci-only-local-session-secret-with-at-least-32-characters
+      SANDBOX_WEBHOOK_SECRET: ci-only-sandbox-signature-secret-at-least-64-characters
+      AUTH_MODE: local
+      ENVIRONMENT: development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: {version: 11.25.0}
+      - uses: actions/setup-node@v4
+        with: {node-version: 22, cache: pnpm}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pnpm install --frozen-lockfile
+      - run: python -m venv .venv && .venv/bin/pip install -r apps/api/requirements.txt
+      - run: pnpm db:migrate
+      - run: pnpm typecheck
+      - run: .venv/bin/mypy --config-file apps/api/pyproject.toml apps/api/app
+      - run: .venv/bin/ruff check apps/api
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm --filter @lilac/mobile export
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm db:seed && pnpm dev > /tmp/lilac-dev.log 2>&1 &
+      - run: for i in $(seq 1 30); do curl -fsS http://127.0.0.1:3000/ && break || sleep 2; done
+      - run: PLAYWRIGHT_CHROMIUM=1 pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-verification
+          path: |
+            artifacts/
+            playwright-report/

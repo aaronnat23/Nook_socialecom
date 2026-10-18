@@ -1,0 +1,1 @@
+The reservation worker shares API models and transactional state transitions. Run `cd apps/api && ../../.venv/bin/python -m app.worker` every minute using your container scheduler. The worker locks a bounded batch with `SKIP LOCKED`, returns stock once, audits the transition, and commits atomically. No external service is called while holding inventory locks.

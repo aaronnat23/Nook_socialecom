@@ -1,0 +1,32 @@
+{
+  "name": "lilac-commerce",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "concurrently -n api,web 'pnpm dev:api' 'pnpm dev:web'",
+    "dev:web": "pnpm --filter @lilac/web dev",
+    "dev:mobile": "pnpm --filter @lilac/mobile start",
+    "dev:api": "cd apps/api && ../../.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload",
+    "setup": "python3 scripts/setup.py",
+    "typecheck": "turbo typecheck",
+    "lint": ".venv/bin/ruff check apps/api && pnpm typecheck",
+    "test": "vitest run && .venv/bin/python -m pytest apps/api/tests -q",
+    "test:e2e": "playwright test",
+    "build": "turbo build --filter=@lilac/web",
+    "db:migrate": "cd apps/api && ../../.venv/bin/alembic upgrade head",
+    "db:seed": "cd apps/api && ../../.venv/bin/python -m app.seed",
+    "api:generate": "node scripts/generate-api.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.11.1",
+    "@playwright/test": "1.58.2",
+    "concurrently": "9.2.1",
+    "openapi-typescript": "7.10.1",
+    "prettier": "3.6.2",
+    "tsx": "4.21.0",
+    "turbo": "2.8.20",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

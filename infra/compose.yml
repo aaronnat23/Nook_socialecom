@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: lilac_app
+      POSTGRES_PASSWORD: lilac_local_only
+      POSTGRES_DB: lilac
+    ports: ["127.0.0.1:55432:5432"]
+    volumes: ["lilac_postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lilac_app -d lilac"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  api:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.api
+    env_file: ../.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://lilac_app:lilac_local_only@db:5432/lilac
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes: ["lilac_uploads:/app/.local/uploads"]
+volumes:
+  lilac_postgres:
+  lilac_uploads:
