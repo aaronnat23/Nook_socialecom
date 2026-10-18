@@ -4,3 +4,7 @@ packages:
 allowBuilds:
   esbuild: true
 dangerouslyAllowAllBuilds: false
+overrides:
+  # Keep transitive optional peers aligned with the native modules in Expo Go SDK 57.
+  react-native-reanimated: 4.5.1
+  react-native-worklets: 0.10.1

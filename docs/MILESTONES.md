@@ -62,9 +62,10 @@ Latest completed checks:
 - Production web build: **passed**.
 - Latest desktop browser regression: **8 passed** against the production build, including collection editing/focus restoration, editor recovery and sandbox checkout/refund. No mobile emulation was used in this run.
 - iOS bundle export: **passed**, including the latest native storefront changes.
+- SDK 57 upgrade: **21/21 Expo Doctor checks passed**, Expo dependency check passed, no pnpm peer dependency issues; strict TypeScript and iOS bundle export passed after aligning native animation/worklet peers.
 - Migration upgrade/downgrade/upgrade: **passed**, 17 tables with RLS.
 - Discover automated accessibility scan: **0 violations** in the saved route-specific report; this is not a full accessibility audit.
 
-Earlier browser runs exercised both desktop and mobile web. Physical iPhone testing is now the requested device path; no emulator testing is being continued. Expo Go installation was authorized, but Mirroring accepted taps while keyboard input was not forwarded. Mirroring subsequently paused and now requires the user's Mac Touch ID/login to reconnect. The user has been asked to unlock Mirroring, install/open Expo Go and open the local development link. **No successful physical iPhone app session is claimed yet.**
+Earlier browser runs exercised both desktop and mobile web. Physical iPhone testing is now the requested device path; no emulator testing is being continued. The user installed Expo Go and unlocked Mirroring. Taps and keyboard input now work. On the physical iPhone, Expo Go reported SDK 57 while the project used SDK 54, so the project was upgraded to Expo 57.0.30 / React Native 0.86.3 / React 19.2.3 and the native peer dependencies were aligned. The version mismatch is resolved. The next physical-device screen requires the **same Expo account signed in to both Expo Go and the local CLI**. A browser sign-in handoff is prepared for the user; no credentials were requested in chat. **No successful physical iPhone Lilac app session is claimed yet.**
 
 Pilot completion is blocked on verification and the remaining work listed in [PILOT_READINESS.md](PILOT_READINESS.md), including signed installable staging builds, real-device QA, accessibility, performance/security reviews and hosted deployment. M6 is not complete.

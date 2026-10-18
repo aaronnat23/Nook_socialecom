@@ -13,7 +13,7 @@ The editor is under **My Space → Customize your space**. Nothing changes on th
 ## Requirements and setup
 
 - Node.js 22, pnpm 11.25.0, Python 3.12, PostgreSQL 17.
-- For the current native test: the connected physical iPhone, iPhone Mirroring and Expo Go compatible with SDK 54. Android testing is deferred at the user's request. A physical phone needs reachable API and image hosts configured in `apps/mobile/.env`.
+- For the current native test: the connected physical iPhone, iPhone Mirroring and Expo Go for SDK 57. Sign in to the same Expo account in Expo Go and the local Expo CLI. Android testing is deferred at the user's request. A physical phone needs reachable API and image hosts configured in `apps/mobile/.env`.
 
 ```sh
 python3.12 scripts/setup.py
@@ -84,7 +84,9 @@ Default API hosts are `127.0.0.1:8000` for iOS Simulator and `10.0.2.2:8000` for
 
 `apps/mobile/eas.json` contains development/preview build profiles. Signed installable builds and store distribution need your own Expo/Apple/Google accounts; export is a bundle check, not an APK/IPA or a device E2E test.
 
-For this Mac's current Wi-Fi session, the phone link is `exp://192.168.0.137:8081`, with API `http://192.168.0.137:8000/api/v1` and assets `http://192.168.0.137:3000`. These addresses may change when Wi-Fi changes. Keep the phone and Mac on the same reachable network. Start the API and web server bound to `0.0.0.0` for local phone access, and start Expo with `--lan`. No internet deployment or external account is required for this local sandbox test. The ignored `apps/mobile/.env` holds these device-specific addresses.
+For this Mac's current Wi-Fi session, the phone link is `exp://192.168.0.137:8081`, with API `http://192.168.0.137:8000/api/v1` and assets `http://192.168.0.137:3000`. These addresses may change when Wi-Fi changes. Keep the phone and Mac on the same reachable network. Start the API and web server bound to `0.0.0.0` for local phone access, and start Expo with `--lan`. Allow Expo Go's local network prompt so it can reach this Mac. SDK 57 Expo Go requires sign-in on both devices; run `pnpm --filter @lilac/mobile exec expo login --browser` for the Mac, then sign in to the same account inside Expo Go. No hosted app deployment is required. The ignored `apps/mobile/.env` holds these device-specific addresses.
+
+The mobile client uses Expo **57.0.30**, React Native **0.86.3** and React **19.2.3**, upgraded to match the SDK 57 Expo Go actually installed on the physical iPhone. Native animation/worklet versions are pinned to the Expo SDK compatibility list, including transitive optional peers. The web client keeps its own React version.
 
 ## Sample assets
 
