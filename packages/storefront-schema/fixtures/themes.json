@@ -2,7 +2,7 @@
   {
     "id": "minimal-studio",
     "name": "Minimal Studio",
-    "description": "Less, but lovelier.",
+    "description": "Quiet typography, soft lilac and room to breathe.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -41,7 +41,7 @@
               "id": "hero",
               "type": "hero",
               "props": {
-                "headline": "Everyday things, thoughtfully made.",
+                "headline": "Everyday, a little more beautiful.",
                 "subtitle": "A collection of little things that feel like you.",
                 "imageAssetId": "seed_hero_0",
                 "alt": "Independent creative studio collection",
@@ -51,12 +51,12 @@
                 }
               },
               "style": {
-                "backgroundColor": "#FFFFFF",
-                "fontSize": 48,
+                "backgroundColor": "#EEE5F7",
+                "fontSize": 54,
                 "minHeight": 320,
-                "borderRadius": 12,
-                "paddingTop": 32,
-                "paddingBottom": 32
+                "borderRadius": 24,
+                "paddingTop": 48,
+                "paddingBottom": 48
               },
               "responsive": {
                 "mobile": {
@@ -71,14 +71,15 @@
               "id": "products",
               "type": "productGrid",
               "props": {
-                "headline": "The latest little things",
+                "headline": "Objects for everyday rituals",
                 "source": "all",
                 "limit": 12
               },
               "style": {
                 "columns": 3,
                 "gap": 20,
-                "paddingTop": 32
+                "paddingTop": 44,
+                "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
@@ -122,7 +123,9 @@
               "style": {
                 "columns": 2,
                 "gap": 16,
-                "borderRadius": 12
+                "borderRadius": 12,
+                "paddingTop": 24,
+                "paddingBottom": 32
               }
             }
           ]
@@ -197,12 +200,12 @@
                 }
               },
               "style": {
-                "backgroundColor": "#FFFAF3",
-                "fontSize": 48,
+                "backgroundColor": "#E8D6C1",
+                "fontSize": 52,
                 "minHeight": 320,
-                "borderRadius": 12,
-                "paddingTop": 32,
-                "paddingBottom": 32
+                "borderRadius": 4,
+                "paddingTop": 48,
+                "paddingBottom": 48
               },
               "responsive": {
                 "mobile": {
@@ -217,14 +220,15 @@
               "id": "products",
               "type": "productGrid",
               "props": {
-                "headline": "The latest little things",
+                "headline": "Good things, found again",
                 "source": "all",
                 "limit": 12
               },
               "style": {
                 "columns": 3,
                 "gap": 20,
-                "paddingTop": 32
+                "paddingTop": 44,
+                "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
@@ -253,7 +257,7 @@
               "id": "photos",
               "type": "gallery",
               "props": {
-                "headline": "From our studio",
+                "headline": "From the archive",
                 "images": [
                   {
                     "imageAssetId": "seed_hero_1",
@@ -268,7 +272,9 @@
               "style": {
                 "columns": 2,
                 "gap": 16,
-                "borderRadius": 12
+                "borderRadius": 12,
+                "paddingTop": 24,
+                "paddingBottom": 32
               }
             }
           ]
@@ -328,12 +334,13 @@
                 }
               },
               "style": {
-                "backgroundColor": "#FFFFFF",
-                "fontSize": 48,
+                "backgroundColor": "#E9D8FC",
+                "fontSize": 54,
                 "minHeight": 320,
-                "borderRadius": 12,
-                "paddingTop": 32,
-                "paddingBottom": 32
+                "borderRadius": 32,
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "textAlign": "center"
               },
               "responsive": {
                 "mobile": {
@@ -348,28 +355,33 @@
               "id": "story",
               "type": "text",
               "props": {
-                "headline": "Behind the little things",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+                "headline": "A note from my world.",
+                "text": "A place for the things I make, the things I love, and a little bit of everything in between. Stay a while."
               },
               "style": {
                 "textAlign": "center",
                 "paddingTop": 48,
                 "paddingBottom": 48,
-                "maxWidth": 680
+                "maxWidth": 680,
+                "backgroundColor": "#FBE6F2",
+                "borderRadius": 28,
+                "paddingLeft": 24,
+                "paddingRight": 24
               }
             },
             {
               "id": "products",
               "type": "productGrid",
               "props": {
-                "headline": "The latest little things",
+                "headline": "Currently obsessed with",
                 "source": "all",
                 "limit": 12
               },
               "style": {
                 "columns": 3,
                 "gap": 20,
-                "paddingTop": 32
+                "paddingTop": 44,
+                "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
@@ -399,7 +411,9 @@
               "style": {
                 "columns": 2,
                 "gap": 16,
-                "borderRadius": 12
+                "borderRadius": 12,
+                "paddingTop": 24,
+                "paddingBottom": 32
               }
             }
           ]
@@ -419,11 +433,11 @@
         "fontHeading": "Georgia",
         "fontBody": "Inter",
         "colors": {
-          "background": "#18171B",
-          "surface": "#242229",
-          "text": "#F8F5FB",
-          "accent": "#C8ADFA",
-          "muted": "#B6AEBF"
+          "background": "#1E1827",
+          "surface": "#2C2237",
+          "text": "#F8F2FC",
+          "accent": "#D4B6FF",
+          "muted": "#BFB0CB"
         },
         "contentWidth": 1100,
         "radius": 0
@@ -449,8 +463,8 @@
               "id": "hero",
               "type": "hero",
               "props": {
-                "headline": "Quiet objects. Bold intentions.",
-                "subtitle": "A collection of little things that feel like you.",
+                "headline": "Less ordinary. More you.",
+                "subtitle": "An independent edit of objects with presence.",
                 "imageAssetId": "seed_hero_3",
                 "alt": "Independent creative studio collection",
                 "cta": {
@@ -459,13 +473,13 @@
                 }
               },
               "style": {
-                "backgroundColor": "#18171B",
-                "fontSize": 48,
+                "backgroundColor": "#30253C",
+                "fontSize": 60,
                 "minHeight": 320,
-                "borderRadius": 12,
-                "paddingTop": 32,
-                "paddingBottom": 32,
-                "textColor": "#F8F5FB"
+                "borderRadius": 0,
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "textColor": "#F8F2FC"
               },
               "responsive": {
                 "mobile": {
@@ -477,17 +491,42 @@
               }
             },
             {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "The editorial edit",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_3",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_9",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "borderRadius": 12,
+                "paddingTop": 24,
+                "paddingBottom": 32
+              }
+            },
+            {
               "id": "products",
               "type": "productGrid",
               "props": {
-                "headline": "The latest little things",
+                "headline": "Selected objects",
                 "source": "all",
                 "limit": 12
               },
               "style": {
                 "columns": 3,
                 "gap": 20,
-                "paddingTop": 32
+                "paddingTop": 44,
+                "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
@@ -510,28 +549,6 @@
                 "paddingTop": 48,
                 "paddingBottom": 48,
                 "maxWidth": 680
-              }
-            },
-            {
-              "id": "photos",
-              "type": "gallery",
-              "props": {
-                "headline": "From our studio",
-                "images": [
-                  {
-                    "imageAssetId": "seed_hero_3",
-                    "alt": "Our studio collection"
-                  },
-                  {
-                    "imageAssetId": "seed_product_9",
-                    "alt": "A detail from our collection"
-                  }
-                ]
-              },
-              "style": {
-                "columns": 2,
-                "gap": 16,
-                "borderRadius": 12
               }
             }
           ]
@@ -606,12 +623,12 @@
                 }
               },
               "style": {
-                "backgroundColor": "#FFFFFF",
-                "fontSize": 48,
+                "backgroundColor": "#F2DECA",
+                "fontSize": 52,
                 "minHeight": 320,
-                "borderRadius": 12,
-                "paddingTop": 32,
-                "paddingBottom": 32
+                "borderRadius": 24,
+                "paddingTop": 48,
+                "paddingBottom": 48
               },
               "responsive": {
                 "mobile": {
@@ -626,14 +643,15 @@
               "id": "products",
               "type": "productGrid",
               "props": {
-                "headline": "The latest little things",
+                "headline": "Made slowly. Chosen carefully.",
                 "source": "all",
                 "limit": 12
               },
               "style": {
                 "columns": 3,
                 "gap": 20,
-                "paddingTop": 32
+                "paddingTop": 44,
+                "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
@@ -648,14 +666,18 @@
               "id": "story",
               "type": "text",
               "props": {
-                "headline": "Behind the little things",
+                "headline": "Meet the hands behind the work.",
                 "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
               },
               "style": {
                 "textAlign": "center",
                 "paddingTop": 48,
                 "paddingBottom": 48,
-                "maxWidth": 680
+                "maxWidth": 680,
+                "backgroundColor": "#F8EADB",
+                "borderRadius": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24
               }
             },
             {
@@ -677,7 +699,9 @@
               "style": {
                 "columns": 2,
                 "gap": 16,
-                "borderRadius": 12
+                "borderRadius": 12,
+                "paddingTop": 24,
+                "paddingBottom": 32
               }
             }
           ]
@@ -712,6 +736,21 @@
           "type": "section",
           "children": [
             {
+              "id": "drop-note",
+              "type": "announcement",
+              "props": {
+                "text": "THE INDEPENDENT EDIT / EXPLORE THE COLLECTION"
+              },
+              "style": {
+                "backgroundColor": "#171717",
+                "textColor": "#FFFFFF",
+                "fontSize": 11,
+                "paddingTop": 14,
+                "paddingBottom": 14,
+                "textAlign": "center"
+              }
+            },
+            {
               "id": "identity",
               "type": "profileHeader",
               "props": {
@@ -727,8 +766,8 @@
               "id": "hero",
               "type": "hero",
               "props": {
-                "headline": "Wear your own story.",
-                "subtitle": "A collection of little things that feel like you.",
+                "headline": "YOUR WORLD. YOUR RULES.",
+                "subtitle": "Independent style. No permission needed.",
                 "imageAssetId": "seed_hero_5",
                 "alt": "Independent creative studio collection",
                 "cta": {
@@ -737,15 +776,16 @@
                 }
               },
               "style": {
-                "backgroundColor": "#FFFFFF",
-                "fontSize": 64,
+                "backgroundColor": "#DDD4F5",
+                "fontSize": 72,
                 "minHeight": 320,
                 "borderRadius": 0,
-                "paddingTop": 32,
-                "paddingBottom": 32,
+                "paddingTop": 48,
+                "paddingBottom": 48,
                 "uppercase": true,
                 "fontFamily": "Arial",
-                "fontWeight": 800
+                "fontWeight": 800,
+                "letterSpacing": -2
               },
               "responsive": {
                 "mobile": {
@@ -760,14 +800,17 @@
               "id": "products",
               "type": "productGrid",
               "props": {
-                "headline": "The latest little things",
+                "headline": "THE CURRENT ROTATION",
                 "source": "all",
                 "limit": 12
               },
               "style": {
                 "columns": 3,
                 "gap": 20,
-                "paddingTop": 32
+                "paddingTop": 44,
+                "paddingBottom": 32,
+                "fontWeight": 800,
+                "fontSize": 28
               },
               "responsive": {
                 "mobile": {
@@ -811,7 +854,9 @@
               "style": {
                 "columns": 2,
                 "gap": 16,
-                "borderRadius": 12
+                "borderRadius": 12,
+                "paddingTop": 24,
+                "paddingBottom": 32
               }
             }
           ]
@@ -886,12 +931,12 @@
                 }
               },
               "style": {
-                "backgroundColor": "#FAFCF6",
-                "fontSize": 48,
+                "backgroundColor": "#E1EAD8",
+                "fontSize": 52,
                 "minHeight": 320,
-                "borderRadius": 12,
-                "paddingTop": 32,
-                "paddingBottom": 32
+                "borderRadius": 30,
+                "paddingTop": 48,
+                "paddingBottom": 48
               },
               "responsive": {
                 "mobile": {
@@ -903,17 +948,32 @@
               }
             },
             {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Rooted in the everyday.",
+                "text": "Thoughtful objects, natural materials, and small rituals that bring us back to ourselves. Make a little room for a slower pace."
+              },
+              "style": {
+                "textAlign": "left",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "maxWidth": 720
+              }
+            },
+            {
               "id": "products",
               "type": "productGrid",
               "props": {
-                "headline": "The latest little things",
+                "headline": "Naturally good things",
                 "source": "all",
                 "limit": 12
               },
               "style": {
                 "columns": 3,
                 "gap": 20,
-                "paddingTop": 32
+                "paddingTop": 44,
+                "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
@@ -922,20 +982,6 @@
                     "gap": 12
                   }
                 }
-              }
-            },
-            {
-              "id": "story",
-              "type": "text",
-              "props": {
-                "headline": "Behind the little things",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
-              },
-              "style": {
-                "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680
               }
             },
             {
@@ -957,7 +1003,9 @@
               "style": {
                 "columns": 2,
                 "gap": 16,
-                "borderRadius": 12
+                "borderRadius": 12,
+                "paddingTop": 24,
+                "paddingBottom": 32
               }
             }
           ]
@@ -1017,12 +1065,12 @@
                 }
               },
               "style": {
-                "backgroundColor": "#FFFFFF",
-                "fontSize": 48,
+                "backgroundColor": "#F3E8EE",
+                "fontSize": 56,
                 "minHeight": 320,
-                "borderRadius": 12,
-                "paddingTop": 32,
-                "paddingBottom": 32
+                "borderRadius": 4,
+                "paddingTop": 48,
+                "paddingBottom": 48
               },
               "responsive": {
                 "mobile": {
@@ -1034,10 +1082,34 @@
               }
             },
             {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "headline": "In the studio",
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_7",
+                    "alt": "Our studio collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_21",
+                    "alt": "A detail from our collection"
+                  }
+                ]
+              },
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "borderRadius": 0,
+                "paddingTop": 24,
+                "paddingBottom": 32
+              }
+            },
+            {
               "id": "story",
               "type": "text",
               "props": {
-                "headline": "Behind the little things",
+                "headline": "A practice of paying attention.",
                 "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
               },
               "style": {
@@ -1058,7 +1130,8 @@
               "style": {
                 "columns": 3,
                 "gap": 20,
-                "paddingTop": 32
+                "paddingTop": 44,
+                "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
@@ -1067,28 +1140,6 @@
                     "gap": 12
                   }
                 }
-              }
-            },
-            {
-              "id": "photos",
-              "type": "gallery",
-              "props": {
-                "headline": "From our studio",
-                "images": [
-                  {
-                    "imageAssetId": "seed_hero_7",
-                    "alt": "Our studio collection"
-                  },
-                  {
-                    "imageAssetId": "seed_product_21",
-                    "alt": "A detail from our collection"
-                  }
-                ]
-              },
-              "style": {
-                "columns": 2,
-                "gap": 16,
-                "borderRadius": 12
               }
             }
           ]

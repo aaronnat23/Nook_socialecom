@@ -3,7 +3,6 @@ import {
   ScrollView,
   View,
   Text,
-  Modal,
   TouchableOpacity,
   Alert,
   Share,
@@ -11,12 +10,14 @@ import {
   useWindowDimensions,
   SafeAreaView,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import {
   blockTypes,
   makeBlock,
   themes,
+  templateDetails,
   validateDocument,
   type Block,
   type BlockType,
@@ -29,6 +30,66 @@ import { AuthGate, useApp } from '../components/provider';
 import { Storefront } from '../components/storefront';
 import { Button, Field, Loading, ui, C } from '../components/ui';
 import { useEditor, clone } from '../components/use-editor';
+import { Sheet } from '../components/sheet';
+import { TemplateArtwork } from '../components/templates';
+const blockInfo: Record<
+  BlockType,
+  { title: string; description: string; icon: keyof typeof Ionicons.glyphMap }
+> = {
+  hero: {
+    title: 'Hero banner',
+    description: 'Make a beautiful first impression',
+    icon: 'albums-outline',
+  },
+  profileHeader: {
+    title: 'Profile',
+    description: 'The person behind the space',
+    icon: 'person-circle-outline',
+  },
+  text: {
+    title: 'Story & text',
+    description: 'A few words, a little personality',
+    icon: 'text-outline',
+  },
+  image: { title: 'Image', description: 'Let a photograph tell the story', icon: 'image-outline' },
+  gallery: {
+    title: 'Gallery',
+    description: 'A collection of visual moments',
+    icon: 'images-outline',
+  },
+  productGrid: {
+    title: 'Product grid',
+    description: 'Good things, all together',
+    icon: 'grid-outline',
+  },
+  featuredProduct: {
+    title: 'Spotlight',
+    description: 'Give a favorite its moment',
+    icon: 'cube-outline',
+  },
+  button: {
+    title: 'Button',
+    description: 'A clear next step',
+    icon: 'arrow-forward-circle-outline',
+  },
+  divider: { title: 'Divider', description: 'A subtle change of chapter', icon: 'remove-outline' },
+  spacer: {
+    title: 'Breathing room',
+    description: 'A little space between things',
+    icon: 'resize-outline',
+  },
+  columns: { title: 'Columns', description: 'Two ideas, side by side', icon: 'copy-outline' },
+  socialLinks: {
+    title: 'Social links',
+    description: 'Find your people everywhere',
+    icon: 'link-outline',
+  },
+  announcement: {
+    title: 'Announcement',
+    description: 'Something worth sharing',
+    icon: 'megaphone-outline',
+  },
+};
 function allBlocks(blocks: Block[]): Block[] {
   return blocks.flatMap((b) => [b, ...allBlocks(b.children || [])]);
 }
@@ -44,8 +105,9 @@ export default function Page() {
     </AuthGate>
   );
 }
-type EditorSheet = 'properties' | 'layers' | 'themes' | 'add' | 'versions';
+type EditorSheet = 'properties' | 'layers' | 'themes' | 'template' | 'add' | 'versions';
 function Editor() {
+  const { template: requestedTemplate } = useLocalSearchParams<{ template?: string }>();
   const { me, notify } = useApp();
   const editor = useEditor(me!.shop.id);
   const { doc } = editor;
@@ -69,6 +131,14 @@ function Editor() {
     { id: string; versionNo: number; note: string; created_at: string }[]
   >([]);
   const [advanced, setAdvanced] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(themes[0].id);
+  const [applying, setApplying] = useState(false);
+  useEffect(() => {
+    if (!requestedTemplate || !themes.some((t) => t.id === requestedTemplate)) return;
+    setSelectedTemplate(requestedTemplate);
+    const timer = setTimeout(() => setSheet('template'), 400);
+    return () => clearTimeout(timer);
+  }, [requestedTemplate]);
   useEffect(() => {
     api<{ items: { id: string; title: string }[] }>(`/shops/${me!.shop.id}/collections`)
       .then((r) => setCollections(r.items))
@@ -242,6 +312,34 @@ function Editor() {
     }
   };
   const s = block?.style || {};
+  const chosenTheme = themes.find((t) => t.id === selectedTemplate)!;
+  const applyTemplate = async () => {
+    setApplying(true);
+    try {
+      const revision = await editor.flush();
+      await api(`/shops/${me!.shop.id}/snapshots`, {
+        method: 'POST',
+        body: JSON.stringify({
+          expectedRevision: revision,
+          note: 'Before applying a native template',
+        }),
+      });
+      const next = clone(chosenTheme.document);
+      next.shopId = me!.shop.id;
+      for (const section of next.sections)
+        for (const b of section.children)
+          if (b.type === 'profileHeader')
+            b.props = { headline: me!.shop.name, subtitle: me!.shop.bio };
+      editor.commit(next);
+      setSelected('hero');
+      setSheet(null);
+      notify('Your new layout is ready. Publish when it feels like you.');
+    } catch (e) {
+      notify((e as Error).message);
+    } finally {
+      setApplying(false);
+    }
+  };
   return (
     <SafeAreaView style={ui.screen}>
       <View
@@ -258,7 +356,7 @@ function Editor() {
             onPress={() => router.back()}
             style={{ padding: 10 }}
           >
-            <Text style={{ fontSize: 23, color: C.primary }}>‹</Text>
+            <Ionicons name="arrow-back" size={22} color={C.primary} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 13, fontWeight: '600', color: C.text }}>{me!.shop.name}</Text>
@@ -374,12 +472,30 @@ function Editor() {
         }}
       >
         {[
-          { label: '＋ Add', onPress: () => setSheet('add') },
-          { label: '▤ Layers', onPress: () => setSheet('layers') },
-          { label: '◈ Themes', onPress: () => setSheet('themes') },
-          { label: '↶ Undo', onPress: editor.undo, disabled: !editor.canUndo },
-          { label: '↷ Redo', onPress: editor.redo, disabled: !editor.canRedo },
-          { label: preview ? '◉ Edit' : '◉ Preview', onPress: () => setPreview(!preview) },
+          { label: 'Add', icon: 'add-circle-outline' as const, onPress: () => setSheet('add') },
+          { label: 'Layers', icon: 'layers-outline' as const, onPress: () => setSheet('layers') },
+          {
+            label: 'Themes',
+            icon: 'color-palette-outline' as const,
+            onPress: () => setSheet('themes'),
+          },
+          {
+            label: 'Undo',
+            icon: 'arrow-undo-outline' as const,
+            onPress: editor.undo,
+            disabled: !editor.canUndo,
+          },
+          {
+            label: 'Redo',
+            icon: 'arrow-redo-outline' as const,
+            onPress: editor.redo,
+            disabled: !editor.canRedo,
+          },
+          {
+            label: preview ? 'Edit' : 'Preview',
+            icon: 'eye-outline' as const,
+            onPress: () => setPreview(!preview),
+          },
         ].map((t) => (
           <TouchableOpacity
             key={t.label}
@@ -395,859 +511,890 @@ function Editor() {
               opacity: t.disabled ? 0.4 : 1,
             }}
           >
-            <Text maxFontSizeMultiplier={1.4} style={{ fontSize: 18, color: C.primary }}>
-              {t.label.split(' ')[0]}
-            </Text>
-            <Text maxFontSizeMultiplier={1.4} style={{ fontSize: 8, color: C.primary }}>
-              {t.label.split(' ').slice(1).join(' ')}
+            <Ionicons name={t.icon} size={21} color={C.primary} />
+            <Text
+              maxFontSizeMultiplier={1.4}
+              style={{ fontSize: 9, color: C.primary, marginTop: 5 }}
+            >
+              {t.label}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
-      <Modal
+      <Sheet
         visible={sheet !== null}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setSheet(null)}
+        onClose={() => {
+          if (!applying) setSheet(null);
+        }}
+        title={
+          panel === 'properties'
+            ? 'Make it feel like you.'
+            : panel === 'layers'
+              ? 'Every little layer.'
+              : panel === 'themes'
+                ? 'Find your signature look.'
+                : panel === 'template'
+                  ? chosenTheme.name
+                  : panel === 'versions'
+                    ? 'Every version of you.'
+                    : 'Build something beautiful.'
+        }
+        eyebrow={
+          panel === 'properties' && block
+            ? blockInfo[block.type].title.toUpperCase()
+            : panel === 'template' || panel === 'themes'
+              ? 'THE TEMPLATE COLLECTION'
+              : 'YOUR DESIGN STUDIO'
+        }
+        subtitle={
+          panel === 'add'
+            ? 'Thoughtful building blocks for a space of your own.'
+            : panel === 'themes'
+              ? 'Eight starting points. Endless ways to make them yours.'
+              : panel === 'layers'
+                ? 'Arrange the story, one section at a time.'
+                : undefined
+        }
       >
-        <SafeAreaView style={ui.screen}>
-          <View
-            style={[
-              ui.row,
-              {
-                justifyContent: 'space-between',
-                padding: 20,
-                borderBottomWidth: 1,
-                borderColor: C.border,
-                backgroundColor: '#FFF',
-              },
-            ]}
-          >
-            <Text style={{ fontSize: 18, fontWeight: '600', color: C.text }}>
-              {panel === 'properties'
-                ? 'Make it feel like you.'
-                : panel === 'layers'
-                  ? 'Every little layer.'
-                  : panel === 'themes'
-                    ? 'A fresh point of view.'
-                    : panel === 'versions'
-                      ? 'Every version of you.'
-                      : 'Add a little something.'}
-            </Text>
-            <TouchableOpacity
-              accessibilityLabel="Close editor panel"
-              onPress={() => setSheet(null)}
-              style={{ padding: 10 }}
-            >
-              <Text style={{ fontSize: 23, color: C.muted }}>×</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView
-            key={panel}
-            contentContainerStyle={ui.content}
-            keyboardShouldPersistTaps="handled"
-          >
-            {panel === 'properties' && block ? (
-              <>
-                <View style={[ui.row, { marginBottom: 18 }]}>
-                  {['Content', 'Style', 'Layout', 'Responsive'].map((t) => (
-                    <TouchableOpacity
-                      key={t}
-                      onPress={() => setTab(t)}
-                      style={{
-                        backgroundColor: tab === t ? C.lilac : '#FFF',
-                        padding: 10,
-                        borderRadius: 7,
-                      }}
-                    >
-                      <Text style={{ fontSize: 10, color: C.primary }}>{t}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-                {tab === 'Content' ? (
-                  <>
-                    {[
-                      'hero',
-                      'profileHeader',
-                      'text',
-                      'gallery',
-                      'productGrid',
-                      'featuredProduct',
-                      'columns',
-                    ].includes(block.type) && (
-                      <Field
-                        label="Heading"
-                        value={block.props.headline || ''}
-                        maxLength={200}
-                        onChangeText={(v) => props('headline', v)}
+        <ScrollView
+          key={panel}
+          contentContainerStyle={ui.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          {panel === 'properties' && block ? (
+            <>
+              <View style={[ui.row, { marginBottom: 18 }]}>
+                {['Content', 'Style', 'Layout', 'Responsive'].map((t) => (
+                  <TouchableOpacity
+                    key={t}
+                    onPress={() => setTab(t)}
+                    style={{
+                      backgroundColor: tab === t ? C.primary : '#F0EAF7',
+                      padding: 10,
+                      borderRadius: 13,
+                    }}
+                  >
+                    <Text style={{ fontSize: 10, color: tab === t ? '#FFF' : C.primary }}>{t}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              {tab === 'Content' ? (
+                <>
+                  {[
+                    'hero',
+                    'profileHeader',
+                    'text',
+                    'gallery',
+                    'productGrid',
+                    'featuredProduct',
+                    'columns',
+                  ].includes(block.type) && (
+                    <Field
+                      label="Heading"
+                      value={block.props.headline || ''}
+                      maxLength={200}
+                      onChangeText={(v) => props('headline', v)}
+                    />
+                  )}
+                  {['hero', 'profileHeader'].includes(block.type) && (
+                    <Field
+                      label="Introduction"
+                      multiline
+                      value={block.props.subtitle || ''}
+                      maxLength={600}
+                      onChangeText={(v) => props('subtitle', v)}
+                    />
+                  )}
+                  {['text', 'announcement'].includes(block.type) && (
+                    <Field
+                      label="Your words"
+                      multiline
+                      value={block.props.text || ''}
+                      maxLength={block.type === 'text' ? 6000 : 600}
+                      onChangeText={(v) => props('text', v)}
+                    />
+                  )}
+                  {['hero', 'profileHeader', 'image', 'gallery'].includes(block.type) && (
+                    <>
+                      <Button
+                        title={uploading ? 'Preparing image…' : 'Choose & crop a photo'}
+                        soft
+                        disabled={uploading}
+                        style={{ marginTop: 20 }}
+                        onPress={() => void upload()}
                       />
-                    )}
-                    {['hero', 'profileHeader'].includes(block.type) && (
-                      <Field
-                        label="Introduction"
-                        multiline
-                        value={block.props.subtitle || ''}
-                        maxLength={600}
-                        onChangeText={(v) => props('subtitle', v)}
-                      />
-                    )}
-                    {['text', 'announcement'].includes(block.type) && (
-                      <Field
-                        label="Your words"
-                        multiline
-                        value={block.props.text || ''}
-                        maxLength={block.type === 'text' ? 6000 : 600}
-                        onChangeText={(v) => props('text', v)}
-                      />
-                    )}
-                    {['hero', 'profileHeader', 'image', 'gallery'].includes(block.type) && (
-                      <>
-                        <Button
-                          title={uploading ? 'Preparing image…' : 'Choose & crop a photo'}
-                          soft
-                          disabled={uploading}
-                          style={{ marginTop: 20 }}
-                          onPress={() => void upload()}
+                      {block.type !== 'gallery' && (
+                        <Field
+                          label="Image description / alt text"
+                          value={block.props.alt || ''}
+                          maxLength={300}
+                          onChangeText={(v) => props('alt', v)}
                         />
-                        {block.type !== 'gallery' && (
-                          <Field
-                            label="Image description / alt text"
-                            value={block.props.alt || ''}
-                            maxLength={300}
-                            onChangeText={(v) => props('alt', v)}
-                          />
-                        )}
-                        {block.type === 'gallery' &&
-                          block.props.images?.map((im, i) => (
-                            <View key={i}>
-                              <Field
-                                label={`Photo ${i + 1} description`}
-                                value={im.alt}
-                                maxLength={300}
-                                onChangeText={(v) =>
-                                  props(
-                                    'images',
-                                    block.props.images!.map((x, j) =>
-                                      i === j ? { ...x, alt: v } : x,
-                                    ),
-                                  )
-                                }
-                              />
-                              <Button
-                                title="Remove photo"
-                                soft
-                                onPress={() =>
-                                  props(
-                                    'images',
-                                    block.props.images!.filter((_, j) => j !== i),
-                                  )
-                                }
-                              />
-                            </View>
-                          ))}
-                      </>
-                    )}
-                    {block.type === 'socialLinks' && (
-                      <>
-                        {block.props.links?.map((link, i) => (
-                          <View key={i} style={ui.card}>
+                      )}
+                      {block.type === 'gallery' &&
+                        block.props.images?.map((im, i) => (
+                          <View key={i}>
                             <Field
-                              label="Link label"
-                              value={link.label}
+                              label={`Photo ${i + 1} description`}
+                              value={im.alt}
+                              maxLength={300}
                               onChangeText={(v) =>
                                 props(
-                                  'links',
-                                  block.props.links!.map((x, j) =>
-                                    i === j ? { ...x, label: v } : x,
+                                  'images',
+                                  block.props.images!.map((x, j) =>
+                                    i === j ? { ...x, alt: v } : x,
                                   ),
                                 )
                               }
                             />
+                            <Button
+                              title="Remove photo"
+                              soft
+                              onPress={() =>
+                                props(
+                                  'images',
+                                  block.props.images!.filter((_, j) => j !== i),
+                                )
+                              }
+                            />
+                          </View>
+                        ))}
+                    </>
+                  )}
+                  {block.type === 'socialLinks' && (
+                    <>
+                      {block.props.links?.map((link, i) => (
+                        <View key={i} style={ui.card}>
+                          <Field
+                            label="Link label"
+                            value={link.label}
+                            onChangeText={(v) =>
+                              props(
+                                'links',
+                                block.props.links!.map((x, j) =>
+                                  i === j ? { ...x, label: v } : x,
+                                ),
+                              )
+                            }
+                          />
+                          <Field
+                            label="Secure URL"
+                            value={link.url}
+                            autoCapitalize="none"
+                            onChangeText={(v) =>
+                              props(
+                                'links',
+                                block.props.links!.map((x, j) => (i === j ? { ...x, url: v } : x)),
+                              )
+                            }
+                          />
+                          <Button
+                            title="Remove link"
+                            soft
+                            style={{ marginTop: 12 }}
+                            onPress={() =>
+                              props(
+                                'links',
+                                block.props.links!.filter((_, j) => i !== j),
+                              )
+                            }
+                          />
+                        </View>
+                      ))}
+                      <Button
+                        title="+ Add social link"
+                        soft
+                        disabled={(block.props.links?.length || 0) >= 8}
+                        onPress={() =>
+                          props('links', [
+                            ...(block.props.links || []),
+                            { label: 'Find us here', url: 'https://instagram.com' },
+                          ])
+                        }
+                      />
+                    </>
+                  )}
+                  {block.type === 'columns' && (
+                    <>
+                      <Text style={ui.muted}>
+                        Up to three blocks in a column section. They stack on phones.
+                      </Text>
+                      <View style={[ui.wrap, { marginTop: 15 }]}>
+                        {(['text', 'image', 'productGrid', 'button'] as BlockType[]).map((t) => (
+                          <Button
+                            key={t}
+                            title={`+ ${t}`}
+                            soft
+                            disabled={(block.children?.length || 0) >= 3}
+                            onPress={() => add(t, block.id)}
+                          />
+                        ))}
+                      </View>
+                    </>
+                  )}
+                  {block.type === 'text' && (
+                    <>
+                      <Text style={ui.label}>Rich text details</Text>
+                      {block.props.nodes?.map((node, i) => (
+                        <View key={i} style={ui.card}>
+                          <Field
+                            label={node.type}
+                            value={node.text}
+                            multiline
+                            onChangeText={(v) =>
+                              props(
+                                'nodes',
+                                block.props.nodes!.map((x, j) => (i === j ? { ...x, text: v } : x)),
+                              )
+                            }
+                          />
+                          {node.type === 'link' && (
                             <Field
-                              label="Secure URL"
-                              value={link.url}
+                              label="Link URL"
+                              value={node.url || ''}
                               autoCapitalize="none"
                               onChangeText={(v) =>
                                 props(
-                                  'links',
-                                  block.props.links!.map((x, j) =>
+                                  'nodes',
+                                  block.props.nodes!.map((x, j) =>
                                     i === j ? { ...x, url: v } : x,
                                   ),
                                 )
                               }
                             />
-                            <Button
-                              title="Remove link"
-                              soft
-                              style={{ marginTop: 12 }}
-                              onPress={() =>
-                                props(
-                                  'links',
-                                  block.props.links!.filter((_, j) => i !== j),
-                                )
-                              }
-                            />
-                          </View>
-                        ))}
-                        <Button
-                          title="+ Add social link"
-                          soft
-                          disabled={(block.props.links?.length || 0) >= 8}
-                          onPress={() =>
-                            props('links', [
-                              ...(block.props.links || []),
-                              { label: 'Find us here', url: 'https://instagram.com' },
-                            ])
-                          }
-                        />
-                      </>
-                    )}
-                    {block.type === 'columns' && (
-                      <>
-                        <Text style={ui.muted}>
-                          Up to three blocks in a column section. They stack on phones.
-                        </Text>
-                        <View style={[ui.wrap, { marginTop: 15 }]}>
-                          {(['text', 'image', 'productGrid', 'button'] as BlockType[]).map((t) => (
-                            <Button
-                              key={t}
-                              title={`+ ${t}`}
-                              soft
-                              disabled={(block.children?.length || 0) >= 3}
-                              onPress={() => add(t, block.id)}
-                            />
-                          ))}
-                        </View>
-                      </>
-                    )}
-                    {block.type === 'text' && (
-                      <>
-                        <Text style={ui.label}>Rich text details</Text>
-                        {block.props.nodes?.map((node, i) => (
-                          <View key={i} style={ui.card}>
-                            <Field
-                              label={node.type}
-                              value={node.text}
-                              multiline
-                              onChangeText={(v) =>
-                                props(
-                                  'nodes',
-                                  block.props.nodes!.map((x, j) =>
-                                    i === j ? { ...x, text: v } : x,
-                                  ),
-                                )
-                              }
-                            />
-                            {node.type === 'link' && (
-                              <Field
-                                label="Link URL"
-                                value={node.url || ''}
-                                autoCapitalize="none"
-                                onChangeText={(v) =>
-                                  props(
-                                    'nodes',
-                                    block.props.nodes!.map((x, j) =>
-                                      i === j ? { ...x, url: v } : x,
-                                    ),
-                                  )
-                                }
-                              />
-                            )}
-                            <Button
-                              title="Remove text detail"
-                              soft
-                              style={{ marginTop: 10 }}
-                              onPress={() =>
-                                props(
-                                  'nodes',
-                                  block.props.nodes!.filter((_, j) => i !== j),
-                                )
-                              }
-                            />
-                          </View>
-                        ))}
-                        <View style={ui.wrap}>
-                          {(
-                            ['paragraph', 'h2', 'h3', 'bold', 'italic', 'listItem', 'link'] as const
-                          ).map((type) => (
-                            <Button
-                              key={type}
-                              title={`+ ${type}`}
-                              soft
-                              onPress={() =>
-                                props('nodes', [
-                                  ...(block.props.nodes || []),
-                                  {
-                                    type,
-                                    text: 'Your words here',
-                                    ...(type === 'link' ? { url: 'https://example.com' } : {}),
-                                  },
-                                ])
-                              }
-                            />
-                          ))}
-                        </View>
-                      </>
-                    )}
-                    {block.type === 'button' && (
-                      <>
-                        <Field
-                          label="Button text"
-                          value={block.props.label || ''}
-                          onChangeText={(v) => props('label', v)}
-                        />
-                        <Field
-                          label="Secure link or #section"
-                          value={block.props.url || ''}
-                          onChangeText={(v) => props('url', v)}
-                          autoCapitalize="none"
-                        />
-                      </>
-                    )}
-                    {block.type === 'hero' && (
-                      <>
-                        <Field
-                          label="Call to action"
-                          value={block.props.cta?.label || ''}
-                          onChangeText={(v) =>
-                            props('cta', { label: v, url: block.props.cta?.url || '#products' })
-                          }
-                        />
-                        <Field
-                          label="Button link"
-                          value={block.props.cta?.url || '#products'}
-                          autoCapitalize="none"
-                          onChangeText={(v) =>
-                            props('cta', { label: block.props.cta?.label || 'Explore', url: v })
-                          }
-                        />
-                      </>
-                    )}
-                    {block.type === 'featuredProduct' &&
-                      products.map((p) => (
-                        <Button
-                          key={p.id}
-                          title={`${p.id === block.props.productId ? '✓ ' : ''}${p.title}`}
-                          soft
-                          onPress={() => props('productId', p.id)}
-                          style={{ marginTop: 10 }}
-                        />
-                      ))}
-                    {block.type === 'productGrid' && (
-                      <>
-                        <Text style={ui.label}>Collection</Text>
-                        <View style={ui.wrap}>
+                          )}
                           <Button
-                            title="All products"
+                            title="Remove text detail"
                             soft
+                            style={{ marginTop: 10 }}
                             onPress={() =>
-                              change((b) => ({ ...b, props: { ...b.props, source: 'all' } }))
+                              props(
+                                'nodes',
+                                block.props.nodes!.filter((_, j) => i !== j),
+                              )
                             }
                           />
-                          {collections.map((c) => (
-                            <Button
-                              title={c.title}
-                              key={c.id}
-                              soft
-                              onPress={() =>
-                                change((b) => ({
-                                  ...b,
-                                  props: { ...b.props, source: 'collection', collectionId: c.id },
-                                }))
-                              }
-                            />
-                          ))}
                         </View>
-                        <Numeric
-                          label="Number of products"
-                          value={block.props.limit || 12}
-                          min={1}
-                          max={24}
-                          onChange={(v) => props('limit', v)}
-                        />
-                      </>
-                    )}
-                  </>
-                ) : tab === 'Style' ? (
-                  <>
-                    <Text style={ui.label}>Font family</Text>
-                    <View style={ui.wrap}>
-                      {(['Inter', 'Georgia', 'Arial', 'Trebuchet MS', 'Courier New'] as Font[]).map(
-                        (f) => (
+                      ))}
+                      <View style={ui.wrap}>
+                        {(
+                          ['paragraph', 'h2', 'h3', 'bold', 'italic', 'listItem', 'link'] as const
+                        ).map((type) => (
                           <Button
-                            key={f}
-                            title={`${s.fontFamily === f ? '✓ ' : ''}${f}`}
+                            key={type}
+                            title={`+ ${{ paragraph: 'Paragraph', h2: 'Heading', h3: 'Subheading', bold: 'Bold text', italic: 'Italic text', listItem: 'List item', link: 'Link' }[type]}`}
                             soft
-                            onPress={() => style('fontFamily', f)}
+                            onPress={() =>
+                              props('nodes', [
+                                ...(block.props.nodes || []),
+                                {
+                                  type,
+                                  text: 'Your words here',
+                                  ...(type === 'link' ? { url: 'https://example.com' } : {}),
+                                },
+                              ])
+                            }
                           />
-                        ),
-                      )}
-                    </View>
-                    <Numeric
-                      label="Heading / text size"
-                      value={s.fontSize || 32}
-                      min={10}
-                      max={96}
-                      onChange={(v) => style('fontSize', v)}
-                    />
-                    <Text style={ui.label}>Text alignment</Text>
-                    <View style={ui.row}>
-                      {['left', 'center', 'right'].map((v) => (
-                        <Button key={v} title={v} soft onPress={() => style('textAlign', v)} />
-                      ))}
-                    </View>
-                    <Color
-                      label="Text color"
-                      value={s.textColor || doc.theme.colors.text}
-                      onChange={(v) => style('textColor', v)}
-                    />
-                    <Color
-                      label="Background color"
-                      value={s.backgroundColor || doc.theme.colors.background}
-                      onChange={(v) => style('backgroundColor', v)}
-                    />
-                    <Text style={ui.label}>Background gradient</Text>
-                    <View style={ui.wrap}>
-                      {['none', 'lilac', 'sunset', 'forest'].map((v) => (
-                        <Button key={v} title={v} soft onPress={() => style('gradient', v)} />
-                      ))}
-                    </View>
-                    <Text style={ui.label}>Image aspect ratio</Text>
-                    <View style={ui.wrap}>
-                      {['auto', '1:1', '4:3', '3:4', '16:9'].map((v) => (
-                        <Button key={v} title={v} soft onPress={() => style('aspectRatio', v)} />
-                      ))}
-                    </View>
-                    <Numeric
-                      label="Rounded corners"
-                      value={s.borderRadius ?? doc.theme.radius}
-                      min={0}
-                      max={64}
-                      onChange={(v) => style('borderRadius', v)}
-                    />
-                    <Text style={ui.label}>Image fit</Text>
-                    <View style={ui.row}>
-                      {['cover', 'contain'].map((v) => (
-                        <Button key={v} title={v} soft onPress={() => style('imageFit', v)} />
-                      ))}
-                    </View>
-                    <Numeric
-                      label="Image focal X"
-                      value={s.focalX ?? 50}
-                      min={0}
-                      max={100}
-                      onChange={(v) => style('focalX', v)}
-                    />
-                    <Numeric
-                      label="Image focal Y"
-                      value={s.focalY ?? 50}
-                      min={0}
-                      max={100}
-                      onChange={(v) => style('focalY', v)}
-                    />
-                    <Button
-                      title={advanced ? 'Less detail' : 'Advanced details'}
-                      soft
-                      onPress={() => setAdvanced(!advanced)}
-                      style={{ marginTop: 20 }}
-                    />
-                    {advanced && (
-                      <>
-                        <Numeric
-                          label="Font weight"
-                          value={s.fontWeight || 500}
-                          min={400}
-                          max={800}
-                          step={100}
-                          onChange={(v) => style('fontWeight', v)}
-                        />
-                        <Numeric
-                          label="Line height"
-                          value={s.lineHeight || 1.4}
-                          min={1}
-                          max={2.2}
-                          step={0.1}
-                          onChange={(v) => style('lineHeight', v)}
-                        />
-                        <Numeric
-                          label="Letter spacing"
-                          value={s.letterSpacing || 0}
-                          min={-2}
-                          max={10}
-                          step={0.1}
-                          onChange={(v) => style('letterSpacing', v)}
-                        />
-                        <Numeric
-                          label="Border width"
-                          value={s.borderWidth || 0}
-                          min={0}
-                          max={8}
-                          onChange={(v) => style('borderWidth', v)}
-                        />
-                        <Color
-                          label="Border color"
-                          value={s.borderColor || doc.theme.colors.accent}
-                          onChange={(v) => style('borderColor', v)}
-                        />
-                      </>
-                    )}
-                    <Button
-                      title="Reset block style"
-                      soft
-                      style={{ marginTop: 20 }}
-                      onPress={() =>
-                        change((b) => ({ ...b, style: { paddingTop: 20, paddingBottom: 20 } }))
-                      }
-                    />
-                  </>
-                ) : tab === 'Layout' ? (
-                  <>
-                    {(
-                      [
-                        'paddingTop',
-                        'paddingBottom',
-                        'paddingLeft',
-                        'paddingRight',
-                        'marginTop',
-                        'marginBottom',
-                        'gap',
-                      ] as const
-                    ).map((k) => (
-                      <Numeric
-                        key={k}
-                        label={k.replace(/([A-Z])/g, ' $1')}
-                        value={s[k] ?? 0}
-                        min={0}
-                        max={160}
-                        onChange={(v) => style(k, v)}
+                        ))}
+                      </View>
+                    </>
+                  )}
+                  {block.type === 'button' && (
+                    <>
+                      <Field
+                        label="Button text"
+                        value={block.props.label || ''}
+                        onChangeText={(v) => props('label', v)}
+                      />
+                      <Field
+                        label="Secure link or #section"
+                        value={block.props.url || ''}
+                        onChangeText={(v) => props('url', v)}
+                        autoCapitalize="none"
+                      />
+                    </>
+                  )}
+                  {block.type === 'hero' && (
+                    <>
+                      <Field
+                        label="Call to action"
+                        value={block.props.cta?.label || ''}
+                        onChangeText={(v) =>
+                          props('cta', { label: v, url: block.props.cta?.url || '#products' })
+                        }
+                      />
+                      <Field
+                        label="Button link"
+                        value={block.props.cta?.url || '#products'}
+                        autoCapitalize="none"
+                        onChangeText={(v) =>
+                          props('cta', { label: block.props.cta?.label || 'Explore', url: v })
+                        }
+                      />
+                    </>
+                  )}
+                  {block.type === 'featuredProduct' &&
+                    products.map((p) => (
+                      <Button
+                        key={p.id}
+                        title={`${p.id === block.props.productId ? '✓ ' : ''}${p.title}`}
+                        soft
+                        onPress={() => props('productId', p.id)}
+                        style={{ marginTop: 10 }}
                       />
                     ))}
-                    <Numeric
-                      label="Minimum height"
-                      value={s.minHeight || 0}
-                      min={0}
-                      max={800}
-                      onChange={(v) => style('minHeight', v)}
-                    />
-                    <Numeric
-                      label="Maximum width"
-                      value={s.maxWidth || 1100}
-                      min={280}
-                      max={1440}
-                      onChange={(v) => style('maxWidth', v)}
-                    />
-                    <Numeric
-                      label="Columns"
-                      value={s.columns || 2}
-                      min={1}
-                      max={4}
-                      onChange={(v) => style('columns', v)}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Text style={ui.muted}>Override the base design at a breakpoint.</Text>
-                    <View style={[ui.wrap, { marginTop: 18 }]}>
-                      {(['mobile', 'tablet', 'desktop'] as const).map((v) => (
+                  {block.type === 'productGrid' && (
+                    <>
+                      <Text style={ui.label}>Collection</Text>
+                      <View style={ui.wrap}>
                         <Button
-                          key={v}
-                          title={breakpoint === v ? `✓ ${v}` : v}
+                          title="All products"
                           soft
-                          onPress={() => setBreakpoint(v)}
+                          onPress={() =>
+                            change((b) => ({ ...b, props: { ...b.props, source: 'all' } }))
+                          }
                         />
-                      ))}
-                    </View>
-                    <Numeric
-                      label="Breakpoint text size"
-                      value={
-                        block.responsive?.[breakpoint === 'desktop' ? 'mobile' : breakpoint]?.style
-                          ?.fontSize ||
-                        s.fontSize ||
-                        32
-                      }
-                      min={10}
-                      max={96}
-                      onChange={(v) => style('fontSize', v, true)}
-                    />
-                    <Numeric
-                      label="Breakpoint columns"
-                      value={
-                        block.responsive?.[breakpoint === 'desktop' ? 'mobile' : breakpoint]?.style
-                          ?.columns || 2
-                      }
-                      min={1}
-                      max={breakpoint === 'mobile' ? 2 : 3}
-                      onChange={(v) => style('columns', v, true)}
-                    />
-                    <Numeric
-                      label="Breakpoint order"
-                      value={
-                        block.responsive?.[breakpoint === 'desktop' ? 'mobile' : breakpoint]?.style
-                          ?.order ?? blocks.indexOf(block)
-                      }
-                      min={0}
-                      max={80}
-                      onChange={(v) => style('order', v, true)}
-                    />
-                    <Button
-                      title="Hide at this breakpoint"
-                      soft
-                      onPress={() => style('visibility', 'hidden', true)}
-                      style={{ marginTop: 15 }}
-                    />
-                    <Button
-                      title="Show at this breakpoint"
-                      soft
-                      onPress={() => style('visibility', 'visible', true)}
-                      style={{ marginTop: 10 }}
-                    />
-                  </>
-                )}
-                <View style={ui.divider} />
-                <View style={ui.row}>
-                  <Button
-                    title="↑ Move up"
-                    soft
-                    onPress={() => move(selected, -1)}
-                    style={{ flex: 1 }}
+                        {collections.map((c) => (
+                          <Button
+                            title={c.title}
+                            key={c.id}
+                            soft
+                            onPress={() =>
+                              change((b) => ({
+                                ...b,
+                                props: { ...b.props, source: 'collection', collectionId: c.id },
+                              }))
+                            }
+                          />
+                        ))}
+                      </View>
+                      <Numeric
+                        label="Number of products"
+                        value={block.props.limit || 12}
+                        min={1}
+                        max={24}
+                        onChange={(v) => props('limit', v)}
+                      />
+                    </>
+                  )}
+                </>
+              ) : tab === 'Style' ? (
+                <>
+                  <Text style={ui.label}>Font family</Text>
+                  <View style={ui.wrap}>
+                    {(['Inter', 'Georgia', 'Arial', 'Trebuchet MS', 'Courier New'] as Font[]).map(
+                      (f) => (
+                        <Button
+                          key={f}
+                          title={`${s.fontFamily === f ? '✓ ' : ''}${f}`}
+                          soft
+                          onPress={() => style('fontFamily', f)}
+                        />
+                      ),
+                    )}
+                  </View>
+                  <Numeric
+                    label="Heading / text size"
+                    value={s.fontSize || 32}
+                    min={10}
+                    max={96}
+                    onChange={(v) => style('fontSize', v)}
                   />
-                  <Button
-                    title="↓ Move down"
-                    soft
-                    onPress={() => move(selected, 1)}
-                    style={{ flex: 1 }}
-                  />
-                </View>
-                <View style={[ui.row, { marginTop: 10 }]}>
-                  <Button title="Duplicate" soft onPress={duplicate} style={{ flex: 1 }} />
-                  <Button title="Delete block" soft onPress={remove} style={{ flex: 1 }} />
-                </View>
-                <View style={ui.divider} />
-                <Text style={ui.sectionTitle}>Whole-space palette</Text>
-                {Object.entries(doc.theme.colors).map(([key, value]) => (
+                  <Text style={ui.label}>Text alignment</Text>
+                  <View style={ui.row}>
+                    {['left', 'center', 'right'].map((v) => (
+                      <Button key={v} title={v} soft onPress={() => style('textAlign', v)} />
+                    ))}
+                  </View>
                   <Color
-                    key={key}
-                    label={key}
-                    value={value}
-                    onChange={(v) =>
-                      editor.commit({
-                        ...doc,
-                        theme: { ...doc.theme, colors: { ...doc.theme.colors, [key]: v } },
-                      })
+                    label="Text color"
+                    value={s.textColor || doc.theme.colors.text}
+                    onChange={(v) => style('textColor', v)}
+                  />
+                  <Color
+                    label="Background color"
+                    value={s.backgroundColor || doc.theme.colors.background}
+                    onChange={(v) => style('backgroundColor', v)}
+                  />
+                  <Text style={ui.label}>Background gradient</Text>
+                  <View style={ui.wrap}>
+                    {['none', 'lilac', 'sunset', 'forest'].map((v) => (
+                      <Button key={v} title={v} soft onPress={() => style('gradient', v)} />
+                    ))}
+                  </View>
+                  <Text style={ui.label}>Image aspect ratio</Text>
+                  <View style={ui.wrap}>
+                    {['auto', '1:1', '4:3', '3:4', '16:9'].map((v) => (
+                      <Button key={v} title={v} soft onPress={() => style('aspectRatio', v)} />
+                    ))}
+                  </View>
+                  <Numeric
+                    label="Rounded corners"
+                    value={s.borderRadius ?? doc.theme.radius}
+                    min={0}
+                    max={64}
+                    onChange={(v) => style('borderRadius', v)}
+                  />
+                  <Text style={ui.label}>Image fit</Text>
+                  <View style={ui.row}>
+                    {['cover', 'contain'].map((v) => (
+                      <Button key={v} title={v} soft onPress={() => style('imageFit', v)} />
+                    ))}
+                  </View>
+                  <Numeric
+                    label="Image focal X"
+                    value={s.focalX ?? 50}
+                    min={0}
+                    max={100}
+                    onChange={(v) => style('focalX', v)}
+                  />
+                  <Numeric
+                    label="Image focal Y"
+                    value={s.focalY ?? 50}
+                    min={0}
+                    max={100}
+                    onChange={(v) => style('focalY', v)}
+                  />
+                  <Button
+                    title={advanced ? 'Less detail' : 'Advanced details'}
+                    soft
+                    onPress={() => setAdvanced(!advanced)}
+                    style={{ marginTop: 20 }}
+                  />
+                  {advanced && (
+                    <>
+                      <Numeric
+                        label="Font weight"
+                        value={s.fontWeight || 500}
+                        min={400}
+                        max={800}
+                        step={100}
+                        onChange={(v) => style('fontWeight', v)}
+                      />
+                      <Numeric
+                        label="Line height"
+                        value={s.lineHeight || 1.4}
+                        min={1}
+                        max={2.2}
+                        step={0.1}
+                        onChange={(v) => style('lineHeight', v)}
+                      />
+                      <Numeric
+                        label="Letter spacing"
+                        value={s.letterSpacing || 0}
+                        min={-2}
+                        max={10}
+                        step={0.1}
+                        onChange={(v) => style('letterSpacing', v)}
+                      />
+                      <Numeric
+                        label="Border width"
+                        value={s.borderWidth || 0}
+                        min={0}
+                        max={8}
+                        onChange={(v) => style('borderWidth', v)}
+                      />
+                      <Color
+                        label="Border color"
+                        value={s.borderColor || doc.theme.colors.accent}
+                        onChange={(v) => style('borderColor', v)}
+                      />
+                    </>
+                  )}
+                  <Button
+                    title="Reset block style"
+                    soft
+                    style={{ marginTop: 20 }}
+                    onPress={() =>
+                      change((b) => ({ ...b, style: { paddingTop: 20, paddingBottom: 20 } }))
                     }
                   />
-                ))}
-                <Text style={ui.label}>Whole-space heading font</Text>
-                <View style={ui.wrap}>
-                  {(['Inter', 'Georgia', 'Arial', 'Courier New', 'Trebuchet MS'] as Font[]).map(
-                    (f) => (
-                      <Button
-                        key={f}
-                        title={f}
-                        soft
-                        onPress={() =>
-                          editor.commit({ ...doc, theme: { ...doc.theme, fontHeading: f } })
-                        }
-                      />
-                    ),
-                  )}
-                </View>
-                <Text style={ui.label}>Whole-space body font</Text>
-                <View style={ui.wrap}>
-                  {(['Inter', 'Georgia', 'Arial', 'Courier New', 'Trebuchet MS'] as Font[]).map(
-                    (f) => (
-                      <Button
-                        key={f}
-                        title={f}
-                        soft
-                        onPress={() =>
-                          editor.commit({ ...doc, theme: { ...doc.theme, fontBody: f } })
-                        }
-                      />
-                    ),
-                  )}
-                </View>
-              </>
-            ) : panel === 'layers' ? (
-              <>
-                <Text style={ui.muted}>
-                  {held
-                    ? 'Tap another layer to place the held block above it.'
-                    : 'Hold a layer to move it. Or use the accessible arrows.'}
-                </Text>
-                {blocks.map((b) => (
-                  <View
-                    key={b.id}
-                    style={[
-                      ui.card,
-                      {
-                        marginTop: 12,
-                        padding: 12,
-                        backgroundColor: selected === b.id ? C.lilac : '#FFF',
-                      },
-                    ]}
-                  >
-                    <TouchableOpacity
-                      accessibilityRole="button"
-                      accessibilityLabel={`${b.type} layer`}
-                      accessibilityActions={[
-                        { name: 'increment', label: 'Move down' },
-                        { name: 'decrement', label: 'Move up' },
-                      ]}
-                      onAccessibilityAction={(e) =>
-                        move(b.id, e.nativeEvent.actionName === 'increment' ? 1 : -1)
-                      }
-                      onLongPress={() => setHeld(b.id)}
-                      onPress={() => {
-                        if (held && held !== b.id) {
-                          const i = blocks.findIndex((x) => x.id === held);
-                          const j = blocks.findIndex((x) => x.id === b.id);
-                          move(held, j - i);
-                          setHeld('');
-                        } else {
-                          setSelected(b.id);
-                          setSheet('properties');
-                        }
-                      }}
-                    >
-                      <Text style={{ fontSize: 13, color: C.primary, padding: 10 }}>
-                        {b.props.headline || b.type}
-                      </Text>
-                    </TouchableOpacity>
-                    <View style={ui.row}>
-                      <Button title="↑ Up" soft onPress={() => move(b.id, -1)} />
-                      <Button title="↓ Down" soft onPress={() => move(b.id, 1)} />
-                    </View>
-                  </View>
-                ))}
-                <Button
-                  title="Published version history"
-                  soft
-                  onPress={() => void openVersions()}
-                />
-              </>
-            ) : panel === 'themes' ? (
-              <>
-                {themes.map((t) => (
-                  <View
-                    style={[ui.card, { backgroundColor: t.document.theme.colors.background }]}
-                    key={t.id}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 22,
-                        color: t.document.theme.colors.text,
-                        fontFamily:
-                          t.document.theme.fontHeading === 'Georgia' ? 'Georgia' : undefined,
-                      }}
-                    >
-                      {t.name}
-                    </Text>
-                    <Text style={[ui.muted, { marginTop: 8 }]}>{t.description}</Text>
-                    <View style={[ui.wrap, { marginTop: 14 }]}>
-                      <Button
-                        title="Colors & fonts"
-                        soft
-                        onPress={() => {
-                          editor.commit({ ...doc, theme: clone(t.document.theme) });
-                          setSheet(null);
-                        }}
-                      />
-                      <Button
-                        title="Replace layout"
-                        soft
-                        onPress={() =>
-                          Alert.alert(
-                            'Replace your layout?',
-                            `Your current blocks will be replaced with ${t.name}. Your published page stays as it is.`,
-                            [
-                              { text: 'Keep mine', style: 'cancel' },
-                              {
-                                text: 'Apply template',
-                                onPress: () => {
-                                  void (async () => {
-                                    try {
-                                      const revision = await editor.flush();
-                                      await api(`/shops/${me!.shop.id}/snapshots`, {
-                                        method: 'POST',
-                                        body: JSON.stringify({
-                                          expectedRevision: revision,
-                                          note: 'Before applying a native template',
-                                        }),
-                                      });
-                                      const next = clone(t.document);
-                                      next.shopId = me!.shop.id;
-                                      for (const s of next.sections)
-                                        for (const b of s.children)
-                                          if (b.type === 'profileHeader')
-                                            b.props = {
-                                              headline: me!.shop.name,
-                                              subtitle: me!.shop.bio,
-                                            };
-                                      editor.commit(next);
-                                      setSheet(null);
-                                    } catch (e) {
-                                      notify((e as Error).message);
-                                    }
-                                  })();
-                                },
-                              },
-                            ],
-                          )
-                        }
-                      />
-                    </View>
-                  </View>
-                ))}
-              </>
-            ) : panel === 'add' ? (
-              <View style={ui.wrap}>
-                {blockTypes.map((type) => (
-                  <Button
-                    key={type}
-                    title={`+ ${type}`}
-                    soft
-                    style={{ width: '47%' }}
-                    onPress={() => add(type)}
+                </>
+              ) : tab === 'Layout' ? (
+                <>
+                  {(
+                    [
+                      'paddingTop',
+                      'paddingBottom',
+                      'paddingLeft',
+                      'paddingRight',
+                      'marginTop',
+                      'marginBottom',
+                      'gap',
+                    ] as const
+                  ).map((k) => (
+                    <Numeric
+                      key={k}
+                      label={k.replace(/([A-Z])/g, ' $1')}
+                      value={s[k] ?? 0}
+                      min={0}
+                      max={160}
+                      onChange={(v) => style(k, v)}
+                    />
+                  ))}
+                  <Numeric
+                    label="Minimum height"
+                    value={s.minHeight || 0}
+                    min={0}
+                    max={800}
+                    onChange={(v) => style('minHeight', v)}
                   />
+                  <Numeric
+                    label="Maximum width"
+                    value={s.maxWidth || 1100}
+                    min={280}
+                    max={1440}
+                    onChange={(v) => style('maxWidth', v)}
+                  />
+                  <Numeric
+                    label="Columns"
+                    value={s.columns || 2}
+                    min={1}
+                    max={4}
+                    onChange={(v) => style('columns', v)}
+                  />
+                </>
+              ) : (
+                <>
+                  <Text style={ui.muted}>Override the base design at a breakpoint.</Text>
+                  <View style={[ui.wrap, { marginTop: 18 }]}>
+                    {(['mobile', 'tablet', 'desktop'] as const).map((v) => (
+                      <Button
+                        key={v}
+                        title={breakpoint === v ? `✓ ${v}` : v}
+                        soft
+                        onPress={() => setBreakpoint(v)}
+                      />
+                    ))}
+                  </View>
+                  <Numeric
+                    label="Breakpoint text size"
+                    value={
+                      block.responsive?.[breakpoint === 'desktop' ? 'mobile' : breakpoint]?.style
+                        ?.fontSize ||
+                      s.fontSize ||
+                      32
+                    }
+                    min={10}
+                    max={96}
+                    onChange={(v) => style('fontSize', v, true)}
+                  />
+                  <Numeric
+                    label="Breakpoint columns"
+                    value={
+                      block.responsive?.[breakpoint === 'desktop' ? 'mobile' : breakpoint]?.style
+                        ?.columns || 2
+                    }
+                    min={1}
+                    max={breakpoint === 'mobile' ? 2 : 3}
+                    onChange={(v) => style('columns', v, true)}
+                  />
+                  <Numeric
+                    label="Breakpoint order"
+                    value={
+                      block.responsive?.[breakpoint === 'desktop' ? 'mobile' : breakpoint]?.style
+                        ?.order ?? blocks.indexOf(block)
+                    }
+                    min={0}
+                    max={80}
+                    onChange={(v) => style('order', v, true)}
+                  />
+                  <Button
+                    title="Hide at this breakpoint"
+                    soft
+                    onPress={() => style('visibility', 'hidden', true)}
+                    style={{ marginTop: 15 }}
+                  />
+                  <Button
+                    title="Show at this breakpoint"
+                    soft
+                    onPress={() => style('visibility', 'visible', true)}
+                    style={{ marginTop: 10 }}
+                  />
+                </>
+              )}
+              <View style={ui.divider} />
+              <View style={ui.row}>
+                <Button
+                  title="↑ Move up"
+                  soft
+                  onPress={() => move(selected, -1)}
+                  style={{ flex: 1 }}
+                />
+                <Button
+                  title="↓ Move down"
+                  soft
+                  onPress={() => move(selected, 1)}
+                  style={{ flex: 1 }}
+                />
+              </View>
+              <View style={[ui.row, { marginTop: 10 }]}>
+                <Button title="Duplicate" soft onPress={duplicate} style={{ flex: 1 }} />
+                <Button title="Delete block" soft onPress={remove} style={{ flex: 1 }} />
+              </View>
+              <View style={ui.divider} />
+              <Text style={ui.sectionTitle}>Whole-space palette</Text>
+              {Object.entries(doc.theme.colors).map(([key, value]) => (
+                <Color
+                  key={key}
+                  label={key}
+                  value={value}
+                  onChange={(v) =>
+                    editor.commit({
+                      ...doc,
+                      theme: { ...doc.theme, colors: { ...doc.theme.colors, [key]: v } },
+                    })
+                  }
+                />
+              ))}
+              <Text style={ui.label}>Whole-space heading font</Text>
+              <View style={ui.wrap}>
+                {(['Inter', 'Georgia', 'Arial', 'Courier New', 'Trebuchet MS'] as Font[]).map(
+                  (f) => (
+                    <Button
+                      key={f}
+                      title={f}
+                      soft
+                      onPress={() =>
+                        editor.commit({ ...doc, theme: { ...doc.theme, fontHeading: f } })
+                      }
+                    />
+                  ),
+                )}
+              </View>
+              <Text style={ui.label}>Whole-space body font</Text>
+              <View style={ui.wrap}>
+                {(['Inter', 'Georgia', 'Arial', 'Courier New', 'Trebuchet MS'] as Font[]).map(
+                  (f) => (
+                    <Button
+                      key={f}
+                      title={f}
+                      soft
+                      onPress={() =>
+                        editor.commit({ ...doc, theme: { ...doc.theme, fontBody: f } })
+                      }
+                    />
+                  ),
+                )}
+              </View>
+            </>
+          ) : panel === 'layers' ? (
+            <>
+              <Text style={ui.muted}>
+                {held
+                  ? 'Tap another layer to place the held block above it.'
+                  : 'Hold a layer to move it. Or use the accessible arrows.'}
+              </Text>
+              {blocks.map((b) => (
+                <View
+                  key={b.id}
+                  style={[
+                    ui.card,
+                    {
+                      marginTop: 12,
+                      padding: 12,
+                      backgroundColor: selected === b.id ? C.lilac : '#FFF',
+                    },
+                  ]}
+                >
+                  <TouchableOpacity
+                    accessibilityRole="button"
+                    accessibilityLabel={`${b.type} layer`}
+                    accessibilityActions={[
+                      { name: 'increment', label: 'Move down' },
+                      { name: 'decrement', label: 'Move up' },
+                    ]}
+                    onAccessibilityAction={(e) =>
+                      move(b.id, e.nativeEvent.actionName === 'increment' ? 1 : -1)
+                    }
+                    onLongPress={() => setHeld(b.id)}
+                    onPress={() => {
+                      if (held && held !== b.id) {
+                        const i = blocks.findIndex((x) => x.id === held);
+                        const j = blocks.findIndex((x) => x.id === b.id);
+                        move(held, j - i);
+                        setHeld('');
+                      } else {
+                        setSelected(b.id);
+                        setSheet('properties');
+                      }
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, color: C.primary, padding: 10 }}>
+                      {b.props.headline || b.type}
+                    </Text>
+                  </TouchableOpacity>
+                  <View style={ui.row}>
+                    <Button title="↑ Up" soft onPress={() => move(b.id, -1)} />
+                    <Button title="↓ Down" soft onPress={() => move(b.id, 1)} />
+                  </View>
+                </View>
+              ))}
+              <Button title="Published version history" soft onPress={() => void openVersions()} />
+            </>
+          ) : panel === 'themes' ? (
+            <View style={{ gap: 16 }}>
+              {themes.map((t) => (
+                <TouchableOpacity
+                  key={t.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Choose ${t.name}`}
+                  activeOpacity={0.88}
+                  onPress={() => {
+                    setSelectedTemplate(t.id);
+                    setSheet('template');
+                  }}
+                  style={[ui.card, { padding: 8, marginBottom: 0, overflow: 'hidden' }]}
+                >
+                  <TemplateArtwork theme={t} />
+                  <View style={{ padding: 15 }}>
+                    <Text style={{ fontSize: 19, fontWeight: '600', color: C.text }}>{t.name}</Text>
+                    <Text style={[ui.muted, { marginTop: 5 }]}>{t.description}</Text>
+                    <View style={[ui.row, { marginTop: 12 }]}>
+                      <Text style={{ color: C.primary, fontSize: 11, fontWeight: '600' }}>
+                        Explore this look
+                      </Text>
+                      <Ionicons name="arrow-forward" color={C.primary} size={16} />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : panel === 'template' ? (
+            <View style={{ gap: 18 }}>
+              <TemplateArtwork theme={chosenTheme} />
+              <Text style={ui.muted}>{chosenTheme.description}</Text>
+              <View style={ui.wrap}>
+                {templateDetails[chosenTheme.id].features.map((f) => (
+                  <Text style={ui.pill} key={f}>
+                    {f}
+                  </Text>
                 ))}
               </View>
-            ) : panel === 'versions' ? (
-              <>
-                <Text style={ui.muted}>
-                  Restore creates a draft copy. Your public page stays unchanged until you publish.
+              <View style={[ui.card, { marginBottom: 0 }]}>
+                <View style={[ui.row, { marginBottom: 10 }]}>
+                  <Ionicons name="color-palette-outline" size={22} color={C.primary} />
+                  <Text style={{ fontSize: 16, color: C.text, fontWeight: '600' }}>
+                    Just the finishing touches
+                  </Text>
+                </View>
+                <Text style={[ui.muted, { marginBottom: 17 }]}>
+                  Bring this palette and font pairing to your current layout.
                 </Text>
-                {versions.map((v) => (
-                  <View style={[ui.card, { marginTop: 15 }]} key={v.id}>
-                    <Text style={{ fontSize: 15, color: C.text }}>Version {v.versionNo}</Text>
-                    <Text style={ui.fine}>
-                      {v.note} · {new Date(v.created_at).toLocaleString()}
-                    </Text>
-                    <Button
-                      title="Restore as a draft"
-                      soft
-                      style={{ marginTop: 15 }}
-                      onPress={async () => {
-                        try {
-                          const rev = await editor.flush();
-                          await api<Draft>(`/shops/${me!.shop.id}/restore`, {
-                            method: 'POST',
-                            body: JSON.stringify({ versionId: v.id, expectedRevision: rev }),
-                          });
-                          await editor.reload();
-                          setSheet(null);
-                        } catch (e) {
-                          notify((e as Error).message);
-                        }
-                      }}
-                    />
+                <Button
+                  title="Apply colors & fonts"
+                  disabled={applying}
+                  soft
+                  onPress={() => {
+                    editor.commit({ ...doc, theme: clone(chosenTheme.document.theme) });
+                    setSheet(null);
+                    notify('A fresh palette, with your layout just as you left it.');
+                  }}
+                />
+              </View>
+              <View style={[ui.card, { marginBottom: 0, borderColor: '#D7C2EE' }]}>
+                <View style={[ui.row, { marginBottom: 10 }]}>
+                  <Ionicons name="sparkles-outline" size={22} color={C.primary} />
+                  <Text style={{ fontSize: 16, color: C.text, fontWeight: '600' }}>
+                    Start a new chapter
+                  </Text>
+                </View>
+                <Text style={[ui.muted, { marginBottom: 17 }]}>
+                  Replace your draft blocks with this complete design. Your catalog stays, and a
+                  backup keeps your current draft safe.
+                </Text>
+                <Button
+                  title={applying ? 'Preparing your new space…' : 'Use this template'}
+                  disabled={applying || uploading || ['offline', 'conflict'].includes(editor.state)}
+                  onPress={() => void applyTemplate()}
+                />
+              </View>
+              <Text style={[ui.fine, { textAlign: 'center', marginTop: 0 }]}>
+                Your public space changes only when you publish.
+              </Text>
+              <Button
+                title="← Explore other templates"
+                soft
+                disabled={applying}
+                onPress={() => setSheet('themes')}
+              />
+            </View>
+          ) : panel === 'add' ? (
+            <View style={[ui.wrap, { gap: 12 }]}>
+              {blockTypes.map((type) => (
+                <TouchableOpacity
+                  key={type}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Add ${blockInfo[type].title}`}
+                  activeOpacity={0.8}
+                  onPress={() => add(type)}
+                  style={{
+                    width: '48%',
+                    minHeight: 152,
+                    padding: 17,
+                    borderRadius: 20,
+                    borderWidth: 1,
+                    borderColor: '#E7DDEF',
+                    backgroundColor: '#FFF',
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: 13,
+                      backgroundColor: '#F1EAF9',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: 14,
+                    }}
+                  >
+                    <Ionicons name={blockInfo[type].icon} size={21} color={C.primary} />
                   </View>
-                ))}
-              </>
-            ) : null}
-          </ScrollView>
-        </SafeAreaView>
-      </Modal>
+                  <Text style={{ fontSize: 13, fontWeight: '600', color: C.text }}>
+                    {blockInfo[type].title}
+                  </Text>
+                  <Text style={{ fontSize: 10, lineHeight: 16, color: C.muted, marginTop: 6 }}>
+                    {blockInfo[type].description}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : panel === 'versions' ? (
+            <>
+              <Text style={ui.muted}>
+                Restore creates a draft copy. Your public page stays unchanged until you publish.
+              </Text>
+              {versions.map((v) => (
+                <View style={[ui.card, { marginTop: 15 }]} key={v.id}>
+                  <Text style={{ fontSize: 15, color: C.text }}>Version {v.versionNo}</Text>
+                  <Text style={ui.fine}>
+                    {v.note} · {new Date(v.created_at).toLocaleString()}
+                  </Text>
+                  <Button
+                    title="Restore as a draft"
+                    soft
+                    style={{ marginTop: 15 }}
+                    onPress={async () => {
+                      try {
+                        const rev = await editor.flush();
+                        await api<Draft>(`/shops/${me!.shop.id}/restore`, {
+                          method: 'POST',
+                          body: JSON.stringify({ versionId: v.id, expectedRevision: rev }),
+                        });
+                        await editor.reload();
+                        setSheet(null);
+                      } catch (e) {
+                        notify((e as Error).message);
+                      }
+                    }}
+                  />
+                </View>
+              ))}
+            </>
+          ) : null}
+        </ScrollView>
+      </Sheet>
     </SafeAreaView>
   );
 }

@@ -1,9 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { Modal, ScrollView, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import type { Me } from '@lilac/api-client';
 import { api, setToken } from '../lib';
 import { Button, Field, Loading, ui, C } from './ui';
+import { Sheet } from './sheet';
+import { Notice, NoticeContext } from './notice';
 interface ContextValue {
   me: Me | null;
   loading: boolean;
@@ -29,6 +32,8 @@ export function Provider({ children }: { children: ReactNode }) {
   const [handle, setHandle] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const dismissNotice = useCallback(() => setNotice(''), []);
   const refresh = useCallback(async () => {
     try {
       setMe(await api<Me>('/me'));
@@ -112,83 +117,85 @@ export function Provider({ children }: { children: ReactNode }) {
             await SecureStore.deleteItemAsync('lilac-refresh');
             setMe(null);
           } catch (e) {
-            Alert.alert('Lilac', (e as Error).message);
+            setNotice((e as Error).message);
           }
         },
-        notify: (message) => Alert.alert('Lilac', message),
+        notify: setNotice,
       }}
     >
-      {children}
-      <Modal
-        visible={visible}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setVisible(false)}
-      >
-        <ScrollView
-          contentContainerStyle={{ padding: 28, paddingTop: 45 }}
-          keyboardShouldPersistTaps="handled"
+      <NoticeContext.Provider value={{ message: notice, onClose: dismissNotice }}>
+        {children}
+        <Sheet
+          visible={visible}
+          onClose={() => setVisible(false)}
+          title={register ? 'Make yourself at home.' : 'Lovely to see you.'}
+          eyebrow="YOUR LITTLE CORNER OF THE INTERNET"
+          subtitle="Discover independent shops. Create a space that feels like you."
         >
-          <TouchableOpacity
-            style={{ alignSelf: 'flex-end', padding: 10 }}
-            onPress={() => setVisible(false)}
-            accessibilityLabel="Close sign in"
-          >
-            <Text style={{ fontSize: 25, color: C.muted }}>×</Text>
-          </TouchableOpacity>
-          <Text style={ui.eyebrow}>YOUR LITTLE CORNER OF THE INTERNET</Text>
-          <Text style={ui.title}>{register ? 'Make yourself at home.' : 'Lovely to see you.'}</Text>
-          <Text style={ui.subtitle}>
-            Discover independent shops. Create a space that feels like you.
-          </Text>
-          <Field
-            label="Email address"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-          <Field
-            label="Password · at least 10 characters"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-          {register && (
+          <ScrollView contentContainerStyle={{ padding: 24 }} keyboardShouldPersistTaps="handled">
+            <View
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 18,
+                backgroundColor: '#EEE5FA',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: 5,
+              }}
+            >
+              <Ionicons name="flower-outline" color={C.primary} size={28} />
+            </View>
             <Field
-              label="Your handle"
-              value={handle}
-              onChangeText={setHandle}
+              label="Email address"
+              value={email}
+              onChangeText={setEmail}
               autoCapitalize="none"
+              keyboardType="email-address"
             />
-          )}
-          {error && <Text style={ui.error}>{error}</Text>}
-          <Button
-            title={busy ? 'Opening your space…' : register ? 'Create your space' : 'Sign in'}
-            disabled={busy}
-            onPress={() => void login()}
-            style={{ marginTop: 25 }}
-          />
-          <Button
-            title={register ? 'Already have a space? Sign in' : 'New here? Create an account'}
-            soft
-            onPress={() => setRegister(!register)}
-            style={{ marginTop: 12 }}
-          />
-          {demoAvailable && (
-            <>
-              <View style={ui.divider} />
-              <Button
-                title="Continue as demo shop owner →"
-                soft
-                disabled={busy}
-                onPress={() => void login(true)}
+            <Field
+              label="Password · at least 10 characters"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            {register && (
+              <Field
+                label="Your handle"
+                value={handle}
+                onChangeText={setHandle}
+                autoCapitalize="none"
               />
-              <Text style={ui.fine}>Development sign-in · Sample catalog · Sandbox payments</Text>
-            </>
-          )}
-        </ScrollView>
-      </Modal>
+            )}
+            {error && <Text style={ui.error}>{error}</Text>}
+            <Button
+              title={busy ? 'Opening your space…' : register ? 'Create your space' : 'Sign in'}
+              disabled={busy}
+              onPress={() => void login()}
+              style={{ marginTop: 25 }}
+            />
+            <Button
+              title={register ? 'Already have a space? Sign in' : 'New here? Create an account'}
+              soft
+              onPress={() => setRegister(!register)}
+              style={{ marginTop: 12 }}
+            />
+            {demoAvailable && (
+              <>
+                <View style={ui.divider} />
+                <Button
+                  title="Continue as demo shop owner →"
+                  soft
+                  disabled={busy}
+                  onPress={() => void login(true)}
+                />
+                <Text style={ui.fine}>Development sign-in · Sample catalog · Sandbox payments</Text>
+              </>
+            )}
+          </ScrollView>
+        </Sheet>
+        <Notice message={notice} onClose={dismissNotice} />
+      </NoticeContext.Provider>
     </Context.Provider>
   );
 }

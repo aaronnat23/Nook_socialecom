@@ -1,27 +1,31 @@
+import { useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
+  Pressable,
+  Animated,
   View,
   type TextInputProps,
   type ViewStyle,
   ActivityIndicator,
 } from 'react-native';
 import { tokens } from '@lilac/ui';
+import { contrastRatio } from '@lilac/renderer';
+import { useReducedMotion } from './motion';
 export const C = tokens.colors;
 export const ui = StyleSheet.create({
   screen: { flex: 1, backgroundColor: C.background },
-  content: { padding: 20, paddingBottom: 35 },
+  content: { padding: 22, paddingBottom: 38 },
   eyebrow: {
     fontSize: 9,
     letterSpacing: 1.8,
-    color: '#9E85B2',
-    fontWeight: '600',
+    color: '#8C6BAA',
+    fontWeight: '700',
     marginBottom: 10,
   },
-  title: { fontSize: 30, color: C.text, fontWeight: '600', letterSpacing: -1.1, lineHeight: 37 },
-  subtitle: { fontSize: 12, lineHeight: 20, color: C.muted, marginTop: 10 },
+  title: { fontSize: 32, color: C.text, fontWeight: '600', letterSpacing: -1.25, lineHeight: 39 },
+  subtitle: { fontSize: 13, lineHeight: 22, color: C.muted, marginTop: 10 },
   sectionTitle: {
     fontSize: 21,
     color: C.text,
@@ -34,28 +38,32 @@ export const ui = StyleSheet.create({
     backgroundColor: '#FFF',
     borderWidth: 1,
     borderColor: C.border,
-    borderRadius: 14,
+    borderRadius: 22,
     padding: 20,
     marginBottom: 16,
+    shadowColor: '#44256A',
+    shadowOpacity: 0.035,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 5 },
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 },
   input: {
     borderWidth: 1,
     borderColor: C.border,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    fontSize: 13,
+    borderRadius: 14,
+    paddingHorizontal: 15,
+    paddingVertical: 14,
+    fontSize: 14,
     color: C.text,
-    backgroundColor: '#FFF',
-    minHeight: 44,
+    backgroundColor: '#FDFBFF',
+    minHeight: 50,
   },
-  label: { fontSize: 11, fontWeight: '500', color: '#8D719F', marginBottom: 7, marginTop: 14 },
+  label: { fontSize: 11, fontWeight: '600', color: '#78638E', marginBottom: 8, marginTop: 18 },
   button: {
     backgroundColor: C.primary,
-    borderRadius: 8,
-    minHeight: 46,
+    borderRadius: 15,
+    minHeight: 48,
     paddingHorizontal: 17,
     paddingVertical: 12,
     alignItems: 'center',
@@ -63,7 +71,7 @@ export const ui = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
   },
-  buttonText: { fontSize: 12, color: '#FFF', fontWeight: '600' },
+  buttonText: { fontSize: 12, color: '#FFF', fontWeight: '600', letterSpacing: 0.1 },
   soft: { backgroundColor: C.lilac },
   softText: { color: C.primary },
   error: {
@@ -104,25 +112,85 @@ export function Button({
   disabled?: boolean;
   style?: ViewStyle;
 }) {
+  const scale = useRef(new Animated.Value(1)).current;
+  const reduced = useReducedMotion();
+  const background = typeof style?.backgroundColor === 'string' ? style.backgroundColor : C.primary;
+  const foreground =
+    /^#[\dA-Fa-f]{6}$/.test(background) && contrastRatio('#FFFFFF', background) < 4.5
+      ? '#24182F'
+      : '#FFFFFF';
+  const animate = (value: number) =>
+    Animated.spring(scale, {
+      toValue: value,
+      useNativeDriver: true,
+      speed: 32,
+      bounciness: 3,
+    }).start();
   return (
-    <TouchableOpacity
-      accessibilityRole="button"
-      disabled={disabled}
-      onPress={onPress}
-      style={[ui.button, soft && ui.soft, disabled && { opacity: 0.45 }, style]}
-    >
-      <Text style={[ui.buttonText, soft && ui.softText]}>{title}</Text>
-    </TouchableOpacity>
+    <Animated.View style={[style, { transform: [{ scale }] }]}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ disabled }}
+        disabled={disabled}
+        onPress={onPress}
+        onPressIn={() => {
+          if (reduced === false) animate(0.97);
+        }}
+        onPressOut={() => animate(1)}
+        style={({ pressed }) => [
+          ui.button,
+          soft && ui.soft,
+          disabled && { opacity: 0.45 },
+          {
+            minHeight: style?.minHeight || 48,
+            backgroundColor: soft
+              ? pressed
+                ? '#E3D6F5'
+                : C.lilac
+              : pressed
+                ? background === C.primary
+                  ? C.primaryDark
+                  : background
+                : style?.backgroundColor || C.primary,
+            borderWidth: 1,
+            borderColor: soft ? '#E6DCF3' : '#FFFFFF20',
+            shadowColor: C.primaryDark,
+            shadowOpacity: soft ? 0 : 0.12,
+            shadowRadius: 9,
+            shadowOffset: { width: 0, height: 4 },
+          },
+        ]}
+      >
+        <Text style={[ui.buttonText, { color: foreground }, soft && ui.softText]}>{title}</Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 export function Field({ label, ...props }: TextInputProps & { label: string }) {
+  const [focused, setFocused] = useState(false);
   return (
     <View>
       <Text style={ui.label}>{label}</Text>
       <TextInput
         {...props}
+        onFocus={(event) => {
+          setFocused(true);
+          props.onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          setFocused(false);
+          props.onBlur?.(event);
+        }}
         style={[
           ui.input,
+          focused && {
+            borderColor: '#B496DD',
+            backgroundColor: '#FFF',
+            shadowColor: C.primary,
+            shadowOpacity: 0.08,
+            shadowRadius: 7,
+            shadowOffset: { width: 0, height: 2 },
+          },
           props.multiline && { minHeight: 90, textAlignVertical: 'top' },
           props.style,
         ]}

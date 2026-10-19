@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import type { Product } from '@lilac/api-client';
 import { api } from '../lib';
 import { useApp } from './provider';
 import { Button, Field, ui, C } from './ui';
+import { Sheet } from './sheet';
 
 interface Collection {
   id: string;
@@ -67,24 +69,21 @@ export function Collections({ shopId, products }: { shopId: string; products: Pr
           setForm({ id: '', title: '', product_ids: [] });
         }}
       />
-      <Modal
+      <Sheet
         visible={form !== null}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => {
+        title={form?.id ? 'Better, together.' : 'Curate a little collection.'}
+        eyebrow="THE COLLECTION EDIT"
+        subtitle="Bring your favorite pieces into one thoughtful group."
+        onClose={() => {
           if (!busy) setForm(null);
         }}
       >
         {form ? (
           <ScrollView
             style={ui.screen}
-            contentContainerStyle={[ui.content, { paddingTop: 35 }]}
+            contentContainerStyle={ui.content}
             keyboardShouldPersistTaps="handled"
           >
-            <Button title="Close collection ×" soft disabled={busy} onPress={() => setForm(null)} />
-            <Text style={ui.sectionTitle}>
-              {form.id ? 'Refine your collection.' : 'A thoughtful little group.'}
-            </Text>
             <Field
               label="Collection name"
               value={form.title}
@@ -121,7 +120,11 @@ export function Collections({ shopId, products }: { shopId: string; products: Pr
                     },
                   ]}
                 >
-                  <Text style={{ color: C.primary, fontSize: 20 }}>{checked ? '☑' : '☐'}</Text>
+                  <Ionicons
+                    name={checked ? 'checkbox' : 'square-outline'}
+                    color={C.primary}
+                    size={23}
+                  />
                   <Text style={[ui.muted, { flex: 1 }]}>{product.title}</Text>
                 </TouchableOpacity>
               );
@@ -181,7 +184,7 @@ export function Collections({ shopId, products }: { shopId: string; products: Pr
             />
           </ScrollView>
         ) : null}
-      </Modal>
+      </Sheet>
     </View>
   );
 }

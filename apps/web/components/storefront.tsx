@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import type { Block, Document, Style } from '@lilac/schema';
 import type { Product, Shop } from '@lilac/api-client';
-import { assetPath, resolveStyle, resolveHeadingFont } from '@lilac/renderer';
+import { assetPath, resolveStyle, resolveHeadingFont, contrastRatio } from '@lilac/renderer';
 import { api } from '@/lib/api';
 import { ProductCard, FollowButton } from './cards';
 const gradients = {
@@ -229,7 +229,11 @@ function BlockView({
     <Link
       href={url}
       className="button primary"
-      style={{ background: doc.theme.colors.accent, borderRadius: doc.theme.radius }}
+      style={{
+        background: doc.theme.colors.accent,
+        borderRadius: doc.theme.radius,
+        color: contrastRatio('#FFFFFF', doc.theme.colors.accent) >= 4.5 ? '#FFFFFF' : '#24182F',
+      }}
       target={url.startsWith('https:') ? '_blank' : undefined}
       rel="noopener noreferrer"
     >

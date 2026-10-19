@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-19",
+  "device": "Physical iPhone via iPhone Mirroring",
+  "nativeTemplateApplication": {
+    "draftHero": "Everyday, a little more beautiful.",
+    "publicHero": "Made for little everyday rituals.",
+    "publicVersion": 24,
+    "backup": {
+      "id": "50b46ee0-a741-4fef-b1ce-e9addfceae14",
+      "versionNo": 25,
+      "note": "Draft backup: Before applying a native template",
+      "created_at": "2026-10-19T17:39:44.408696+08:00",
+      "checksum": "d0a9483e8b0c5c5ec72b38ff431dc28926b55619259708b77205e1d240160b6c"
+    }
+  },
+  "browserRegression": {
+    "passed": 10,
+    "project": "desktop"
+  },
+  "schemaTests": 14,
+  "apiTests": 18,
+  "android": "deferred by user request",
+  "nativeChecks": {
+    "discoverAndThreeTabs": "passed",
+    "mySpaceRedesign": "passed",
+    "templateGalleryAndFullPreview": "passed",
+    "previewToEditorOptions": "passed",
+    "addBlockAndUndo": "passed",
+    "propertyStyleSheet": "passed",
+    "applyTemplateBackupPublicUnchanged": "passed",
+    "undoTemplateSavedOriginal": "passed",
+    "productSheetOpenClose": "passed",
+    "collectionSheetOpenClose": "passed"
+  },
+  "templateGalleryAccessibilityViolations": 0,
+  "finalPublication": 24,
+  "finalDraftMatchesPublic": true,
+  "reduceMotion": "implemented; device preference toggle audit remains open"
+}

@@ -15,9 +15,16 @@ export function ProductCard({ product: p }: { product: Product }) {
         onPress={() => router.push(`/product/${p.slug}`)}
         accessibilityLabel={`View ${p.title}`}
       >
-        <Image source={{ uri: imageUri(p.image) }} style={[ui.image, { height: 185 }]} />
+        <Image
+          source={{ uri: imageUri(p.image) }}
+          style={[ui.image, { height: 195, borderRadius: 20, backgroundColor: '#EDE5F5' }]}
+        />
         <Text style={{ fontSize: 9, color: '#A08BAC', marginTop: 10 }}>{p.shop_name} ↗</Text>
-        <Text style={{ fontSize: 12, color: C.text, marginTop: 5, lineHeight: 18 }}>{p.title}</Text>
+        <Text
+          style={{ fontSize: 13, fontWeight: '500', color: C.text, marginTop: 5, lineHeight: 19 }}
+        >
+          {p.title}
+        </Text>
         <Text style={[ui.price, { fontSize: 12, marginTop: 5 }]}>{money(p.price_minor)}</Text>
       </TouchableOpacity>
       <TouchableOpacity
@@ -35,10 +42,12 @@ export function ProductCard({ product: p }: { product: Product }) {
           position: 'absolute',
           top: 8,
           right: 8,
-          width: 34,
-          height: 34,
+          width: 38,
+          height: 38,
           borderRadius: 20,
-          backgroundColor: '#FFF',
+          backgroundColor: '#FFFFFFED',
+          borderWidth: 1,
+          borderColor: '#FFFFFF',
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -55,7 +64,7 @@ export function ShopCard({ shop: s }: { shop: Shop }) {
     <View
       style={{
         width: 235,
-        borderRadius: 12,
+        borderRadius: 22,
         borderWidth: 1,
         borderColor: C.border,
         backgroundColor: '#FFF',

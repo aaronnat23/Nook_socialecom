@@ -99,6 +99,59 @@ export const themes = themeFixtures as {
   description: string;
   document: Document;
 }[];
+export const templateDetails: Record<
+  string,
+  { mood: string; audience: string; features: string[]; cover: string }
+> = {
+  'minimal-studio': {
+    mood: 'Soft & considered',
+    audience: 'Ceramics, homeware & everyday rituals',
+    features: ['Lilac accents', 'Editorial serif', 'Airy product grid'],
+    cover: 'seed_hero_0',
+  },
+  'dark-editorial': {
+    mood: 'After hours',
+    audience: 'Design objects, jewelry & statement pieces',
+    features: ['Deep plum', 'Gallery-led layout', 'Dramatic type'],
+    cover: 'seed_hero_3',
+  },
+  botanical: {
+    mood: 'Naturally quiet',
+    audience: 'Botanicals, beauty & slow living',
+    features: ['Sage palette', 'Story first', 'Organic details'],
+    cover: 'seed_hero_6',
+  },
+  'y2k-diary': {
+    mood: 'A little playful',
+    audience: 'Accessories, art & personal collections',
+    features: ['Lavender & pink', 'Rounded cards', 'Diary layout'],
+    cover: 'seed_hero_2',
+  },
+  'vintage-film': {
+    mood: 'Collected memories',
+    audience: 'Vintage finds, books & pre-loved pieces',
+    features: ['Warm paper', 'Classic serif', 'Archive gallery'],
+    cover: 'seed_hero_1',
+  },
+  'handmade-market': {
+    mood: 'Made with feeling',
+    audience: 'Handmade goods, textiles & craft',
+    features: ['Terracotta tones', 'Maker story', 'Warm textures'],
+    cover: 'seed_hero_4',
+  },
+  'streetwear-drop': {
+    mood: 'Make a statement',
+    audience: 'Fashion, streetwear & limited drops',
+    features: ['Bold contrast', 'Oversized type', 'Drop announcement'],
+    cover: 'seed_hero_5',
+  },
+  'art-gallery': {
+    mood: 'Room for a point of view',
+    audience: 'Art, prints & independent studios',
+    features: ['Gallery white', 'Image first', 'Exhibition layout'],
+    cover: 'seed_hero_7',
+  },
+};
 export const blockTypes: BlockType[] = [
   'hero',
   'profileHeader',

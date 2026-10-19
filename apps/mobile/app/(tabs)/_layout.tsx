@@ -1,21 +1,28 @@
 import { Tabs, router } from 'expo-router';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { C } from '../../components/ui';
+import { useReducedMotion } from '../../components/motion';
 export default function Layout() {
+  const reduced = useReducedMotion();
   return (
     <Tabs
       screenOptions={{
+        animation: reduced === false ? 'shift' : 'none',
         tabBarActiveTintColor: C.primary,
         tabBarInactiveTintColor: '#B19DC1',
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#FFFEFF',
           borderTopColor: C.border,
           height: 83,
           paddingTop: 8,
           paddingBottom: 24,
+          shadowColor: '#5A387E',
+          shadowOffset: { width: 0, height: -4 },
+          shadowOpacity: 0.04,
+          shadowRadius: 12,
         },
-        tabBarLabelStyle: { fontSize: 10 },
+        tabBarLabelStyle: { fontSize: 10, fontWeight: '500' },
         headerStyle: { backgroundColor: '#FFFFFF' },
         headerTintColor: C.primary,
         headerTitle: 'lilac.',
@@ -35,8 +42,19 @@ export default function Layout() {
         name="index"
         options={{
           title: 'Discover',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="compass-outline" color={color} size={size} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={{
+                backgroundColor: focused ? '#EEE5FA' : 'transparent',
+                width: 53,
+                height: 32,
+                borderRadius: 18,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name={focused ? 'compass' : 'compass-outline'} color={color} size={22} />
+            </View>
           ),
         }}
       />
@@ -44,8 +62,19 @@ export default function Layout() {
         name="me"
         options={{
           title: 'My Space',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="grid-outline" color={color} size={size} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={{
+                backgroundColor: focused ? '#EEE5FA' : 'transparent',
+                width: 53,
+                height: 32,
+                borderRadius: 18,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name={focused ? 'grid' : 'grid-outline'} color={color} size={21} />
+            </View>
           ),
         }}
       />
@@ -53,8 +82,19 @@ export default function Layout() {
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" color={color} size={size} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={{
+                backgroundColor: focused ? '#EEE5FA' : 'transparent',
+                width: 53,
+                height: 32,
+                borderRadius: 18,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name={focused ? 'settings' : 'settings-outline'} color={color} size={21} />
+            </View>
           ),
         }}
       />

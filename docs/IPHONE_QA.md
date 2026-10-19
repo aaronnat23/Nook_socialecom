@@ -1,5 +1,7 @@
 # Physical iPhone smoke test
 
+For the subsequent visual redesign and its physical-device checks, see [DESIGN_REFRESH.md](DESIGN_REFRESH.md).
+
 Tested the **native Expo app on the user's connected physical iPhone through iPhone Mirroring**. Android and simulator testing were not used for this walkthrough. This is manual smoke-test evidence, not a complete release acceptance or accessibility certification.
 
 ## Environment

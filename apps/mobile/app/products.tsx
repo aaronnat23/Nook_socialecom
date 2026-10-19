@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Modal, Image } from 'react-native';
+import { ScrollView, View, Text, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import type { Product } from '@lilac/api-client';
 import { money } from '@lilac/renderer';
@@ -7,6 +7,7 @@ import { api, imageUri } from '../lib';
 import { AuthGate, useApp } from '../components/provider';
 import { Button, Field, Loading, ui, C } from '../components/ui';
 import { Collections } from '../components/collections';
+import { Sheet } from '../components/sheet';
 interface Form {
   title: string;
   description: string;
@@ -137,22 +138,21 @@ function Products() {
       ))}
       {products === null && !error && <Loading />}
       {products !== null && <Collections shopId={me!.shop.id} products={products} />}
-      <Modal
+      <Sheet
         visible={form !== null}
-        animationType="slide"
-        presentationStyle="pageSheet"
-        onRequestClose={() => setForm(null)}
+        onClose={() => {
+          if (!busy) setForm(null);
+        }}
+        title={editing ? 'A little refinement.' : 'Meet your next favorite.'}
+        eyebrow="YOUR PRODUCT STUDIO"
+        subtitle="Thoughtful details make all the difference."
       >
         {form && (
           <ScrollView
             style={ui.screen}
-            contentContainerStyle={[ui.content, { paddingTop: 40 }]}
+            contentContainerStyle={ui.content}
             keyboardShouldPersistTaps="handled"
           >
-            <Button title="Close product ×" soft onPress={() => setForm(null)} />
-            <Text style={ui.sectionTitle}>
-              {editing ? 'A little update.' : 'A new little find.'}
-            </Text>
             <Field
               label="Product name"
               value={form.title}
@@ -304,7 +304,7 @@ function Products() {
             <Text style={ui.fine}>All selling is sandbox only in this preview.</Text>
           </ScrollView>
         )}
-      </Modal>
+      </Sheet>
     </ScrollView>
   );
 }

@@ -58,6 +58,7 @@ import { useEditor } from '@/lib/use-editor';
 import { useApp } from './provider';
 import { AuthGate } from './auth-gate';
 import { AssetImage, Storefront } from './storefront';
+import { TemplateArtwork } from './templates';
 const labels: Record<BlockType, string> = {
   hero: 'Hero banner',
   profileHeader: 'Profile header',
@@ -135,6 +136,10 @@ function Editor() {
     { id: string; versionNo: number; note: string; created_at: string }[]
   >([]);
   const [template, setTemplate] = useState<string | null>(null);
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('template');
+    if (themes.some((t) => t.id === requested)) setTemplate(requested);
+  }, []);
   const [publishing, setPublishing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [mobileLeft, setMobileLeft] = useState(false);
@@ -1250,6 +1255,9 @@ function Editor() {
       )}
       {template && (
         <Modal title="A fresh look for your space." close={() => setTemplate(null)}>
+          <div className="template-apply-art">
+            <TemplateArtwork theme={themes.find((t) => t.id === template)!} />
+          </div>
           <p className="muted" style={{ fontSize: 12, marginTop: 16 }}>
             Choose how to apply {themes.find((t) => t.id === template)?.name}. Your products stay in
             your catalog.

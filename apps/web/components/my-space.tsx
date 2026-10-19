@@ -20,6 +20,7 @@ import { useApp } from './provider';
 import { AuthGate } from './auth-gate';
 import { Storefront } from './storefront';
 import { ProductCard, ShopCard } from './cards';
+import { TemplateGallery } from './templates';
 export function SpacePage() {
   return (
     <AuthGate>
@@ -136,6 +137,7 @@ function Space() {
               note="No real money collected"
             />
           </div>
+          <TemplateGallery shop={me.shop} products={products} />
           {!me.seller_enabled && (
             <div className="panel" style={{ marginBottom: 25 }}>
               <h2>Your space could be a shop.</h2>
