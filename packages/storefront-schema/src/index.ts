@@ -99,6 +99,26 @@ export const themes = themeFixtures as {
   description: string;
   document: Document;
 }[];
+/** Bind a reusable layout to the seller without changing the template or catalog. */
+export function personalizeTemplate(
+  source: Document,
+  shop: { id: string; name: string; bio: string },
+  productIds: string[],
+): Document {
+  const next = JSON.parse(JSON.stringify(source)) as Document;
+  next.shopId = shop.id;
+  const visit = (blocks: Block[]) => {
+    for (const block of blocks) {
+      if (block.type === 'profileHeader')
+        block.props = { ...block.props, headline: shop.name, subtitle: shop.bio };
+      if (block.type === 'featuredProduct' && !block.props.productId)
+        block.props.productId = productIds[0] || '';
+      if (block.children) visit(block.children);
+    }
+  };
+  for (const section of next.sections) visit(section.children);
+  return next;
+}
 export const templateDetails: Record<
   string,
   { mood: string; audience: string; features: string[]; cover: string }
@@ -106,49 +126,49 @@ export const templateDetails: Record<
   'minimal-studio': {
     mood: 'Soft & considered',
     audience: 'Ceramics, homeware & everyday rituals',
-    features: ['Lilac accents', 'Editorial serif', 'Airy product grid'],
+    features: ['Split hero', 'Open product grid', 'Quiet studio story'],
     cover: 'seed_hero_0',
   },
   'dark-editorial': {
     mood: 'After hours',
     audience: 'Design objects, jewelry & statement pieces',
-    features: ['Deep plum', 'Gallery-led layout', 'Dramatic type'],
+    features: ['Cinematic cover', 'Editorial side column', 'Oversized masthead'],
     cover: 'seed_hero_3',
   },
   botanical: {
     mood: 'Naturally quiet',
     audience: 'Botanicals, beauty & slow living',
-    features: ['Sage palette', 'Story first', 'Organic details'],
+    features: ['Image first', 'Product spotlight', 'Two-part story'],
     cover: 'seed_hero_6',
   },
   'y2k-diary': {
     mood: 'A little playful',
     audience: 'Accessories, art & personal collections',
-    features: ['Lavender & pink', 'Rounded cards', 'Diary layout'],
+    features: ['Scrapbook grid', 'Photo & note cards', 'Personal links'],
     cover: 'seed_hero_2',
   },
   'vintage-film': {
     mood: 'Collected memories',
     audience: 'Vintage finds, books & pre-loved pieces',
-    features: ['Warm paper', 'Classic serif', 'Archive gallery'],
+    features: ['Photo contact sheet', 'Centered title', 'Mobile archive list'],
     cover: 'seed_hero_1',
   },
   'handmade-market': {
     mood: 'Made with feeling',
     audience: 'Handmade goods, textiles & craft',
-    features: ['Terracotta tones', 'Maker story', 'Warm textures'],
+    features: ['Maker letter', 'Paired portraits', 'Worktable story'],
     cover: 'seed_hero_4',
   },
   'streetwear-drop': {
     mood: 'Make a statement',
     audience: 'Fashion, streetwear & limited drops',
-    features: ['Bold contrast', 'Oversized type', 'Drop announcement'],
+    features: ['Products first', 'Campaign spread', 'Oversized type'],
     cover: 'seed_hero_5',
   },
   'art-gallery': {
     mood: 'Room for a point of view',
     audience: 'Art, prints & independent studios',
-    features: ['Gallery white', 'Image first', 'Exhibition layout'],
+    features: ['Asymmetric cover', 'Paired art wall', 'Curator captions'],
     cover: 'seed_hero_7',
   },
 };

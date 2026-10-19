@@ -17,6 +17,7 @@ import {
   blockTypes,
   makeBlock,
   themes,
+  personalizeTemplate,
   templateDetails,
   validateDocument,
   type Block,
@@ -324,14 +325,17 @@ function Editor() {
           note: 'Before applying a native template',
         }),
       });
-      const next = clone(chosenTheme.document);
-      next.shopId = me!.shop.id;
-      for (const section of next.sections)
-        for (const b of section.children)
-          if (b.type === 'profileHeader')
-            b.props = { headline: me!.shop.name, subtitle: me!.shop.bio };
+      const next = personalizeTemplate(
+        chosenTheme.document,
+        me!.shop,
+        products.filter((p) => p.status === 'published').map((p) => p.id),
+      );
       editor.commit(next);
-      setSelected('hero');
+      setSelected(
+        allBlocks(next.sections.flatMap((s) => s.children)).find((b) => b.type === 'hero')?.id ||
+          next.sections[0]?.children[0]?.id ||
+          '',
+      );
       setSheet(null);
       notify('Your new layout is ready. Publish when it feels like you.');
     } catch (e) {
@@ -1246,7 +1250,7 @@ function Editor() {
                   }}
                   style={[ui.card, { padding: 8, marginBottom: 0, overflow: 'hidden' }]}
                 >
-                  <TemplateArtwork theme={t} />
+                  <TemplateArtwork theme={t} shop={me!.shop} products={products} />
                   <View style={{ padding: 15 }}>
                     <Text style={{ fontSize: 19, fontWeight: '600', color: C.text }}>{t.name}</Text>
                     <Text style={[ui.muted, { marginTop: 5 }]}>{t.description}</Text>
@@ -1262,7 +1266,7 @@ function Editor() {
             </View>
           ) : panel === 'template' ? (
             <View style={{ gap: 18 }}>
-              <TemplateArtwork theme={chosenTheme} />
+              <TemplateArtwork theme={chosenTheme} shop={me!.shop} products={products} />
               <Text style={ui.muted}>{chosenTheme.description}</Text>
               <View style={ui.wrap}>
                 {templateDetails[chosenTheme.id].features.map((f) => (

@@ -2,11 +2,18 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import type { Product, Shop } from '@lilac/api-client';
+import type { Document } from '@lilac/schema';
 import { money } from '@lilac/renderer';
 import { api, imageUri } from '../lib';
 import { useApp } from './provider';
 import { ui, C } from './ui';
-export function ProductCard({ product: p }: { product: Product }) {
+export function ProductCard({
+  product: p,
+  colors,
+}: {
+  product: Product;
+  colors?: Document['theme']['colors'];
+}) {
   const { me, requireAuth, refresh, notify } = useApp();
   const saved = me?.favorites.includes(p.id);
   return (
@@ -19,13 +26,25 @@ export function ProductCard({ product: p }: { product: Product }) {
           source={{ uri: imageUri(p.image) }}
           style={[ui.image, { height: 195, borderRadius: 20, backgroundColor: '#EDE5F5' }]}
         />
-        <Text style={{ fontSize: 9, color: '#A08BAC', marginTop: 10 }}>{p.shop_name} ↗</Text>
+        <Text style={{ fontSize: 9, color: colors?.muted || '#A08BAC', marginTop: 10 }}>
+          {p.shop_name} ↗
+        </Text>
         <Text
-          style={{ fontSize: 13, fontWeight: '500', color: C.text, marginTop: 5, lineHeight: 19 }}
+          style={{
+            fontSize: 13,
+            fontWeight: '500',
+            color: colors?.text || C.text,
+            marginTop: 5,
+            lineHeight: 19,
+          }}
         >
           {p.title}
         </Text>
-        <Text style={[ui.price, { fontSize: 12, marginTop: 5 }]}>{money(p.price_minor)}</Text>
+        <Text
+          style={[ui.price, { fontSize: 12, marginTop: 5, color: colors?.accent || C.primary }]}
+        >
+          {money(p.price_minor)}
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         accessibilityLabel={saved ? `Unsave ${p.title}` : `Save ${p.title}`}

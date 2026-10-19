@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-19",
+  "nativeDevice": "Physical iPhone via iPhone Mirroring",
+  "nativePreviewChecks": [
+    "Vintage Film contact sheet",
+    "Y2K Diary two-column scrapbook"
+  ],
+  "nativeApply": {
+    "pageId": "page_y2k-diary",
+    "sections": 3,
+    "mobileColumns": 2,
+    "publicUnchanged": true,
+    "backup": {
+      "id": "2f6e8e14-1667-47d2-9d21-53fa850535a5",
+      "versionNo": 33,
+      "note": "Draft backup: Before applying a native template",
+      "created_at": "2026-10-19T18:11:01.480877+08:00",
+      "checksum": "d0a9483e8b0c5c5ec72b38ff431dc28926b55619259708b77205e1d240160b6c"
+    }
+  },
+  "nestedCardTapOpensTextInspector": "passed",
+  "schemaTests": 17,
+  "apiTests": 18,
+  "browserTests": 11,
+  "webPreviewStructures": 8,
+  "templateGalleryAccessibilityViolations": 0,
+  "nativeTemplateUndo": "observed",
+  "finalDraftMatchesPublic": true,
+  "finalPublication": 37,
+  "finalHero": "Made for little everyday rituals."
+}

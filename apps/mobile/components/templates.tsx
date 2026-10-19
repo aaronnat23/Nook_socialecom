@@ -1,92 +1,53 @@
 import { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { themes, templateDetails } from '@lilac/schema';
+import { themes, templateDetails, personalizeTemplate } from '@lilac/schema';
 import type { Product, Shop } from '@lilac/api-client';
-import { imageUri } from '../lib';
 import { Sheet } from './sheet';
 import { Storefront } from './storefront';
 import { Button, C, ui } from './ui';
 import { Reveal } from './motion';
 
 type Theme = (typeof themes)[number];
-export function TemplateArtwork({ theme, compact = false }: { theme: Theme; compact?: boolean }) {
-  const { colors, fontHeading } = theme.document.theme;
-  const hero = theme.document.sections.flatMap((s) => s.children).find((b) => b.type === 'hero')!;
-  const dark = theme.id === 'dark-editorial';
-  const bold = theme.id === 'streetwear-drop';
+export function TemplateArtwork({
+  theme,
+  shop,
+  products,
+}: {
+  theme: Theme;
+  shop: Shop;
+  products: Product[];
+}) {
+  const [frameWidth, setFrameWidth] = useState(252);
+  const published = products.filter((p) => p.status === 'published');
+  const document = personalizeTemplate(
+    theme.document,
+    shop,
+    published.map((p) => p.id),
+  );
   return (
     <View
-      style={[styles.art, { backgroundColor: colors.background, height: compact ? 195 : 244 }]}
+      onLayout={(event) => setFrameWidth(event.nativeEvent.layout.width)}
+      style={{
+        height: 260,
+        overflow: 'hidden',
+        backgroundColor: theme.document.theme.colors.background,
+      }}
       pointerEvents="none"
       accessibilityElementsHidden
     >
-      <View style={styles.miniNav}>
-        <Text style={{ color: colors.text, fontSize: 9, fontWeight: '600' }}>
-          {theme.name.toLowerCase()}.
-        </Text>
-        <View style={[styles.miniDot, { backgroundColor: colors.accent }]} />
-      </View>
       <View
-        style={[
-          styles.miniHero,
-          {
-            backgroundColor: hero.style?.backgroundColor || colors.surface,
-            borderRadius: Math.min(theme.document.theme.radius, 18),
-          },
-        ]}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: 1000,
+          transform: [{ scale: frameWidth / 1000 }],
+          transformOrigin: 'left top',
+        }}
       >
-        <Text
-          numberOfLines={5}
-          style={{
-            color: colors.text,
-            fontFamily: fontHeading === 'Georgia' ? 'Georgia' : undefined,
-            fontWeight: bold ? '800' : '500',
-            fontSize: compact ? 17 : 20,
-            letterSpacing: -0.6,
-            lineHeight: compact ? 20 : 23,
-            maxWidth: '56%',
-          }}
-        >
-          {hero.props.headline}
-        </Text>
-        <Image
-          source={{ uri: imageUri(templateDetails[theme.id].cover) }}
-          style={{
-            width: '34%',
-            height: compact ? 85 : 112,
-            borderRadius: theme.document.theme.radius ? 14 : 0,
-            position: 'absolute',
-            right: 11,
-            bottom: 14,
-            opacity: dark ? 0.85 : 1,
-          }}
-        />
-        <View
-          style={{
-            backgroundColor: colors.accent,
-            width: 42,
-            height: 5,
-            borderRadius: 3,
-            marginTop: 15,
-          }}
-        />
-      </View>
-      <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 14, marginTop: 10 }}>
-        {[0, 1, 2].map((n) => (
-          <View
-            key={n}
-            style={{
-              flex: 1,
-              height: compact ? 32 : 41,
-              borderRadius: Math.min(theme.document.theme.radius, 8),
-              backgroundColor: colors.accent + '18',
-              borderTopWidth: 2,
-              borderColor: colors.accent + '40',
-            }}
-          />
-        ))}
+        <Storefront document={document} shop={shop} products={published} width={1000} thumbnail />
       </View>
     </View>
   );
@@ -136,7 +97,7 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
         </TouchableOpacity>
       </View>
       <Text style={[ui.muted, { marginBottom: 18 }]}>
-        Beautiful starting points. Make every detail yours.
+        Different layouts. Every block is yours to customize.
       </Text>
       <ScrollView
         horizontal
@@ -154,7 +115,7 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
               activeOpacity={0.88}
               style={styles.card}
             >
-              <TemplateArtwork theme={t} />
+              <TemplateArtwork theme={t} shop={shop} products={products} />
               <View style={styles.caption}>
                 <Text style={styles.mood}>{templateDetails[t.id].mood.toUpperCase()}</Text>
                 <View style={[ui.row, { justifyContent: 'space-between' }]}>
@@ -228,7 +189,11 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
               </View>
               <View pointerEvents="none" accessibilityElementsHidden>
                 <Storefront
-                  document={theme.document}
+                  document={personalizeTemplate(
+                    theme.document,
+                    shop,
+                    products.filter((p) => p.status === 'published').map((p) => p.id),
+                  )}
                   shop={shop}
                   products={products.filter((p) => p.status === 'published')}
                 />
@@ -243,7 +208,7 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
                 onPress={() => setSelected(t.id)}
                 style={[ui.card, { padding: 8, overflow: 'hidden' }]}
               >
-                <TemplateArtwork theme={t} />
+                <TemplateArtwork theme={t} shop={shop} products={products} />
                 <View style={{ padding: 14 }}>
                   <Text style={styles.name}>{t.name}</Text>
                   <Text style={[ui.muted, { marginTop: 6 }]}>{t.description}</Text>

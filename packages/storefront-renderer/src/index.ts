@@ -24,6 +24,12 @@ export function resolveHeadingFont(block: Block, theme: Document['theme'], width
     width,
   ).fontFamily!;
 }
+/** Column groups stack on phones unless the seller explicitly chooses a mobile grid. */
+export function resolveColumns(block: Block, theme: Document['theme'], width: number) {
+  return width < 768
+    ? block.responsive?.mobile?.style?.columns || 1
+    : resolveStyle(block, theme, width).columns || 2;
+}
 export function blocksOf(doc: Document): Block[] {
   return doc.sections.flatMap((s) => s.children);
 }

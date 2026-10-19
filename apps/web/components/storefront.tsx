@@ -3,7 +3,13 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import type { Block, Document, Style } from '@lilac/schema';
 import type { Product, Shop } from '@lilac/api-client';
-import { assetPath, resolveStyle, resolveHeadingFont, contrastRatio } from '@lilac/renderer';
+import {
+  assetPath,
+  resolveStyle,
+  resolveHeadingFont,
+  resolveColumns,
+  contrastRatio,
+} from '@lilac/renderer';
 import { api } from '@/lib/api';
 import { ProductCard, FollowButton } from './cards';
 const gradients = {
@@ -107,6 +113,7 @@ interface Props {
   selected?: string;
   onSelect?: (id: string) => void;
   onDropBlock?: (dragId: string, targetId: string) => void;
+  thumbnail?: boolean;
 }
 export function Storefront({
   document: doc,
@@ -117,6 +124,7 @@ export function Storefront({
   selected,
   onSelect,
   onDropBlock,
+  thumbnail = false,
 }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const [measured, setMeasured] = useState(given || 1280);
@@ -133,26 +141,37 @@ export function Storefront({
   }, [given]);
   const [collections, setCollections] = useState<Record<string, string[]>>({});
   useEffect(() => {
+    if (thumbnail) return;
     api<{ items: { id: string; product_ids: string[] }[] }>(`/shops/${shop.id}/collections`)
       .then((r) => setCollections(Object.fromEntries(r.items.map((c) => [c.id, c.product_ids]))))
       .catch(() => {});
-  }, [shop.id]);
+  }, [shop.id, thumbnail]);
   const width = given || measured;
   return (
     <div
       className="storefront"
       ref={container}
-      style={{
-        background: doc.theme.colors.background,
-        color: doc.theme.colors.text,
-        fontFamily: doc.theme.fontBody === 'Inter' ? 'var(--font)' : doc.theme.fontBody,
-      }}
+      style={
+        {
+          background: doc.theme.colors.background,
+          color: doc.theme.colors.text,
+          fontFamily: doc.theme.fontBody === 'Inter' ? 'var(--font)' : doc.theme.fontBody,
+          '--shop-muted': doc.theme.colors.muted,
+          '--shop-accent': doc.theme.colors.accent,
+        } as CSSProperties
+      }
     >
       {doc.sections.map((section) => (
         <section
           className="sf-section"
           key={section.id}
-          style={{ ...styleToCss(section.style || {}), maxWidth: doc.theme.contentWidth }}
+          style={{
+            ...styleToCss(section.style || {}),
+            maxWidth:
+              section.style?.width === 'full'
+                ? '100%'
+                : section.style?.maxWidth || doc.theme.contentWidth,
+          }}
         >
           {[...section.children]
             .sort(
@@ -174,6 +193,7 @@ export function Storefront({
                   onSelect,
                   onDropBlock,
                   collections,
+                  omitIds: thumbnail,
                 }}
               />
             ))}
@@ -193,6 +213,7 @@ function BlockView({
   onSelect,
   onDropBlock,
   collections,
+  omitIds = false,
 }: {
   block: Block;
   doc: Document;
@@ -204,6 +225,7 @@ function BlockView({
   onSelect?: (id: string) => void;
   onDropBlock?: (id: string, target: string) => void;
   collections: Record<string, string[]>;
+  omitIds?: boolean;
 }) {
   const s = resolveStyle(b, doc.theme, width);
   const headingFace = resolveHeadingFont(b, doc.theme, width);
@@ -223,6 +245,7 @@ function BlockView({
     objectPosition: `${s.focalX ?? 50}% ${s.focalY ?? 50}%`,
     aspectRatio: s.aspectRatio === 'auto' ? undefined : s.aspectRatio?.replace(':', '/'),
     borderRadius: s.borderRadius,
+    height: s.aspectRatio && s.aspectRatio !== 'auto' ? 'auto' : undefined,
   };
   let content: React.ReactNode = null;
   const cta = (label: string, url: string) => (
@@ -243,7 +266,7 @@ function BlockView({
   switch (b.type) {
     case 'profileHeader':
       content = (
-        <div className="sf-profile">
+        <div className={`sf-profile ${s.textAlign === 'center' ? 'sf-profile-centered' : ''}`}>
           <span
             className="shop-logo"
             style={{ background: doc.theme.colors.accent + '22', color: doc.theme.colors.accent }}
@@ -414,7 +437,11 @@ function BlockView({
       const product = products.find((x) => x.id === p.productId);
       content = (
         <>
-          {p.headline && <h2 className="sf-title">{p.headline}</h2>}
+          {p.headline && (
+            <h2 className="sf-title" style={headingStyle}>
+              {p.headline}
+            </h2>
+          )}
           {product ? (
             <div style={{ maxWidth: 350 }}>
               <ProductCard product={product} />
@@ -449,7 +476,12 @@ function BlockView({
       content = (
         <div className="sf-social">
           {p.links?.map((l, i) => (
-            <a href={l.url} rel="noopener noreferrer" target="_blank" key={i}>
+            <a
+              href={l.url}
+              rel="noopener noreferrer"
+              target={l.url.startsWith('#') ? undefined : '_blank'}
+              key={i}
+            >
               {l.label} ↗
             </a>
           ))}
@@ -461,7 +493,7 @@ function BlockView({
         <div
           className="sf-columns"
           style={{
-            gridTemplateColumns: `repeat(${width < 768 ? 1 : s.columns || 2},minmax(0,1fr))`,
+            gridTemplateColumns: `repeat(${resolveColumns(b, doc.theme, width)},minmax(0,1fr))`,
           }}
         >
           {b.children?.map((child) => (
@@ -478,6 +510,7 @@ function BlockView({
                 onSelect,
                 onDropBlock,
                 collections,
+                omitIds,
               }}
             />
           ))}
@@ -489,8 +522,9 @@ function BlockView({
   }
   const inner = (
     <div
-      id={b.id}
+      id={omitIds ? undefined : b.id}
       className={`sf-block sf-inner ${b.type === 'productGrid' ? 'sf-catalog' : ''}`}
+      data-block-type={b.type}
       style={styleToCss(s)}
     >
       {content}
@@ -523,6 +557,7 @@ function BlockView({
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
+          e.stopPropagation();
           onSelect?.(b.id);
         }
       }}

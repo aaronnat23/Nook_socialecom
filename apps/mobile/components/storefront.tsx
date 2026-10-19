@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, type RefObject } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   Text,
@@ -13,7 +13,7 @@ import {
 import { router } from 'expo-router';
 import type { Document, Block, Style } from '@lilac/schema';
 import type { Product, Shop } from '@lilac/api-client';
-import { resolveStyle, resolveHeadingFont } from '@lilac/renderer';
+import { resolveStyle, resolveHeadingFont, resolveColumns } from '@lilac/renderer';
 import { apiBase, authToken, imageUri, api } from '../lib';
 import { ProductCard } from './cards';
 import { Button, ui } from './ui';
@@ -83,6 +83,7 @@ export function Storefront({
   onSelect,
   onAnchor,
   onBlockLayout,
+  thumbnail = false,
 }: {
   document: Document;
   shop: Shop;
@@ -93,17 +94,33 @@ export function Storefront({
   onSelect?: (id: string) => void;
   onAnchor?: (id: string) => void;
   onBlockLayout?: (id: string, y: number) => void;
+  thumbnail?: boolean;
 }) {
+  const anchorRoot = useRef<View>(null);
   const [collections, setCollections] = useState<Record<string, string[]>>({});
   useEffect(() => {
+    if (thumbnail) return;
     api<{ items: { id: string; product_ids: string[] }[] }>(`/shops/${shop.id}/collections`)
       .then((r) => setCollections(Object.fromEntries(r.items.map((c) => [c.id, c.product_ids]))))
       .catch(() => {});
-  }, [shop.id]);
+  }, [shop.id, thumbnail]);
   return (
-    <View style={{ backgroundColor: document.theme.colors.background, width: '100%' }}>
+    <View
+      ref={anchorRoot}
+      style={{ backgroundColor: document.theme.colors.background, width: '100%' }}
+    >
       {document.sections.map((section) => (
-        <View key={section.id}>
+        <View
+          key={section.id}
+          style={[
+            nativeStyle(section.style || {}),
+            {
+              paddingLeft: section.style?.paddingLeft || 0,
+              paddingRight: section.style?.paddingRight || 0,
+              maxWidth: section.style?.maxWidth || document.theme.contentWidth,
+            },
+          ]}
+        >
           {[...section.children]
             .sort(
               (a, b) =>
@@ -125,6 +142,7 @@ export function Storefront({
                   onAnchor,
                   onBlockLayout,
                   collections,
+                  anchorRoot,
                 }}
               />
             ))}
@@ -145,6 +163,7 @@ function NativeBlock({
   onAnchor,
   onBlockLayout,
   collections,
+  anchorRoot,
 }: {
   block: Block;
   document: Document;
@@ -157,7 +176,9 @@ function NativeBlock({
   onAnchor?: (id: string) => void;
   onBlockLayout?: (id: string, y: number) => void;
   collections: Record<string, string[]>;
+  anchorRoot: RefObject<View | null>;
 }) {
+  const frame = useRef<View>(null);
   const s = resolveStyle(b, d.theme, width);
   const p = b.props;
   const view = nativeStyle(s);
@@ -203,7 +224,13 @@ function NativeBlock({
             <Image
               source={source(p.imageAssetId)}
               accessibilityLabel={p.alt || shop.name}
-              style={{ width: 56, height: 56, borderRadius: 28, marginBottom: 12 }}
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 28,
+                marginBottom: 12,
+                alignSelf: s.textAlign === 'center' ? 'center' : 'flex-start',
+              }}
             />
           )}
           <Text
@@ -300,20 +327,33 @@ function NativeBlock({
         </>
       );
       break;
-    case 'gallery':
+    case 'gallery': {
+      const cols = Math.min(s.columns || 2, width < 768 ? 2 : 4);
+      const images = p.images || [];
       content = (
         <>
           {title}
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: s.gap || 12 }}>
-            {p.images?.map((im, i) => (
-              <View key={i} style={{ width: (s.columns || 2) > 1 ? '47%' : '100%' }}>
-                {image(im.imageAssetId, im.alt, i)}
+          <View style={{ gap: s.gap || 12 }}>
+            {Array.from({ length: Math.ceil(images.length / cols) }, (_, row) => (
+              <View key={row} style={{ flexDirection: 'row', gap: s.gap || 12 }}>
+                {images.slice(row * cols, row * cols + cols).map((im, i) => (
+                  <View key={i} style={{ flex: 1, minWidth: 0 }}>
+                    {image(im.imageAssetId, im.alt, i)}
+                  </View>
+                ))}
+                {Array.from(
+                  { length: cols - images.slice(row * cols, row * cols + cols).length },
+                  (_, empty) => (
+                    <View key={`empty_${empty}`} style={{ flex: 1 }} />
+                  ),
+                )}
               </View>
             ))}
           </View>
         </>
       );
       break;
+    }
     case 'productGrid': {
       const ids = p.source === 'collection' ? collections[p.collectionId || ''] : undefined;
       const filtered = ids
@@ -332,16 +372,21 @@ function NativeBlock({
               : () => 0,
         )
         .slice(0, p.limit || 12);
-      const cols = width < 360 ? 1 : Math.min(s.columns || 2, 2);
+      const cols = width < 360 ? 1 : Math.min(s.columns || 2, width < 768 ? 2 : 4);
       content = (
         <>
           {title}
           {Array.from({ length: Math.ceil(sorted.length / cols) }, (_, i) => (
             <View style={{ flexDirection: 'row', gap: s.gap || 12, marginBottom: 20 }} key={i}>
               {sorted.slice(i * cols, i * cols + cols).map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} colors={d.theme.colors} />
               ))}
-              {cols === 2 && !sorted[i * cols + 1] && <View style={{ flex: 1 }} />}
+              {Array.from(
+                { length: cols - sorted.slice(i * cols, i * cols + cols).length },
+                (_, empty) => (
+                  <View key={`empty_${empty}`} style={{ flex: 1 }} />
+                ),
+              )}
             </View>
           ))}
           {!products.length && <Text style={textStyle}>Your collection is on its way.</Text>}
@@ -355,7 +400,7 @@ function NativeBlock({
         <>
           {title}
           {product ? (
-            <ProductCard product={product} />
+            <ProductCard product={product} colors={d.theme.colors} />
           ) : (
             <Text style={textStyle}>Choose a featured product.</Text>
           )}
@@ -376,7 +421,7 @@ function NativeBlock({
       content = (
         <View style={{ flexDirection: 'row', gap: 20, flexWrap: 'wrap' }}>
           {p.links?.map((l, i) => (
-            <TouchableOpacity key={i} onPress={() => open(l.url)}>
+            <TouchableOpacity key={i} onPress={() => open(l.url, onAnchor)}>
               <Text style={[textStyle, { fontSize: 12, textDecorationLine: 'underline' }]}>
                 {l.label} ↗
               </Text>
@@ -398,30 +443,46 @@ function NativeBlock({
     case 'spacer':
       content = <View style={{ height: s.minHeight || 40 }} />;
       break;
-    case 'columns':
+    case 'columns': {
+      const cols = resolveColumns(b, d.theme, width);
+      const children = b.children || [];
       content = (
         <View style={{ gap: s.gap || 16 }}>
-          {b.children?.map((c) => (
-            <NativeBlock
-              key={c.id}
-              {...{
-                block: c,
-                document: d,
-                shop,
-                products,
-                width,
-                editing,
-                selected,
-                onSelect,
-                onAnchor,
-                onBlockLayout,
-                collections,
-              }}
-            />
+          {Array.from({ length: Math.ceil(children.length / cols) }, (_, row) => (
+            <View key={row} style={{ flexDirection: 'row', gap: s.gap || 16 }}>
+              {children.slice(row * cols, row * cols + cols).map((c) => (
+                <View key={c.id} style={{ flex: 1, minWidth: 0 }}>
+                  <NativeBlock
+                    key={c.id}
+                    {...{
+                      block: c,
+                      document: d,
+                      shop,
+                      products,
+                      width,
+                      editing,
+                      selected,
+                      onSelect,
+                      onAnchor,
+                      onBlockLayout,
+                      collections,
+                      anchorRoot,
+                    }}
+                  />
+                </View>
+              ))}
+              {Array.from(
+                { length: cols - children.slice(row * cols, row * cols + cols).length },
+                (_, empty) => (
+                  <View key={`empty_${empty}`} style={{ flex: 1 }} />
+                ),
+              )}
+            </View>
           ))}
         </View>
       );
       break;
+    }
     default:
       content = <Text style={textStyle}>Update the app to view this section.</Text>;
   }
@@ -440,24 +501,39 @@ function NativeBlock({
       end={{ x: 1, y: 1 }}
       style={view}
     >
-      <View pointerEvents={editing ? 'none' : 'auto'}>{content}</View>
+      <View pointerEvents={editing && b.type !== 'columns' ? 'none' : 'auto'}>{content}</View>
     </LinearGradient>
   ) : (
-    <View pointerEvents={editing ? 'none' : 'auto'} style={view}>
+    <View pointerEvents={editing && b.type !== 'columns' ? 'none' : 'auto'} style={view}>
       {content}
     </View>
   );
   return editing ? (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={() => onSelect?.(b.id)}
+      onPress={(event) => {
+        event.stopPropagation();
+        onSelect?.(b.id);
+      }}
       accessibilityLabel={`Edit ${b.type}`}
       style={{ borderWidth: 2, borderColor: selected === b.id ? '#A074C8' : 'transparent' }}
     >
       {inner}
     </TouchableOpacity>
   ) : (
-    <View onLayout={(e) => onBlockLayout?.(b.id, e.nativeEvent.layout.y)}>{inner}</View>
+    <View
+      ref={frame}
+      onLayout={() => {
+        if (onBlockLayout && anchorRoot.current)
+          frame.current?.measureLayout(
+            anchorRoot.current,
+            (_x, y) => onBlockLayout(b.id, y),
+            () => {},
+          );
+      }}
+    >
+      {inner}
+    </View>
   );
 }
 

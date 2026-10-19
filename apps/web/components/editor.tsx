@@ -43,6 +43,7 @@ import {
   blockTypes,
   makeBlock,
   themes,
+  personalizeTemplate,
   validateDocument,
   type Block,
   type BlockType,
@@ -590,21 +591,21 @@ function Editor() {
           ) : (
             <div className="theme-cards">
               {themes.map((t) => (
-                <button
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setTemplate(t.id);
+                    }
+                  }}
+                  aria-label={`Choose ${t.name}`}
                   key={t.id}
                   className={`theme-card ${doc.theme.colors.accent === t.document.theme.colors.accent ? 'active' : ''}`}
                   onClick={() => setTemplate(t.id)}
                 >
-                  <div
-                    className="theme-card-preview"
-                    style={{
-                      background: t.document.theme.colors.background,
-                      color: t.document.theme.colors.text,
-                    }}
-                  >
-                    <strong style={{ fontFamily: t.document.theme.fontHeading }}>{t.name}</strong>
-                    <span style={{ background: t.document.theme.colors.accent }} />
-                  </div>
+                  <TemplateArtwork theme={t} shop={me!.shop} products={products} />
                   <strong>{t.name}</strong>
                   <p>{t.description}</p>
                   <div className="theme-swatches">
@@ -614,7 +615,7 @@ function Editor() {
                         <span style={{ background: c }} key={i} />
                       ))}
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}
@@ -1256,7 +1257,11 @@ function Editor() {
       {template && (
         <Modal title="A fresh look for your space." close={() => setTemplate(null)}>
           <div className="template-apply-art">
-            <TemplateArtwork theme={themes.find((t) => t.id === template)!} />
+            <TemplateArtwork
+              theme={themes.find((t) => t.id === template)!}
+              shop={me!.shop}
+              products={products}
+            />
           </div>
           <p className="muted" style={{ fontSize: 12, marginTop: 16 }}>
             Choose how to apply {themes.find((t) => t.id === template)?.name}. Your products stay in
@@ -1287,15 +1292,18 @@ function Editor() {
                     }),
                   });
                   const t = themes.find((t) => t.id === template)!;
-                  const next = structuredClone(t.document);
-                  next.shopId = me!.shop.id;
-                  for (const s of next.sections)
-                    for (const b of s.children)
-                      if (b.type === 'profileHeader')
-                        b.props = { headline: me!.shop.name, subtitle: me!.shop.bio };
+                  const next = personalizeTemplate(
+                    t.document,
+                    me!.shop,
+                    products.filter((p) => p.status === 'published').map((p) => p.id),
+                  );
                   commit(next);
                   setTemplate(null);
-                  setSelected('hero');
+                  setSelected(
+                    flatten(blocksOf(next)).find((b) => b.type === 'hero')?.id ||
+                      blocksOf(next)[0]?.id ||
+                      '',
+                  );
                   toast('New layout applied. Undo brings your previous draft back.');
                 } catch (e) {
                   toast((e as Error).message);

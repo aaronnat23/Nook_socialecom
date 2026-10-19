@@ -4470,7 +4470,7 @@ select:focus {
     padding: 3px 0 18px;
     gap: 14px;
   }
-  .template-featured > button {
+  .template-featured > .template-design-card {
     width: 255px;
     flex: none;
     scroll-snap-align: start;
@@ -4523,4 +4523,44 @@ select:focus {
     max-width: none;
     text-align: center;
   }
+}
+
+/* Previews use the same document renderer as the finished shop. */
+.template-real-art {
+  position: relative;
+  height: 260px;
+  display: block;
+  pointer-events: none;
+}
+.template-design-card {
+  cursor: pointer;
+}
+.template-design-card:focus-visible {
+  outline: 3px solid #ac88dd;
+  outline-offset: 4px;
+}
+.theme-card .template-real-art {
+  height: 205px;
+  margin-bottom: 12px;
+  border-radius: 9px;
+}
+.sf-profile-centered {
+  flex-direction: column;
+  text-align: center;
+}
+.sf-profile-centered .button {
+  margin-left: 0;
+}
+.storefront .product-shop,
+.storefront .product-meta {
+  color: var(--shop-muted);
+}
+.storefront .product-title-row > span {
+  color: var(--shop-accent);
+}
+.storefront .product-title-row h3 {
+  color: inherit;
+}
+.template-apply-art .template-real-art {
+  height: 300px;
 }

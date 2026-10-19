@@ -2,7 +2,7 @@
   {
     "id": "minimal-studio",
     "name": "Minimal Studio",
-    "description": "Quiet typography, soft lilac and room to breathe.",
+    "description": "Split hero, open product grid and a quiet studio story.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -17,13 +17,14 @@
           "accent": "#7550B5",
           "muted": "#77717F"
         },
-        "contentWidth": 1100,
+        "contentWidth": 1120,
         "radius": 8
       },
       "sections": [
         {
           "id": "main",
           "type": "section",
+          "style": {},
           "children": [
             {
               "id": "identity",
@@ -44,25 +45,26 @@
                 "headline": "Everyday, a little more beautiful.",
                 "subtitle": "A collection of little things that feel like you.",
                 "imageAssetId": "seed_hero_0",
-                "alt": "Independent creative studio collection",
+                "alt": "Independent studio collection",
                 "cta": {
                   "label": "Explore the collection",
                   "url": "#products"
                 }
               },
               "style": {
+                "fontSize": 60,
+                "paddingTop": 42,
+                "paddingBottom": 42,
                 "backgroundColor": "#EEE5F7",
-                "fontSize": 54,
-                "minHeight": 320,
                 "borderRadius": 24,
-                "paddingTop": 48,
-                "paddingBottom": 48
+                "minHeight": 340
               },
               "responsive": {
                 "mobile": {
                   "style": {
-                    "fontSize": 30,
-                    "minHeight": 240
+                    "fontSize": 36,
+                    "paddingTop": 28,
+                    "paddingBottom": 28
                   }
                 }
               }
@@ -73,19 +75,19 @@
               "props": {
                 "headline": "Objects for everyday rituals",
                 "source": "all",
-                "limit": 12
+                "limit": 6
               },
               "style": {
                 "columns": 3,
-                "gap": 20,
-                "paddingTop": 44,
+                "gap": 24,
+                "paddingTop": 32,
                 "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
                   "style": {
                     "columns": 2,
-                    "gap": 12
+                    "gap": 14
                   }
                 }
               }
@@ -94,38 +96,45 @@
               "id": "story",
               "type": "text",
               "props": {
-                "headline": "Behind the little things",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+                "headline": "Less, but considered.",
+                "text": "Useful objects. Honest materials. Space to breathe."
               },
               "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24,
                 "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680
+                "maxWidth": 640
               }
             },
             {
               "id": "photos",
               "type": "gallery",
               "props": {
-                "headline": "From our studio",
                 "images": [
                   {
                     "imageAssetId": "seed_hero_0",
-                    "alt": "Our studio collection"
+                    "alt": "A detail from the independent collection"
                   },
                   {
-                    "imageAssetId": "seed_product_0",
-                    "alt": "A detail from our collection"
+                    "imageAssetId": "seed_product_1",
+                    "alt": "A detail from the independent collection"
                   }
                 ]
               },
               "style": {
                 "columns": 2,
-                "gap": 16,
-                "borderRadius": 12,
-                "paddingTop": 24,
-                "paddingBottom": 32
+                "gap": 18,
+                "aspectRatio": "16:9",
+                "paddingTop": 20,
+                "paddingBottom": 20
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
               }
             }
           ]
@@ -136,7 +145,7 @@
   {
     "id": "vintage-film",
     "name": "Vintage Film",
-    "description": "Nostalgia, beautifully collected.",
+    "description": "A photographic contact sheet, centered title and single-column mobile archive.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -151,27 +160,29 @@
           "accent": "#925E45",
           "muted": "#786B60"
         },
-        "contentWidth": 1100,
+        "contentWidth": 1040,
         "radius": 4
       },
       "sections": [
         {
-          "id": "main",
+          "id": "archive",
           "type": "section",
+          "style": {},
           "children": [
             {
-              "id": "announce",
+              "id": "archive-label",
               "type": "announcement",
               "props": {
-                "text": "Small batches. Good intentions. Made in Malaysia."
+                "text": "THE FOUND OBJECT ARCHIVE / EST. IN SMALL MOMENTS"
               },
               "style": {
-                "backgroundColor": "#925E45",
-                "textColor": "#FFFFFF",
+                "backgroundColor": "#493725",
+                "textColor": "#FFFAF3",
                 "paddingTop": 12,
                 "paddingBottom": 12,
                 "textAlign": "center",
-                "fontSize": 13
+                "fontSize": 11,
+                "letterSpacing": 1.2
               }
             },
             {
@@ -187,48 +198,32 @@
               }
             },
             {
-              "id": "hero",
-              "type": "hero",
+              "id": "contact-sheet",
+              "type": "gallery",
               "props": {
-                "headline": "A little old soul. A lot of character.",
-                "subtitle": "A collection of little things that feel like you.",
-                "imageAssetId": "seed_hero_1",
-                "alt": "Independent creative studio collection",
-                "cta": {
-                  "label": "Explore the collection",
-                  "url": "#products"
-                }
-              },
-              "style": {
-                "backgroundColor": "#E8D6C1",
-                "fontSize": 52,
-                "minHeight": 320,
-                "borderRadius": 4,
-                "paddingTop": 48,
-                "paddingBottom": 48
-              },
-              "responsive": {
-                "mobile": {
-                  "style": {
-                    "fontSize": 30,
-                    "minHeight": 240
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_1",
+                    "alt": "A detail from the independent collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_4",
+                    "alt": "A detail from the independent collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_5",
+                    "alt": "A detail from the independent collection"
                   }
-                }
-              }
-            },
-            {
-              "id": "products",
-              "type": "productGrid",
-              "props": {
-                "headline": "Good things, found again",
-                "source": "all",
-                "limit": 12
+                ]
               },
               "style": {
                 "columns": 3,
-                "gap": 20,
-                "paddingTop": 44,
-                "paddingBottom": 32
+                "gap": 18,
+                "aspectRatio": "3:4",
+                "paddingTop": 20,
+                "paddingBottom": 20,
+                "paddingLeft": 20,
+                "paddingRight": 20
               },
               "responsive": {
                 "mobile": {
@@ -240,41 +235,105 @@
               }
             },
             {
-              "id": "story",
+              "id": "archive-title",
               "type": "text",
               "props": {
-                "headline": "Behind the little things",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
+                "headline": "A little old soul. A lot of character.",
+                "text": "Good things, found again."
               },
               "style": {
+                "paddingTop": 28,
+                "paddingBottom": 28,
                 "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680
+                "fontSize": 30
               }
             },
             {
-              "id": "photos",
-              "type": "gallery",
+              "id": "archive-divider",
+              "type": "divider",
+              "props": {},
+              "style": {
+                "borderColor": "#C6A98F",
+                "marginTop": 8,
+                "marginBottom": 8
+              }
+            }
+          ]
+        },
+        {
+          "id": "archive-shop",
+          "type": "section",
+          "style": {},
+          "children": [
+            {
+              "id": "products",
+              "type": "productGrid",
               "props": {
-                "headline": "From the archive",
-                "images": [
-                  {
-                    "imageAssetId": "seed_hero_1",
-                    "alt": "Our studio collection"
-                  },
-                  {
-                    "imageAssetId": "seed_product_3",
-                    "alt": "A detail from our collection"
-                  }
-                ]
+                "headline": "New to the archive",
+                "source": "all",
+                "limit": 4
               },
               "style": {
                 "columns": 2,
-                "gap": 16,
-                "borderRadius": 12,
-                "paddingTop": 24,
+                "gap": 24,
+                "paddingTop": 32,
                 "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1,
+                    "gap": 14
+                  }
+                }
+              }
+            },
+            {
+              "id": "archive-notes",
+              "type": "columns",
+              "props": {},
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24,
+                "paddingBottom": 30
+              },
+              "children": [
+                {
+                  "id": "archive-story",
+                  "type": "text",
+                  "props": {
+                    "headline": "The story stays.",
+                    "text": "Collected slowly, with a soft spot for the beautifully imperfect."
+                  },
+                  "style": {
+                    "paddingTop": 24,
+                    "paddingBottom": 24
+                  }
+                },
+                {
+                  "id": "archive-care",
+                  "type": "text",
+                  "props": {
+                    "headline": "Keep good things going.",
+                    "text": "A second chapter for objects with a first story."
+                  },
+                  "style": {
+                    "paddingTop": 24,
+                    "paddingBottom": 24
+                  }
+                }
+              ],
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
+                  }
+                }
               }
             }
           ]
@@ -285,7 +344,7 @@
   {
     "id": "y2k-diary",
     "name": "Y2K Diary",
-    "description": "A playful corner of the internet.",
+    "description": "A two-column scrapbook with photo cards, colored notes and personal links.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -300,14 +359,31 @@
           "accent": "#8753CD",
           "muted": "#7C688E"
         },
-        "contentWidth": 1100,
+        "contentWidth": 920,
         "radius": 24
       },
       "sections": [
         {
-          "id": "main",
+          "id": "diary-header",
           "type": "section",
+          "style": {},
           "children": [
+            {
+              "id": "diary-status",
+              "type": "announcement",
+              "props": {
+                "text": "CURRENT MOOD: MAKING MY OWN LITTLE WORLD"
+              },
+              "style": {
+                "backgroundColor": "#EAD9FF",
+                "textColor": "#38234A",
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
+                "fontSize": 11,
+                "letterSpacing": 1.2
+              }
+            },
             {
               "id": "identity",
               "type": "profileHeader",
@@ -317,103 +393,178 @@
               },
               "style": {
                 "paddingTop": 24,
-                "paddingBottom": 24
+                "paddingBottom": 24,
+                "textAlign": "center",
+                "backgroundColor": "#FFFFFF",
+                "borderRadius": 24
               }
-            },
+            }
+          ]
+        },
+        {
+          "id": "diary-board",
+          "type": "section",
+          "style": {},
+          "children": [
             {
-              "id": "hero",
-              "type": "hero",
-              "props": {
-                "headline": "Welcome to my little universe.",
-                "subtitle": "A collection of little things that feel like you.",
-                "imageAssetId": "seed_hero_2",
-                "alt": "Independent creative studio collection",
-                "cta": {
-                  "label": "Explore the collection",
-                  "url": "#products"
-                }
-              },
+              "id": "diary-collage",
+              "type": "columns",
+              "props": {},
               "style": {
-                "backgroundColor": "#E9D8FC",
-                "fontSize": 54,
-                "minHeight": 320,
-                "borderRadius": 32,
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "textAlign": "center"
+                "columns": 2,
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24,
+                "paddingTop": 20
               },
+              "children": [
+                {
+                  "id": "diary-polaroid",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_hero_2",
+                    "alt": "Independent studio collection"
+                  },
+                  "style": {
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "aspectRatio": "3:4",
+                    "borderRadius": 20,
+                    "shadow": "soft"
+                  }
+                },
+                {
+                  "id": "diary-note",
+                  "type": "text",
+                  "props": {
+                    "headline": "Welcome to my little universe.",
+                    "text": "Made.\nFound.\nLoved."
+                  },
+                  "style": {
+                    "paddingTop": 26,
+                    "paddingBottom": 24,
+                    "backgroundColor": "#FBE6F2",
+                    "borderRadius": 24,
+                    "fontSize": 21,
+                    "paddingLeft": 18,
+                    "paddingRight": 18
+                  }
+                }
+              ],
               "responsive": {
                 "mobile": {
                   "style": {
-                    "fontSize": 30,
-                    "minHeight": 240
+                    "columns": 2,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
                   }
                 }
               }
             },
             {
-              "id": "story",
-              "type": "text",
-              "props": {
-                "headline": "A note from my world.",
-                "text": "A place for the things I make, the things I love, and a little bit of everything in between. Stay a while."
-              },
+              "id": "diary-second-row",
+              "type": "columns",
+              "props": {},
               "style": {
-                "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680,
-                "backgroundColor": "#FBE6F2",
-                "borderRadius": 28,
+                "columns": 2,
+                "gap": 24,
                 "paddingLeft": 24,
-                "paddingRight": 24
+                "paddingRight": 24,
+                "paddingTop": 16,
+                "paddingBottom": 16
+              },
+              "children": [
+                {
+                  "id": "diary-sticker",
+                  "type": "text",
+                  "props": {
+                    "headline": "Made of little obsessions."
+                  },
+                  "style": {
+                    "paddingTop": 24,
+                    "paddingBottom": 24,
+                    "backgroundColor": "#DED5FF",
+                    "borderRadius": 24,
+                    "fontSize": 20,
+                    "paddingLeft": 18,
+                    "paddingRight": 18
+                  }
+                },
+                {
+                  "id": "diary-detail",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_6",
+                    "alt": "Independent studio collection"
+                  },
+                  "style": {
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "aspectRatio": "4:3",
+                    "borderRadius": 24
+                  }
+                }
+              ],
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
+                  }
+                }
               }
-            },
+            }
+          ]
+        },
+        {
+          "id": "diary-shop",
+          "type": "section",
+          "style": {},
+          "children": [
             {
               "id": "products",
               "type": "productGrid",
               "props": {
                 "headline": "Currently obsessed with",
                 "source": "all",
-                "limit": 12
+                "limit": 6
               },
               "style": {
-                "columns": 3,
-                "gap": 20,
-                "paddingTop": 44,
+                "columns": 2,
+                "gap": 24,
+                "paddingTop": 32,
                 "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
                   "style": {
                     "columns": 2,
-                    "gap": 12
+                    "gap": 14
                   }
                 }
               }
             },
             {
-              "id": "photos",
-              "type": "gallery",
+              "id": "diary-links",
+              "type": "socialLinks",
               "props": {
-                "headline": "From our studio",
-                "images": [
+                "links": [
                   {
-                    "imageAssetId": "seed_hero_2",
-                    "alt": "Our studio collection"
+                    "label": "A note from me",
+                    "url": "#diary-note"
                   },
                   {
-                    "imageAssetId": "seed_product_6",
-                    "alt": "A detail from our collection"
+                    "label": "The latest finds",
+                    "url": "#products"
                   }
                 ]
               },
               "style": {
-                "columns": 2,
-                "gap": 16,
-                "borderRadius": 12,
-                "paddingTop": 24,
-                "paddingBottom": 32
+                "paddingTop": 20,
+                "paddingBottom": 30
               }
             }
           ]
@@ -424,7 +575,7 @@
   {
     "id": "dark-editorial",
     "name": "Dark Editorial",
-    "description": "Contrast with confidence.",
+    "description": "Oversized masthead, cinematic cover and an editorial side column.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -444,8 +595,9 @@
       },
       "sections": [
         {
-          "id": "main",
+          "id": "masthead",
           "type": "section",
+          "style": {},
           "children": [
             {
               "id": "identity",
@@ -464,69 +616,145 @@
               "type": "hero",
               "props": {
                 "headline": "Less ordinary. More you.",
-                "subtitle": "An independent edit of objects with presence.",
-                "imageAssetId": "seed_hero_3",
-                "alt": "Independent creative studio collection",
-                "cta": {
-                  "label": "Explore the collection",
-                  "url": "#products"
-                }
+                "subtitle": "THE INDEPENDENT EDIT / VOL. 01"
               },
               "style": {
-                "backgroundColor": "#30253C",
-                "fontSize": 60,
-                "minHeight": 320,
-                "borderRadius": 0,
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "textColor": "#F8F2FC"
+                "fontSize": 76,
+                "paddingTop": 32,
+                "paddingBottom": 32,
+                "textAlign": "center"
               },
               "responsive": {
                 "mobile": {
                   "style": {
-                    "fontSize": 30,
-                    "minHeight": 240
+                    "fontSize": 36,
+                    "paddingTop": 28,
+                    "paddingBottom": 28
                   }
                 }
               }
             },
             {
-              "id": "photos",
+              "id": "cover",
+              "type": "image",
+              "props": {
+                "imageAssetId": "seed_hero_3",
+                "alt": "Independent studio collection"
+              },
+              "style": {
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "aspectRatio": "16:9"
+              }
+            },
+            {
+              "id": "editorial-label",
+              "type": "announcement",
+              "props": {
+                "text": "OBJECTS OF INTENTION / SELECTED INDEPENDENTLY"
+              },
+              "style": {
+                "backgroundColor": "#D4B6FF",
+                "textColor": "#24182F",
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
+                "fontSize": 11,
+                "letterSpacing": 1.2
+              }
+            }
+          ]
+        },
+        {
+          "id": "editorial",
+          "type": "section",
+          "style": {},
+          "children": [
+            {
+              "id": "editorial-spread",
+              "type": "columns",
+              "props": {},
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24,
+                "paddingTop": 40,
+                "paddingBottom": 32
+              },
+              "children": [
+                {
+                  "id": "editor-note",
+                  "type": "text",
+                  "props": {
+                    "headline": "An eye for the unexpected.",
+                    "text": "An independent edit of objects with presence. Follow the details. Find your own point of view."
+                  },
+                  "style": {
+                    "paddingTop": 36,
+                    "paddingBottom": 24
+                  }
+                },
+                {
+                  "id": "products",
+                  "type": "productGrid",
+                  "props": {
+                    "headline": "The selected edit",
+                    "source": "all",
+                    "limit": 4
+                  },
+                  "style": {
+                    "columns": 2,
+                    "gap": 24,
+                    "paddingTop": 32,
+                    "paddingBottom": 32
+                  },
+                  "responsive": {
+                    "mobile": {
+                      "style": {
+                        "columns": 2,
+                        "gap": 14
+                      }
+                    }
+                  }
+                }
+              ],
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
+                  }
+                }
+              }
+            },
+            {
+              "id": "editorial-details",
               "type": "gallery",
               "props": {
-                "headline": "The editorial edit",
                 "images": [
                   {
-                    "imageAssetId": "seed_hero_3",
-                    "alt": "Our studio collection"
+                    "imageAssetId": "seed_product_9",
+                    "alt": "A detail from the independent collection"
                   },
                   {
-                    "imageAssetId": "seed_product_9",
-                    "alt": "A detail from our collection"
+                    "imageAssetId": "seed_product_10",
+                    "alt": "A detail from the independent collection"
+                  },
+                  {
+                    "imageAssetId": "seed_product_11",
+                    "alt": "A detail from the independent collection"
                   }
                 ]
               },
               "style": {
-                "columns": 2,
-                "gap": 16,
-                "borderRadius": 12,
-                "paddingTop": 24,
-                "paddingBottom": 32
-              }
-            },
-            {
-              "id": "products",
-              "type": "productGrid",
-              "props": {
-                "headline": "Selected objects",
-                "source": "all",
-                "limit": 12
-              },
-              "style": {
                 "columns": 3,
-                "gap": 20,
-                "paddingTop": 44,
-                "paddingBottom": 32
+                "gap": 18,
+                "aspectRatio": "1:1",
+                "paddingTop": 0,
+                "paddingBottom": 20
               },
               "responsive": {
                 "mobile": {
@@ -535,20 +763,6 @@
                     "gap": 12
                   }
                 }
-              }
-            },
-            {
-              "id": "story",
-              "type": "text",
-              "props": {
-                "headline": "Behind the little things",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
-              },
-              "style": {
-                "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680
               }
             }
           ]
@@ -559,7 +773,7 @@
   {
     "id": "handmade-market",
     "name": "Handmade Market",
-    "description": "For the things made by hand.",
+    "description": "A maker letter, paired portrait photos and a worktable story.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -574,29 +788,15 @@
           "accent": "#BB694A",
           "muted": "#836E60"
         },
-        "contentWidth": 1100,
+        "contentWidth": 1080,
         "radius": 16
       },
       "sections": [
         {
-          "id": "main",
+          "id": "maker-letter",
           "type": "section",
+          "style": {},
           "children": [
-            {
-              "id": "announce",
-              "type": "announcement",
-              "props": {
-                "text": "Small batches. Good intentions. Made in Malaysia."
-              },
-              "style": {
-                "backgroundColor": "#BB694A",
-                "textColor": "#FFFFFF",
-                "paddingTop": 12,
-                "paddingBottom": 12,
-                "textAlign": "center",
-                "fontSize": 13
-              }
-            },
             {
               "id": "identity",
               "type": "profileHeader",
@@ -614,94 +814,173 @@
               "type": "hero",
               "props": {
                 "headline": "Made slowly. Loved for a long time.",
-                "subtitle": "A collection of little things that feel like you.",
-                "imageAssetId": "seed_hero_4",
-                "alt": "Independent creative studio collection",
-                "cta": {
-                  "label": "Explore the collection",
-                  "url": "#products"
-                }
+                "subtitle": "A letter from the hands behind the work."
               },
               "style": {
-                "backgroundColor": "#F2DECA",
-                "fontSize": 52,
-                "minHeight": 320,
-                "borderRadius": 24,
-                "paddingTop": 48,
-                "paddingBottom": 48
+                "fontSize": 58,
+                "paddingTop": 42,
+                "paddingBottom": 42,
+                "textAlign": "left",
+                "backgroundColor": "#F2DECA"
               },
               "responsive": {
                 "mobile": {
                   "style": {
-                    "fontSize": 30,
-                    "minHeight": 240
+                    "fontSize": 36,
+                    "paddingTop": 28,
+                    "paddingBottom": 28
                   }
                 }
               }
             },
             {
+              "id": "maker-photo-pair",
+              "type": "columns",
+              "props": {},
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24,
+                "paddingTop": 24,
+                "paddingBottom": 24
+              },
+              "children": [
+                {
+                  "id": "maker-portrait",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_hero_4",
+                    "alt": "Independent studio collection"
+                  },
+                  "style": {
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "aspectRatio": "3:4",
+                    "borderRadius": 24
+                  }
+                },
+                {
+                  "id": "maker-process",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_14",
+                    "alt": "Independent studio collection"
+                  },
+                  "style": {
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "aspectRatio": "3:4",
+                    "borderRadius": 24
+                  }
+                }
+              ],
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
+                  }
+                }
+              }
+            },
+            {
+              "id": "maker-promise",
+              "type": "announcement",
+              "props": {
+                "text": "SMALL BATCHES / HONEST MATERIALS / HUMAN HANDS"
+              },
+              "style": {
+                "backgroundColor": "#F1DFCA",
+                "textColor": "#493128",
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
+                "fontSize": 11,
+                "letterSpacing": 1.2
+              }
+            }
+          ]
+        },
+        {
+          "id": "maker-table",
+          "type": "section",
+          "style": {},
+          "children": [
+            {
               "id": "products",
               "type": "productGrid",
               "props": {
-                "headline": "Made slowly. Chosen carefully.",
+                "headline": "From our worktable",
                 "source": "all",
-                "limit": 12
+                "limit": 6
               },
               "style": {
                 "columns": 3,
-                "gap": 20,
-                "paddingTop": 44,
+                "gap": 24,
+                "paddingTop": 32,
                 "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
                   "style": {
                     "columns": 2,
-                    "gap": 12
+                    "gap": 14
                   }
                 }
               }
             },
             {
-              "id": "story",
-              "type": "text",
-              "props": {
-                "headline": "Meet the hands behind the work.",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
-              },
-              "style": {
-                "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680,
-                "backgroundColor": "#F8EADB",
-                "borderRadius": 24,
-                "paddingLeft": 24,
-                "paddingRight": 24
-              }
-            },
-            {
-              "id": "photos",
-              "type": "gallery",
-              "props": {
-                "headline": "From our studio",
-                "images": [
-                  {
-                    "imageAssetId": "seed_hero_4",
-                    "alt": "Our studio collection"
-                  },
-                  {
-                    "imageAssetId": "seed_product_12",
-                    "alt": "A detail from our collection"
-                  }
-                ]
-              },
+              "id": "maker-story",
+              "type": "columns",
+              "props": {},
               "style": {
                 "columns": 2,
-                "gap": 16,
-                "borderRadius": 12,
-                "paddingTop": 24,
-                "paddingBottom": 32
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24,
+                "paddingTop": 30,
+                "paddingBottom": 30
+              },
+              "children": [
+                {
+                  "id": "worktable-detail",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_13",
+                    "alt": "Independent studio collection"
+                  },
+                  "style": {
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "aspectRatio": "1:1",
+                    "borderRadius": 20
+                  }
+                },
+                {
+                  "id": "maker-letter-text",
+                  "type": "text",
+                  "props": {
+                    "headline": "Meet the maker.",
+                    "text": "Every piece begins as a small idea, takes shape by hand, and finds its way into your everyday. Thank you for being part of its story."
+                  },
+                  "style": {
+                    "paddingTop": 24,
+                    "paddingBottom": 24
+                  }
+                }
+              ],
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
+                  }
+                }
               }
             }
           ]
@@ -712,7 +991,7 @@
   {
     "id": "streetwear-drop",
     "name": "Streetwear Drop",
-    "description": "Your next drop starts here.",
+    "description": "Product-first drop, oversized type, full-width campaign and sharp geometry.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -727,27 +1006,161 @@
           "accent": "#5F35C9",
           "muted": "#70706B"
         },
-        "contentWidth": 1100,
+        "contentWidth": 1280,
         "radius": 0
       },
       "sections": [
         {
-          "id": "main",
+          "id": "drop-header",
           "type": "section",
+          "style": {},
           "children": [
             {
-              "id": "drop-note",
+              "id": "drop-label",
               "type": "announcement",
               "props": {
-                "text": "THE INDEPENDENT EDIT / EXPLORE THE COLLECTION"
+                "text": "INDEPENDENT STYLE / THE CURRENT ROTATION"
               },
               "style": {
                 "backgroundColor": "#171717",
                 "textColor": "#FFFFFF",
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
                 "fontSize": 11,
-                "paddingTop": 14,
-                "paddingBottom": 14,
-                "textAlign": "center"
+                "letterSpacing": 1.2
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "YOUR WORLD. YOUR RULES.",
+                "subtitle": "THE INDEPENDENT COLLECTION"
+              },
+              "style": {
+                "fontSize": 88,
+                "paddingTop": 26,
+                "paddingBottom": 26,
+                "fontFamily": "Arial",
+                "fontWeight": 800,
+                "backgroundColor": "#DDD4F5",
+                "letterSpacing": -2
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 36,
+                    "paddingTop": 28,
+                    "paddingBottom": 28
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "SHOP THE DROP",
+                "source": "all",
+                "limit": 3
+              },
+              "style": {
+                "columns": 3,
+                "gap": 24,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1,
+                    "gap": 14
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "drop-campaign",
+          "type": "section",
+          "style": {},
+          "children": [
+            {
+              "id": "campaign-cover",
+              "type": "image",
+              "props": {
+                "imageAssetId": "seed_hero_5",
+                "alt": "Independent studio collection"
+              },
+              "style": {
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "aspectRatio": "16:9"
+              }
+            },
+            {
+              "id": "campaign-spread",
+              "type": "columns",
+              "props": {},
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24,
+                "paddingTop": 20
+              },
+              "children": [
+                {
+                  "id": "campaign-detail",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_15",
+                    "alt": "Independent studio collection"
+                  },
+                  "style": {
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "aspectRatio": "3:4"
+                  }
+                },
+                {
+                  "id": "campaign-title",
+                  "type": "text",
+                  "props": {
+                    "headline": "NO PERMISSION NEEDED.",
+                    "text": "Built for your everyday rotation."
+                  },
+                  "style": {
+                    "paddingTop": 24,
+                    "paddingBottom": 24,
+                    "fontSize": 34,
+                    "fontWeight": 800
+                  }
+                }
+              ],
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
+                  }
+                }
+              }
+            },
+            {
+              "id": "drop-button",
+              "type": "button",
+              "props": {
+                "label": "Explore the whole collection",
+                "url": "#products"
+              },
+              "style": {
+                "paddingTop": 16,
+                "paddingBottom": 28
               }
             },
             {
@@ -761,103 +1174,6 @@
                 "paddingTop": 24,
                 "paddingBottom": 24
               }
-            },
-            {
-              "id": "hero",
-              "type": "hero",
-              "props": {
-                "headline": "YOUR WORLD. YOUR RULES.",
-                "subtitle": "Independent style. No permission needed.",
-                "imageAssetId": "seed_hero_5",
-                "alt": "Independent creative studio collection",
-                "cta": {
-                  "label": "Explore the collection",
-                  "url": "#products"
-                }
-              },
-              "style": {
-                "backgroundColor": "#DDD4F5",
-                "fontSize": 72,
-                "minHeight": 320,
-                "borderRadius": 0,
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "uppercase": true,
-                "fontFamily": "Arial",
-                "fontWeight": 800,
-                "letterSpacing": -2
-              },
-              "responsive": {
-                "mobile": {
-                  "style": {
-                    "fontSize": 30,
-                    "minHeight": 240
-                  }
-                }
-              }
-            },
-            {
-              "id": "products",
-              "type": "productGrid",
-              "props": {
-                "headline": "THE CURRENT ROTATION",
-                "source": "all",
-                "limit": 12
-              },
-              "style": {
-                "columns": 3,
-                "gap": 20,
-                "paddingTop": 44,
-                "paddingBottom": 32,
-                "fontWeight": 800,
-                "fontSize": 28
-              },
-              "responsive": {
-                "mobile": {
-                  "style": {
-                    "columns": 2,
-                    "gap": 12
-                  }
-                }
-              }
-            },
-            {
-              "id": "story",
-              "type": "text",
-              "props": {
-                "headline": "Behind the little things",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
-              },
-              "style": {
-                "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680
-              }
-            },
-            {
-              "id": "photos",
-              "type": "gallery",
-              "props": {
-                "headline": "From our studio",
-                "images": [
-                  {
-                    "imageAssetId": "seed_hero_5",
-                    "alt": "Our studio collection"
-                  },
-                  {
-                    "imageAssetId": "seed_product_15",
-                    "alt": "A detail from our collection"
-                  }
-                ]
-              },
-              "style": {
-                "columns": 2,
-                "gap": 16,
-                "borderRadius": 12,
-                "paddingTop": 24,
-                "paddingBottom": 32
-              }
             }
           ]
         }
@@ -867,7 +1183,7 @@
   {
     "id": "botanical",
     "name": "Botanical",
-    "description": "Rooted in the natural world.",
+    "description": "Image-first sanctuary, a two-part story and one product in the spotlight.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -882,29 +1198,15 @@
           "accent": "#55784D",
           "muted": "#6B7E63"
         },
-        "contentWidth": 1100,
+        "contentWidth": 980,
         "radius": 12
       },
       "sections": [
         {
-          "id": "main",
+          "id": "garden-intro",
           "type": "section",
+          "style": {},
           "children": [
-            {
-              "id": "announce",
-              "type": "announcement",
-              "props": {
-                "text": "Small batches. Good intentions. Made in Malaysia."
-              },
-              "style": {
-                "backgroundColor": "#55784D",
-                "textColor": "#FFFFFF",
-                "paddingTop": 12,
-                "paddingBottom": 12,
-                "textAlign": "center",
-                "fontSize": 13
-              }
-            },
             {
               "id": "identity",
               "type": "profileHeader",
@@ -918,47 +1220,97 @@
               }
             },
             {
-              "id": "hero",
-              "type": "hero",
+              "id": "garden-cover",
+              "type": "image",
               "props": {
-                "headline": "A slower kind of beautiful.",
-                "subtitle": "A collection of little things that feel like you.",
                 "imageAssetId": "seed_hero_6",
-                "alt": "Independent creative studio collection",
-                "cta": {
-                  "label": "Explore the collection",
-                  "url": "#products"
-                }
+                "alt": "Independent studio collection"
               },
               "style": {
-                "backgroundColor": "#E1EAD8",
-                "fontSize": 52,
-                "minHeight": 320,
-                "borderRadius": 30,
-                "paddingTop": 48,
-                "paddingBottom": 48
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "aspectRatio": "16:9",
+                "borderRadius": 64
+              }
+            },
+            {
+              "id": "garden-story",
+              "type": "columns",
+              "props": {},
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24
               },
+              "children": [
+                {
+                  "id": "garden-title",
+                  "type": "text",
+                  "props": {
+                    "headline": "A slower kind of beautiful."
+                  },
+                  "style": {
+                    "paddingTop": 32,
+                    "paddingBottom": 24,
+                    "fontSize": 42
+                  }
+                },
+                {
+                  "id": "garden-note",
+                  "type": "text",
+                  "props": {
+                    "headline": "Rooted in the everyday.",
+                    "text": "Plant-led rituals, natural materials, and space to come back to yourself."
+                  },
+                  "style": {
+                    "paddingTop": 32,
+                    "paddingBottom": 24
+                  }
+                }
+              ],
               "responsive": {
                 "mobile": {
                   "style": {
-                    "fontSize": 30,
-                    "minHeight": 240
+                    "columns": 1,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
                   }
                 }
               }
             },
             {
-              "id": "story",
-              "type": "text",
+              "id": "garden-button",
+              "type": "button",
               "props": {
-                "headline": "Rooted in the everyday.",
-                "text": "Thoughtful objects, natural materials, and small rituals that bring us back to ourselves. Make a little room for a slower pace."
+                "label": "Find your daily ritual",
+                "url": "#products"
               },
               "style": {
-                "textAlign": "left",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 720
+                "paddingTop": 16,
+                "paddingBottom": 28
+              }
+            }
+          ]
+        },
+        {
+          "id": "garden-edit",
+          "type": "section",
+          "style": {},
+          "children": [
+            {
+              "id": "botanical-spotlight",
+              "type": "featuredProduct",
+              "props": {
+                "headline": "One small daily ritual",
+                "productId": ""
+              },
+              "style": {
+                "paddingTop": 30,
+                "paddingBottom": 30,
+                "backgroundColor": "#E1EAD8",
+                "borderRadius": 28
               }
             },
             {
@@ -967,45 +1319,37 @@
               "props": {
                 "headline": "Naturally good things",
                 "source": "all",
-                "limit": 12
+                "limit": 6
               },
               "style": {
                 "columns": 3,
-                "gap": 20,
-                "paddingTop": 44,
+                "gap": 24,
+                "paddingTop": 32,
                 "paddingBottom": 32
               },
               "responsive": {
                 "mobile": {
                   "style": {
                     "columns": 2,
-                    "gap": 12
+                    "gap": 14
                   }
                 }
               }
             },
             {
-              "id": "photos",
-              "type": "gallery",
+              "id": "garden-footer",
+              "type": "announcement",
               "props": {
-                "headline": "From our studio",
-                "images": [
-                  {
-                    "imageAssetId": "seed_hero_6",
-                    "alt": "Our studio collection"
-                  },
-                  {
-                    "imageAssetId": "seed_product_18",
-                    "alt": "A detail from our collection"
-                  }
-                ]
+                "text": "GROW SLOWLY. CHOOSE THOUGHTFULLY."
               },
               "style": {
-                "columns": 2,
-                "gap": 16,
-                "borderRadius": 12,
-                "paddingTop": 24,
-                "paddingBottom": 32
+                "backgroundColor": "#DFE8D5",
+                "textColor": "#2F432E",
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
+                "fontSize": 11,
+                "letterSpacing": 1.2
               }
             }
           ]
@@ -1016,7 +1360,7 @@
   {
     "id": "art-gallery",
     "name": "Art Gallery",
-    "description": "A canvas for your point of view.",
+    "description": "An asymmetric exhibition cover, paired art wall and curator captions.",
     "document": {
       "schemaVersion": 1,
       "shopId": "template",
@@ -1031,13 +1375,14 @@
           "accent": "#8D4B7B",
           "muted": "#8C7C87"
         },
-        "contentWidth": 1100,
+        "contentWidth": 1200,
         "radius": 4
       },
       "sections": [
         {
-          "id": "main",
+          "id": "gallery-entry",
           "type": "section",
+          "style": {},
           "children": [
             {
               "id": "identity",
@@ -1052,92 +1397,172 @@
               }
             },
             {
-              "id": "hero",
-              "type": "hero",
-              "props": {
-                "headline": "Objects with a point of view.",
-                "subtitle": "A collection of little things that feel like you.",
-                "imageAssetId": "seed_hero_7",
-                "alt": "Independent creative studio collection",
-                "cta": {
-                  "label": "Explore the collection",
-                  "url": "#products"
-                }
-              },
+              "id": "exhibition-cover",
+              "type": "columns",
+              "props": {},
               "style": {
-                "backgroundColor": "#F3E8EE",
-                "fontSize": 56,
-                "minHeight": 320,
-                "borderRadius": 4,
-                "paddingTop": 48,
-                "paddingBottom": 48
+                "columns": 2,
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24,
+                "paddingBottom": 32
               },
+              "children": [
+                {
+                  "id": "exhibition-title",
+                  "type": "text",
+                  "props": {
+                    "headline": "Objects with a point of view.",
+                    "text": "AN INDEPENDENT EXHIBITION / NO. 01"
+                  },
+                  "style": {
+                    "paddingTop": 64,
+                    "paddingBottom": 24,
+                    "fontSize": 45
+                  }
+                },
+                {
+                  "id": "exhibition-cover-art",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_hero_7",
+                    "alt": "Independent studio collection"
+                  },
+                  "style": {
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "aspectRatio": "3:4"
+                  }
+                }
+              ],
               "responsive": {
                 "mobile": {
                   "style": {
-                    "fontSize": 30,
-                    "minHeight": 240
+                    "columns": 1,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
                   }
                 }
               }
-            },
+            }
+          ]
+        },
+        {
+          "id": "gallery-wall",
+          "type": "section",
+          "style": {},
+          "children": [
             {
-              "id": "photos",
+              "id": "gallery-pair",
               "type": "gallery",
               "props": {
-                "headline": "In the studio",
                 "images": [
                   {
-                    "imageAssetId": "seed_hero_7",
-                    "alt": "Our studio collection"
+                    "imageAssetId": "seed_product_21",
+                    "alt": "A detail from the independent collection"
                   },
                   {
-                    "imageAssetId": "seed_product_21",
-                    "alt": "A detail from our collection"
+                    "imageAssetId": "seed_product_22",
+                    "alt": "A detail from the independent collection"
                   }
                 ]
               },
               "style": {
                 "columns": 2,
-                "gap": 24,
-                "borderRadius": 0,
-                "paddingTop": 24,
-                "paddingBottom": 32
-              }
-            },
-            {
-              "id": "story",
-              "type": "text",
-              "props": {
-                "headline": "A practice of paying attention.",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia."
-              },
-              "style": {
-                "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680
-              }
-            },
-            {
-              "id": "products",
-              "type": "productGrid",
-              "props": {
-                "headline": "The latest little things",
-                "source": "all",
-                "limit": 12
-              },
-              "style": {
-                "columns": 3,
-                "gap": 20,
-                "paddingTop": 44,
-                "paddingBottom": 32
+                "gap": 18,
+                "aspectRatio": "3:4",
+                "paddingTop": 20,
+                "paddingBottom": 20,
+                "paddingLeft": 32,
+                "paddingRight": 32
               },
               "responsive": {
                 "mobile": {
                   "style": {
                     "columns": 2,
                     "gap": 12
+                  }
+                }
+              }
+            },
+            {
+              "id": "gallery-caption",
+              "type": "columns",
+              "props": {},
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingLeft": 24,
+                "paddingRight": 24,
+                "paddingBottom": 24
+              },
+              "children": [
+                {
+                  "id": "gallery-number",
+                  "type": "text",
+                  "props": {
+                    "headline": "01 / In the studio."
+                  },
+                  "style": {
+                    "paddingTop": 24,
+                    "paddingBottom": 24,
+                    "fontSize": 21
+                  }
+                },
+                {
+                  "id": "curator-note",
+                  "type": "text",
+                  "props": {
+                    "headline": "A practice of paying attention.",
+                    "text": "Form, material and the spaces in between. An exhibition of everyday things, seen a little differently."
+                  },
+                  "style": {
+                    "paddingTop": 24,
+                    "paddingBottom": 24
+                  }
+                }
+              ],
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1,
+                    "gap": 14,
+                    "paddingLeft": 16,
+                    "paddingRight": 16
+                  }
+                }
+              }
+            },
+            {
+              "id": "gallery-rule",
+              "type": "divider",
+              "props": {},
+              "style": {
+                "borderColor": "#D9C9D4",
+                "marginTop": 16,
+                "marginBottom": 16
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "Collect a piece of the story",
+                "source": "all",
+                "limit": 6
+              },
+              "style": {
+                "columns": 4,
+                "gap": 24,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 14
                   }
                 }
               }

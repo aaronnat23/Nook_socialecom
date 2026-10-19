@@ -22,7 +22,7 @@ Open: real Supabase email confirmation/recovery and account deletion, full devic
 
 Implemented a strict versioned JSON Schema, thirteen block types, safe links, bounded style/layout controls, shared responsive rules, eight themes and public server-rendered shop/product/profile pages. Web and native use the same published documents and separate platform renderers.
 
-Verification: 14 schema/renderer tests, invalid markup/link/structure API coverage, responsive web overflow checks and screenshots at 320, 390, 768 and 1280 pixels; successful iOS bundle export.
+Verification: 17 schema/renderer tests, invalid markup/link/structure API coverage, responsive web overflow checks and screenshots at 320, 390, 768 and 1280 pixels; successful iOS bundle export.
 
 Verification now also includes the customized Minimal Studio storefront on the physical iPhone in editor and buyer modes. All-theme device inspection remains open. Android device inspection is deferred. Native uses platform typography and does not promise identical pixels to the browser.
 
@@ -56,11 +56,11 @@ Implemented the lilac visual system, locally bundled fonts/licenses, responsive 
 
 Latest completed checks:
 
-- Schema/renderer: **14 passed**, including heading-font override regression.
+- Schema/renderer: **17 passed**, including heading-font override regression.
 - PostgreSQL API integration: **18 passed**; one upstream Starlette test-client deprecation warning.
 - TypeScript: **6 packages passed**. Python: **12 source files passed**, Ruff passed.
 - Production web build: **passed**.
-- Desktop browser regression: **10 passed** against the production build, including template preview/application/backup/undo, collection editing/focus restoration, editor recovery, heading-font persistence and sandbox checkout/refund. The final focused template check also passed after contrast refinements, including a gallery accessibility scan with zero violations. No mobile emulation was used in these runs.
+- Desktop browser regression: **11 passed** against the production build, including template preview/application/backup/undo, collection editing/focus restoration, editor recovery, heading-font persistence and sandbox checkout/refund. The final focused template check also passed after contrast refinements, including a gallery accessibility scan with zero violations. No mobile emulation was used in these runs.
 - iOS bundle export: **passed**, including the latest native storefront changes.
 - SDK 57 upgrade: **21/21 Expo Doctor checks passed**, Expo dependency check passed, no pnpm peer dependency issues; strict TypeScript and iOS bundle export passed after aligning native animation/worklet peers.
 - Migration upgrade/downgrade/upgrade: **passed**, 17 tables with RLS.
@@ -71,3 +71,5 @@ Physical iPhone smoke testing is complete for the core flows recorded in [IPHONE
 The subsequent [design refresh](DESIGN_REFRESH.md) adds polished shared sheets, motion, revised Discover/My Space layouts and eight differentiated templates with full previews. Actual iPhone checks verified template application/backup/undo, block add/undo and the new editor/product/collection sheets. The final draft matches the public lilac design.
 
 Pilot completion is blocked on verification and the remaining work listed in [PILOT_READINESS.md](PILOT_READINESS.md), including signed installable staging builds, real-device QA, accessibility, performance/security reviews and hosted deployment. M6 is not complete.
+
+The template layout revision replaces generic artwork with actual scaled document previews and eight different structures. Native mobile grids and direct nested-card editing are verified on the physical iPhone; browser coverage checks all eight previews and nested keyboard selection. See [design refresh](DESIGN_REFRESH.md).

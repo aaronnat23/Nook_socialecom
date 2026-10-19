@@ -1,54 +1,55 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowUpRight, Check, Sparkles, X } from 'lucide-react';
-import { themes, templateDetails } from '@lilac/schema';
+import { themes, templateDetails, personalizeTemplate } from '@lilac/schema';
 import type { Product, Shop } from '@lilac/api-client';
 import { useModal } from '@/lib/use-modal';
 import { Storefront } from './storefront';
 
 type Theme = (typeof themes)[number];
-export function TemplateArtwork({ theme }: { theme: Theme }) {
-  const { colors, fontHeading } = theme.document.theme;
-  const hero = theme.document.sections.flatMap((s) => s.children).find((b) => b.type === 'hero')!;
+export function TemplateArtwork({
+  theme,
+  shop,
+  products,
+}: {
+  theme: Theme;
+  shop: Shop;
+  products: Product[];
+}) {
+  const frame = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(280);
+  useEffect(() => {
+    if (!frame.current) return;
+    const observer = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    observer.observe(frame.current);
+    return () => observer.disconnect();
+  }, []);
+  const published = products.filter((p) => p.status === 'published');
+  const document = personalizeTemplate(
+    theme.document,
+    shop,
+    published.map((p) => p.id),
+  );
   return (
     <div
-      className={`template-art template-art-${theme.id}`}
-      style={{ background: colors.background, color: colors.text }}
+      ref={frame}
+      className="template-art template-real-art"
+      style={{ background: theme.document.theme.colors.background }}
       aria-hidden="true"
+      inert
     >
-      <div className="template-mini-nav">
-        <b>{theme.name.toLowerCase()}.</b>
-        <span style={{ background: colors.accent }} />
-      </div>
       <div
-        className="template-mini-hero"
         style={{
-          background: hero.style?.backgroundColor || colors.surface,
-          borderRadius: Math.min(theme.document.theme.radius, 18),
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: 1000,
+          transform: `scale(${width / 1000})`,
+          transformOrigin: 'left top',
         }}
       >
-        <strong style={{ fontFamily: fontHeading === 'Inter' ? 'var(--font)' : fontHeading }}>
-          {hero.props.headline}
-        </strong>
-        <img
-          src={`/images/${templateDetails[theme.id].cover}.jpg`}
-          alt=""
-          style={{ borderRadius: Math.min(theme.document.theme.radius, 12) }}
-        />
-        <span style={{ background: colors.accent }} />
-      </div>
-      <div className="template-mini-grid">
-        {[0, 1, 2].map((n) => (
-          <span
-            key={n}
-            style={{
-              background: `${colors.accent}16`,
-              borderColor: `${colors.accent}40`,
-              borderRadius: Math.min(theme.document.theme.radius, 7),
-            }}
-          />
-        ))}
+        <Storefront document={document} shop={shop} products={published} width={1000} thumbnail />
       </div>
     </div>
   );
@@ -70,7 +71,7 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
           <h2>
             Find your kind of <em>space.</em>
           </h2>
-          <p>Beautiful starting points. Make every detail yours.</p>
+          <p>Different layouts. Every block is yours to customize.</p>
         </div>
         <button
           className="button outline"
@@ -84,7 +85,16 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
       </div>
       <div className="template-featured">
         {featured.map((t) => (
-          <button
+          <div
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setSelected(t.id);
+                setOpen(true);
+              }
+            }}
             className="template-design-card"
             key={t.id}
             aria-label={`Preview ${t.name} template`}
@@ -93,7 +103,7 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
               setOpen(true);
             }}
           >
-            <TemplateArtwork theme={t} />
+            <TemplateArtwork theme={t} shop={shop} products={products} />
             <div className="template-design-caption">
               <span className="eyebrow">{templateDetails[t.id].mood}</span>
               <div>
@@ -114,7 +124,7 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
                 <span>Preview design</span>
               </div>
             </div>
-          </button>
+          </div>
         ))}
       </div>
       {open && (
@@ -187,7 +197,11 @@ function TemplateDialog({
               </div>
               <div className="template-live-preview" inert aria-hidden="true">
                 <Storefront
-                  document={theme.document}
+                  document={personalizeTemplate(
+                    theme.document,
+                    shop,
+                    products.filter((p) => p.status === 'published').map((p) => p.id),
+                  )}
                   shop={shop}
                   products={products.filter((p) => p.status === 'published')}
                 />
@@ -196,18 +210,26 @@ function TemplateDialog({
           ) : (
             <div className="template-browser-grid">
               {themes.map((t) => (
-                <button
+                <div
                   key={t.id}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      select(t.id);
+                    }
+                  }}
                   className="template-design-card"
                   aria-label={`Preview ${t.name} template`}
                   onClick={() => select(t.id)}
                 >
-                  <TemplateArtwork theme={t} />
+                  <TemplateArtwork theme={t} shop={shop} products={products} />
                   <div className="template-design-caption">
                     <h3>{t.name}</h3>
                     <p>{t.description}</p>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           )}

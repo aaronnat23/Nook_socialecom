@@ -1,9 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { themes, validateDocument, makeBlock } from '../packages/storefront-schema/src/index';
+import {
+  themes,
+  validateDocument,
+  makeBlock,
+  personalizeTemplate,
+  type Block,
+} from '../packages/storefront-schema/src/index';
 import {
   resolveStyle,
   resolveHeadingFont,
   moveBlock,
+  resolveColumns,
 } from '../packages/storefront-renderer/src/index';
 describe('shared storefront contract', () => {
   it.each(themes)('validates $name on both platform contracts', (t) =>
@@ -57,5 +64,40 @@ describe('shared storefront contract', () => {
   });
   it('uses narrow-screen single-column defaults', () => {
     expect(resolveStyle(makeBlock('productGrid'), themes[0].document.theme, 320).columns).toBe(1);
+  });
+  it('offers eight structurally different templates independent of color and content', () => {
+    const structure = (blocks: Block[]): unknown[] =>
+      blocks.map((b) => ({
+        type: b.type,
+        columns: b.style?.columns,
+        mobileColumns: b.responsive?.mobile?.style?.columns,
+        children: structure(b.children || []),
+      }));
+    const layouts = themes.map((t) =>
+      JSON.stringify(t.document.sections.map((s) => structure(s.children))),
+    );
+    expect(new Set(layouts).size).toBe(8);
+    expect(themes.filter((t) => t.document.sections.length > 1).length).toBeGreaterThanOrEqual(6);
+  });
+  it('personalizes nested profiles and product spotlights without changing the source', () => {
+    const source = structuredClone(themes.find((t) => t.id === 'botanical')!.document);
+    const before = JSON.stringify(source);
+    const doc = personalizeTemplate(
+      source,
+      { id: 'shop-local', name: 'My studio', bio: 'Made here.' },
+      ['product-local'],
+    );
+    expect(doc.shopId).toBe('shop-local');
+    expect(doc.sections[0].children[0].props.headline).toBe('My studio');
+    expect(doc.sections[1].children[0].props.productId).toBe('product-local');
+    expect(JSON.stringify(source)).toBe(before);
+  });
+  it('supports explicit mobile column layouts while stacking default groups', () => {
+    const group = makeBlock('columns');
+    group.style = { columns: 2 };
+    expect(resolveColumns(group, themes[0].document.theme, 390)).toBe(1);
+    group.responsive = { mobile: { style: { columns: 2 } } };
+    expect(resolveColumns(group, themes[0].document.theme, 390)).toBe(2);
+    expect(resolveColumns(group, themes[0].document.theme, 1280)).toBe(2);
   });
 });
