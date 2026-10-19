@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-19",
+  "device": "Physical iPhone via iPhone Mirroring",
+  "client": "Expo Go SDK 57",
+  "checks": {
+    "demoSignIn": "passed",
+    "threeTabs": "passed",
+    "heroTextFontSizeBackgroundAutosave": "passed",
+    "publishAndPublicBuyerView": "passed",
+    "variantPriceMYR73": "passed",
+    "sandboxCheckoutMYR81": "passed",
+    "refundAndInventoryRestored": "passed",
+    "nativeProductEdit": "passed",
+    "nativeCollectionReorder": "passed",
+    "nativeBlockReorderUndoRedoPreview": "passed",
+    "restoreEarlierVersionAsDraftPublicUnchanged": "passed",
+    "secureSessionAndSettingsSurviveAppReload": "passed",
+    "restoredLatestVersionAsWorkingDraft": "passed"
+  },
+  "hero": {
+    "headline": "Made for little everyday rituals.",
+    "style": {
+      "fontSize": 46,
+      "minHeight": 320,
+      "fontFamily": "Arial",
+      "paddingTop": 32,
+      "borderRadius": 12,
+      "paddingBottom": 32,
+      "backgroundColor": "#C7ADE5"
+    }
+  },
+  "collectionOrder": [
+    "Cloud ceramic mug",
+    "Quiet corner table lamp",
+    "The everyday vessel"
+  ],
+  "sandboxOrder": {
+    "id": "d28c0d34-12dd-4cd3-92b2-444db7e6b32e",
+    "state": "refunded",
+    "total_minor": 8100,
+    "currency": "MYR"
+  },
+  "publishedVersion": {
+    "id": "909a7a28-4ae4-409e-beee-0b563edec6ed",
+    "versionNo": 16,
+    "note": "Published from the native editor",
+    "created_at": "2026-10-19T16:23:25.255915+08:00",
+    "checksum": "d0a9483e8b0c5c5ec72b38ff431dc28926b55619259708b77205e1d240160b6c"
+  },
+  "finalPresentationRestoredFromVersion": 16,
+  "finalPublication": {
+    "versionId": "8df10689-b00e-4608-a7c3-2bde0efd7413",
+    "versionNo": 20,
+    "publishedAt": "2026-10-19T08:51:35.091906+00:00"
+  }
+}

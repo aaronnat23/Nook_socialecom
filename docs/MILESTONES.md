@@ -14,7 +14,7 @@ Open: dedicated Supabase credentials and provider flows, remote CI, Docker execu
 
 Implemented registration/sign-in/sign-out/session refresh, profile and shop settings, personal spaces, sandbox seller enablement, and exactly Discover, My Space and Settings navigation destinations. Nested seller, cart and order screens retain those destinations. Profile edits no longer change a shop's separate display name.
 
-Verification: API authentication/revocation/ownership tests; browser profile/favorite flow; earlier native iOS Simulator sign-in/navigation walkthrough. The simulator walkthrough predates the physical-device-only testing request and does not count as physical iPhone evidence.
+Verification: API authentication/revocation/ownership tests; browser profile/favorite flow; physical iPhone sign-in, all three navigation destinations and persisted session/settings after app reload. See [IPHONE_QA.md](IPHONE_QA.md).
 
 Open: real Supabase email confirmation/recovery and account deletion, full device screen-reader and large-type coverage.
 
@@ -22,17 +22,17 @@ Open: real Supabase email confirmation/recovery and account deletion, full devic
 
 Implemented a strict versioned JSON Schema, thirteen block types, safe links, bounded style/layout controls, shared responsive rules, eight themes and public server-rendered shop/product/profile pages. Web and native use the same published documents and separate platform renderers.
 
-Verification: 13 schema/renderer tests, invalid markup/link/structure API coverage, responsive web overflow checks and screenshots at 320, 390, 768 and 1280 pixels; successful iOS bundle export.
+Verification: 14 schema/renderer tests, invalid markup/link/structure API coverage, responsive web overflow checks and screenshots at 320, 390, 768 and 1280 pixels; successful iOS bundle export.
 
-Open: all-theme visual inspection on the connected physical iPhone. Android device inspection is deferred. Native uses platform typography and does not promise identical pixels to the browser.
+Verification now also includes the customized Minimal Studio storefront on the physical iPhone in editor and buyer modes. All-theme device inspection remains open. Android device inspection is deferred. Native uses platform typography and does not promise identical pixels to the browser.
 
 ## M3 — Storefront editor: substantial implementation; acceptance matrix open
 
 Implemented the desktop three-pane editor, mobile web inspector and native inspector sheets; block add/duplicate/delete/reorder; web library/layer drag/drop; native long-press selection plus destination/arrow controls; content/style/layout/responsive inspectors; rich text, links, nested columns, collections, images/alt text/focal crop, fonts, palette, gradients and spacing. Includes 50-step history, autosave, offline local recovery, conflict preservation, immutable versions, atomic publish, restore and backups before replacing a layout.
 
-Verification: browser tests cover add/duplicate/reorder/delete persistence, draft/public separation, publish/restore, stale revision preservation, offline recovery and responsive widths. API tests reject invalid schema, foreign/private assets, foreign collections and severe contrast errors. Earlier native simulator editor save was observed; physical iPhone verification remains separate.
+Verification: browser tests cover add/duplicate/reorder/delete persistence, draft/public separation, publish/restore, stale revision preservation, offline recovery and responsive widths. API tests reject invalid schema, foreign/private assets, foreign collections and severe contrast errors. Physical iPhone tests verify heading/font/size/background, autosave/reopening, publication/buyer view, layer arrows, undo/redo, preview and restoring an earlier publication into a draft without changing the public shop.
 
-Open: perform E01–E15 on the physical iPhone, especially image permissions/crop, font/background changes, rich text, nested blocks, offline recovery and accessible focus. Native continuous animated gesture drag/drop remains incomplete. Native reorder currently uses long-press selection and explicit destination/accessibility controls. Comprehensive keyboard/screen-reader acceptance is not yet established. M3 is not declared release-complete.
+Open: finish E01–E15 on the physical iPhone, especially image permissions/crop, all templates, rich text, nested blocks, offline recovery, add/duplicate/delete/long-press gestures and accessible focus. Native continuous animated gesture drag/drop remains incomplete. Native reorder currently uses long-press selection and explicit destination/accessibility controls. Comprehensive keyboard/screen-reader acceptance is not yet established. M3 is not declared release-complete.
 
 ## M4 — Catalog and discovery: sandbox slice verified
 
@@ -40,7 +40,7 @@ Implemented products with variants/prices/stock, image selection, publication/ar
 
 Verification: API public/private catalog, follow/favorite idempotence and ownership tests; browser search/filter/saved flows. Eight sample shops and 24 products each have two variants; sample history created during tests is sandbox data.
 
-Open: physical-device product and collection creation/editing walkthrough. Large-catalog indexed ranking/UI pagination and approved seller imagery are pilot work.
+Physical iPhone product editing and collection ordering are verified. New product/collection creation and image uploads still need device coverage. Large-catalog indexed ranking/UI pagination and approved seller imagery are pilot work.
 
 ## M5 — Sandbox commerce: local slice verified
 
@@ -48,7 +48,7 @@ Implemented per-shop carts, authoritative quote, row-locked inventory reservatio
 
 Verification: integration tests cover price tampering, final-unit contention, duplicate webhook processing, incorrect amount rejection, cross-user order access, refunds/failure/expiry and seller fulfillment. Browser checkout/payment/refund flow passes against the sample shop. No live charges or payouts are enabled.
 
-Open: physical iPhone purchase/refund walkthrough, scheduled production worker/outbox, external provider/legal approval and staffed moderation.
+Physical iPhone purchase/refund is verified: selected RM73 variant + RM8 shipping = RM81, then refund with stock restored. Open: scheduled production worker/outbox, external provider/legal approval and staffed moderation.
 
 ## M6 — Polish and pilot: in progress
 
@@ -56,16 +56,16 @@ Implemented the lilac visual system, locally bundled fonts/licenses, responsive 
 
 Latest completed checks:
 
-- Schema/renderer: **13 passed**.
+- Schema/renderer: **14 passed**, including heading-font override regression.
 - PostgreSQL API integration: **18 passed**; one upstream Starlette test-client deprecation warning.
 - TypeScript: **6 packages passed**. Python: **12 source files passed**, Ruff passed.
 - Production web build: **passed**.
-- Latest desktop browser regression: **8 passed** against the production build, including collection editing/focus restoration, editor recovery and sandbox checkout/refund. No mobile emulation was used in this run.
+- Desktop browser regression: **9 passed** against the production build, including collection editing/focus restoration, editor recovery, heading-font persistence and sandbox checkout/refund. The expanded typography check also passed afterward with section heading size and weight assertions. No mobile emulation was used in these runs.
 - iOS bundle export: **passed**, including the latest native storefront changes.
 - SDK 57 upgrade: **21/21 Expo Doctor checks passed**, Expo dependency check passed, no pnpm peer dependency issues; strict TypeScript and iOS bundle export passed after aligning native animation/worklet peers.
 - Migration upgrade/downgrade/upgrade: **passed**, 17 tables with RLS.
 - Discover automated accessibility scan: **0 violations** in the saved route-specific report; this is not a full accessibility audit.
 
-Earlier browser runs exercised both desktop and mobile web. Physical iPhone testing is now the requested device path; no emulator testing is being continued. The user installed Expo Go and unlocked Mirroring. Taps and keyboard input now work. On the physical iPhone, Expo Go reported SDK 57 while the project used SDK 54, so the project was upgraded to Expo 57.0.30 / React Native 0.86.3 / React 19.2.3 and the native peer dependencies were aligned. The version mismatch is resolved. The next physical-device screen requires the **same Expo account signed in to both Expo Go and the local CLI**. A browser sign-in handoff is prepared for the user; no credentials were requested in chat. **No successful physical iPhone Lilac app session is claimed yet.**
+Physical iPhone smoke testing is complete for the core flows recorded in [IPHONE_QA.md](IPHONE_QA.md), with screenshots and API readback evidence. Expo account sign-in and SDK compatibility are resolved. No credentials were requested in chat. No emulator testing was continued after the user's device-only instruction; Android remains deferred. The phone walkthrough is a smoke test, not a claim that all native release criteria pass.
 
 Pilot completion is blocked on verification and the remaining work listed in [PILOT_READINESS.md](PILOT_READINESS.md), including signed installable staging builds, real-device QA, accessibility, performance/security reviews and hosted deployment. M6 is not complete.

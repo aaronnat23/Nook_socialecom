@@ -50,7 +50,7 @@ SHOPS = [
 PRODUCTS = [
     ("Cloud ceramic mug", 6800),
     ("The everyday vessel", 12800),
-    ("Soft curves bowl", 8900),
+    ("Quiet corner table lamp", 8900),
     ("Weekend canvas tote", 4800),
     ("The archive carryall", 9600),
     ("Soft linen shirt", 11900),

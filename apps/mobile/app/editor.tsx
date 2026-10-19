@@ -44,6 +44,7 @@ export default function Page() {
     </AuthGate>
   );
 }
+type EditorSheet = 'properties' | 'layers' | 'themes' | 'add' | 'versions';
 function Editor() {
   const { me, notify } = useApp();
   const editor = useEditor(me!.shop.id);
@@ -52,9 +53,12 @@ function Editor() {
   const [products, setProducts] = useState<Product[]>([]);
   const [collections, setCollections] = useState<{ id: string; title: string }[]>([]);
   const [selected, setSelected] = useState('hero');
-  const [sheet, setSheet] = useState<
-    'properties' | 'layers' | 'themes' | 'add' | 'versions' | null
-  >(null);
+  const [sheet, setSheet] = useState<EditorSheet | null>(null);
+  const [lastSheet, setLastSheet] = useState<EditorSheet>('add');
+  const panel = sheet || lastSheet;
+  useEffect(() => {
+    if (sheet) setLastSheet(sheet);
+  }, [sheet]);
   const [tab, setTab] = useState('Content');
   const [preview, setPreview] = useState(false);
   const [breakpoint, setBreakpoint] = useState<'mobile' | 'tablet' | 'desktop'>('mobile');
@@ -420,13 +424,13 @@ function Editor() {
             ]}
           >
             <Text style={{ fontSize: 18, fontWeight: '600', color: C.text }}>
-              {sheet === 'properties'
+              {panel === 'properties'
                 ? 'Make it feel like you.'
-                : sheet === 'layers'
+                : panel === 'layers'
                   ? 'Every little layer.'
-                  : sheet === 'themes'
+                  : panel === 'themes'
                     ? 'A fresh point of view.'
-                    : sheet === 'versions'
+                    : panel === 'versions'
                       ? 'Every version of you.'
                       : 'Add a little something.'}
             </Text>
@@ -438,8 +442,12 @@ function Editor() {
               <Text style={{ fontSize: 23, color: C.muted }}>×</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView contentContainerStyle={ui.content} keyboardShouldPersistTaps="handled">
-            {sheet === 'properties' && block ? (
+          <ScrollView
+            key={panel}
+            contentContainerStyle={ui.content}
+            keyboardShouldPersistTaps="handled"
+          >
+            {panel === 'properties' && block ? (
               <>
                 <View style={[ui.row, { marginBottom: 18 }]}>
                   {['Content', 'Style', 'Layout', 'Responsive'].map((t) => (
@@ -1060,7 +1068,7 @@ function Editor() {
                   )}
                 </View>
               </>
-            ) : sheet === 'layers' ? (
+            ) : panel === 'layers' ? (
               <>
                 <Text style={ui.muted}>
                   {held
@@ -1118,7 +1126,7 @@ function Editor() {
                   onPress={() => void openVersions()}
                 />
               </>
-            ) : sheet === 'themes' ? (
+            ) : panel === 'themes' ? (
               <>
                 {themes.map((t) => (
                   <View
@@ -1192,7 +1200,7 @@ function Editor() {
                   </View>
                 ))}
               </>
-            ) : sheet === 'add' ? (
+            ) : panel === 'add' ? (
               <View style={ui.wrap}>
                 {blockTypes.map((type) => (
                   <Button
@@ -1204,7 +1212,7 @@ function Editor() {
                   />
                 ))}
               </View>
-            ) : sheet === 'versions' ? (
+            ) : panel === 'versions' ? (
               <>
                 <Text style={ui.muted}>
                   Restore creates a draft copy. Your public page stays unchanged until you publish.

@@ -13,7 +13,7 @@ import {
 import { router } from 'expo-router';
 import type { Document, Block, Style } from '@lilac/schema';
 import type { Product, Shop } from '@lilac/api-client';
-import { resolveStyle } from '@lilac/renderer';
+import { resolveStyle, resolveHeadingFont } from '@lilac/renderer';
 import { apiBase, authToken, imageUri, api } from '../lib';
 import { ProductCard } from './cards';
 import { Button, ui } from './ui';
@@ -25,8 +25,18 @@ const font = (f?: string) =>
         ? 'Georgia'
         : 'serif'
       : f === 'Courier New'
-        ? 'monospace'
-        : undefined;
+        ? Platform.OS === 'ios'
+          ? 'CourierNewPSMT'
+          : 'monospace'
+        : f === 'Arial'
+          ? Platform.OS === 'ios'
+            ? 'Arial'
+            : 'sans-serif'
+          : f === 'Trebuchet MS'
+            ? Platform.OS === 'ios'
+              ? 'TrebuchetMS'
+              : 'sans-serif'
+            : undefined;
 function nativeStyle(s: Style): ViewStyle & TextStyle {
   return {
     backgroundColor: s.backgroundColor,
@@ -173,11 +183,11 @@ function NativeBlock({
       style={[
         textStyle,
         {
-          fontFamily: font(d.theme.fontHeading),
-          fontSize: b.type === 'hero' ? s.fontSize || 34 : 24,
-          lineHeight: b.type === 'hero' ? (s.fontSize || 34) * 1.15 : 30,
+          fontFamily: font(resolveHeadingFont(b, d.theme, width)),
+          fontSize: s.fontSize || (b.type === 'hero' ? 34 : 24),
+          lineHeight: (s.fontSize || (b.type === 'hero' ? 34 : 24)) * (s.lineHeight || 1.15),
           marginBottom: 15,
-          fontWeight: '500',
+          fontWeight: String(s.fontWeight || 500) as TextStyle['fontWeight'],
         },
       ]}
     >
@@ -196,7 +206,17 @@ function NativeBlock({
               style={{ width: 56, height: 56, borderRadius: 28, marginBottom: 12 }}
             />
           )}
-          <Text style={[textStyle, { fontSize: 23, lineHeight: 30, fontWeight: '600' }]}>
+          <Text
+            style={[
+              textStyle,
+              {
+                fontFamily: font(resolveHeadingFont(b, d.theme, width)),
+                fontSize: s.fontSize || 23,
+                lineHeight: (s.fontSize || 23) * (s.lineHeight || 1.3),
+                fontWeight: String(s.fontWeight || 600) as TextStyle['fontWeight'],
+              },
+            ]}
+          >
             {p.headline || shop.name}
           </Text>
           <Text style={[textStyle, { fontSize: 12, lineHeight: 20, opacity: 0.65, marginTop: 7 }]}>

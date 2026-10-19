@@ -115,3 +115,33 @@ test('collection edits persist and the dialog restores focus', async ({ page }, 
   await dialog.getByRole('button', { name: 'Save collection', exact: true }).click();
   await expect(dialog).not.toBeVisible();
 });
+
+test('custom heading font renders and survives reopening the editor', async ({ page }, info) => {
+  test.skip(
+    info.project.name === 'mobile',
+    'Native font rendering is verified on the physical iPhone.',
+  );
+  await signIn(page);
+  await page.getByRole('button', { name: 'Style', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Font family', exact: true }).selectOption('Georgia');
+  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', 'Georgia');
+  await page.getByRole('combobox', { name: 'Font family', exact: true }).selectOption('Arial');
+  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', 'Arial');
+  await expect(page.getByRole('status').first()).toContainText('All changes saved');
+  await page.reload();
+  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', 'Arial');
+  await page.getByRole('button', { name: 'Edit productGrid block', exact: true }).press('Enter');
+  await page.getByRole('button', { name: 'Style', exact: true }).click();
+  await page.getByRole('combobox', { name: 'Font family', exact: true }).selectOption('Arial');
+  await expect(
+    page.getByRole('button', { name: 'Edit productGrid block', exact: true }).locator('h2'),
+  ).toHaveCSS('font-family', 'Arial');
+  await page.getByLabel('Text size', { exact: true }).fill('36');
+  await page.getByRole('combobox', { name: 'Weight', exact: true }).selectOption('700');
+  const sectionHeading = page
+    .getByRole('button', { name: 'Edit productGrid block', exact: true })
+    .locator('h2');
+  await expect(sectionHeading).toHaveCSS('font-size', '36px');
+  await expect(sectionHeading).toHaveCSS('font-weight', '700');
+  await expect(page.getByRole('status').first()).toContainText('All changes saved');
+});

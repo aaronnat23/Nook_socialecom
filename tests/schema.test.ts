@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { themes, validateDocument, makeBlock } from '../packages/storefront-schema/src/index';
-import { resolveStyle, moveBlock } from '../packages/storefront-renderer/src/index';
+import {
+  resolveStyle,
+  resolveHeadingFont,
+  moveBlock,
+} from '../packages/storefront-renderer/src/index';
 describe('shared storefront contract', () => {
   it.each(themes)('validates $name on both platform contracts', (t) =>
     expect(validateDocument(t.document)).toEqual({ valid: true, errors: [] }),
@@ -39,6 +43,17 @@ describe('shared storefront contract', () => {
     const n = moveBlock(d, 'products', -1);
     expect(n.sections[0].children[1].id).toBe('products');
     expect(d.sections[0].children.map((b) => b.id)).toEqual(original);
+  });
+  it('preserves custom heading fonts across theme and responsive fallbacks', () => {
+    const theme = { ...themes[0].document.theme, fontHeading: 'Georgia' as const };
+    const block = makeBlock('text');
+    block.style = {};
+    expect(resolveHeadingFont(block, theme, 1280)).toBe('Georgia');
+    block.style.fontFamily = 'Arial';
+    block.responsive = { mobile: { style: { fontFamily: 'Trebuchet MS' } } };
+    expect(resolveHeadingFont(block, theme, 1280)).toBe('Arial');
+    expect(resolveHeadingFont(block, theme, 390)).toBe('Trebuchet MS');
+    expect(block.style.fontFamily).toBe('Arial');
   });
   it('uses narrow-screen single-column defaults', () => {
     expect(resolveStyle(makeBlock('productGrid'), themes[0].document.theme, 320).columns).toBe(1);

@@ -16,6 +16,14 @@ export function resolveStyle(block: Block, theme: Document['theme'], width: numb
     ...(width < 768 ? block.responsive?.mobile?.style : {}),
   };
 }
+/** Headings inherit the theme heading face unless the block or breakpoint overrides it. */
+export function resolveHeadingFont(block: Block, theme: Document['theme'], width: number) {
+  return resolveStyle(
+    { ...block, style: { fontFamily: theme.fontHeading, ...block.style } },
+    theme,
+    width,
+  ).fontFamily!;
+}
 export function blocksOf(doc: Document): Block[] {
   return doc.sections.flatMap((s) => s.children);
 }

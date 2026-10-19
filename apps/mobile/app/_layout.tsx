@@ -11,6 +11,8 @@ export default function Layout() {
         <StatusBar style="dark" />
         <Stack
           screenOptions={{
+            headerBackButtonDisplayMode: 'minimal',
+            headerBackTitle: 'Back',
             headerTintColor: C.primary,
             headerStyle: { backgroundColor: '#FFF' },
             headerTitleStyle: { fontSize: 16 },

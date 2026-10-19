@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
 import type { Block, Document, Style } from '@lilac/schema';
 import type { Product, Shop } from '@lilac/api-client';
-import { assetPath, resolveStyle } from '@lilac/renderer';
+import { assetPath, resolveStyle, resolveHeadingFont } from '@lilac/renderer';
 import { api } from '@/lib/api';
 import { ProductCard, FollowButton } from './cards';
 const gradients = {
@@ -206,6 +206,16 @@ function BlockView({
   collections: Record<string, string[]>;
 }) {
   const s = resolveStyle(b, doc.theme, width);
+  const headingFace = resolveHeadingFont(b, doc.theme, width);
+  const headingFont = headingFace === 'Inter' ? 'var(--font)' : headingFace;
+  const headingStyle: CSSProperties = {
+    fontFamily: headingFont,
+    fontSize: s.fontSize,
+    fontWeight: s.fontWeight,
+    lineHeight: s.lineHeight,
+    letterSpacing: s.letterSpacing,
+    textAlign: s.textAlign,
+  };
   const p = b.props;
   const [idOver, setIdOver] = useState(false);
   const imgStyle: CSSProperties = {
@@ -246,7 +256,7 @@ function BlockView({
             )}
           </span>
           <div>
-            <h2 style={{ fontFamily: doc.theme.fontHeading }}>{p.headline || shop.name}</h2>
+            <h2 style={headingStyle}>{p.headline || shop.name}</h2>
             <p>{p.subtitle || shop.bio}</p>
           </div>
           <FollowButton shop={shop} />
@@ -259,8 +269,8 @@ function BlockView({
           <div className="sf-hero-copy">
             <h1
               style={{
+                ...headingStyle,
                 fontSize: s.fontSize || 48,
-                fontFamily: s.fontFamily,
                 fontWeight: s.fontWeight || 500,
                 textAlign: s.textAlign,
               }}
@@ -285,7 +295,7 @@ function BlockView({
       content = (
         <div className="sf-text">
           {p.headline && (
-            <h2 className="sf-title" style={{ fontFamily: doc.theme.fontHeading }}>
+            <h2 className="sf-title" style={headingStyle}>
               {p.headline}
             </h2>
           )}
@@ -341,7 +351,7 @@ function BlockView({
       content = (
         <>
           {p.headline && (
-            <h2 className="sf-title" style={{ fontFamily: doc.theme.fontHeading }}>
+            <h2 className="sf-title" style={headingStyle}>
               {p.headline}
             </h2>
           )}
@@ -378,7 +388,7 @@ function BlockView({
       content = (
         <>
           {p.headline && (
-            <h2 className="sf-title" style={{ fontFamily: doc.theme.fontHeading }}>
+            <h2 className="sf-title" style={headingStyle}>
               {p.headline}
             </h2>
           )}

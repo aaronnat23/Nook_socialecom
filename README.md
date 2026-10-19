@@ -65,6 +65,8 @@ pg_ctl -D .local/postgres -l .local/postgres.log -o '-p 55432 -h 127.0.0.1' star
 
 See [milestone verification](docs/MILESTONES.md), [implementation decisions](docs/decisions/001-architecture.md), [pilot requirements](docs/PILOT_READINESS.md), and [operations](docs/runbooks/operations.md) for actual verification and remaining limits. This is a working local sandbox, **not a declaration that every production launch gate is complete**.
 
+The native app has been smoke-tested on the connected **physical iPhone through iPhone Mirroring**: sign-in/persistence, three-tab navigation, storefront styling/autosave/publish/restore, reorder/undo/redo, product editing, collection order, variant pricing, checkout and refund. Device findings, fixes and untested cases are recorded in [iPhone QA](docs/IPHONE_QA.md). Android QA is deferred.
+
 ## Supabase configuration
 
 Copy `.env.example` to `.env` (setup does this locally). Set `AUTH_MODE=supabase`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and a dedicated PostgreSQL `DATABASE_URL`. For Storage also set the **server-only** service-role key and create a private `shop-assets` bucket. Run migrations with the application/migration owner role. Do not expose the service-role key to web or mobile.

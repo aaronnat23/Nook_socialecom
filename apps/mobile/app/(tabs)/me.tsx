@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import type { Document } from '@lilac/schema';
 import type { Product } from '@lilac/api-client';
 import { api } from '../../lib';
@@ -19,14 +19,29 @@ function Space() {
   const [doc, setDoc] = useState<Document | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState('');
-  useEffect(() => {
-    api<{ document: Document }>(`/shops/${me!.shop.id}/published`)
-      .then((r) => setDoc(r.document))
-      .catch(() => {});
-    api<{ items: Product[] }>(`/shops/${me!.shop.id}/products`)
-      .then((r) => setProducts(r.items))
-      .catch((e) => setError(e.message));
-  }, [me]);
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      api<{ document: Document }>(`/shops/${me!.shop.id}/published`)
+        .then((r) => {
+          if (active) setDoc(r.document);
+        })
+        .catch(() => {});
+      api<{ items: Product[] }>(`/shops/${me!.shop.id}/products`)
+        .then((r) => {
+          if (active) {
+            setProducts(r.items);
+            setError('');
+          }
+        })
+        .catch((e) => {
+          if (active) setError(e.message);
+        });
+      return () => {
+        active = false;
+      };
+    }, [me!.shop.id]),
+  );
   return (
     <ScrollView style={ui.screen}>
       <View style={ui.content}>
