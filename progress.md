@@ -227,3 +227,22 @@ What changed:
 - Rename: visible name, metadata, `app.json` (name/slug/scheme/bundle id), API title, reserved handle, README/docs. Internal identifiers (`@lilac/*` scope, `lilac` DB names, `lilac-*` storage keys, `demo@lilac.local`) were left alone on purpose.
 - Tests: e2e copy updated for the new headings. Desktop suite passes; the native app was verified by typecheck, an Expo web export rendered in Chromium, and the SDK bundle export. **It has not been run on the physical iPhone in this session**, so animation feel on device, font loading on first launch and reduced-motion behaviour still need a hands-on check.
 - Local env note: product descriptions in an existing database still say "Lilac sandbox catalog" until reseeded (seed text is updated). `update products set description = replace(description,'Lilac sandbox catalog','Nook sandbox catalog')` fixes it in place.
+
+## Product stage, background removal and flatter design (round 2)
+
+User request: let sellers upload a product, remove its background and place it on a backdrop of their choosing; redesign the product page after the reference shots (SOLE, a pastel die-cut tile UI, Maison Archive, H&M); and replace the hard-shadow "sticker" look, which still felt generic.
+
+What changed:
+
+- **Backend.** `app/cutout.py` (onnxruntime + bundled `models/u2netp.onnx`, numpy/Pillow post-processing, bounded concurrency), `POST /shops/{id}/cutouts`, `/uploads` `keep_alpha`, `Product.stage` JSONB with migration `0004`, strict `Stage` validation (asset ownership, hex colours, ranges), public `/media` only for assets referenced by published products, 10 seeded sample cut-outs and staged seed products. Tests in `apps/api/tests/test_stage.py`; `conftest.py` now rebuilds the `_test` schema once per run.
+- **Shared.** `Stage` types in `@lilac/schema`, presets/palettes/limits in `@lilac/renderer` (`stage.ts`), regenerated OpenAPI types.
+- **Web.** `ProductStage` + `StageStudio`, product page rebuilt (staged hero pager, round floating buttons, tabs, finish chips, black buy bar), seller dialog with the studio, flat double-stroke surfaces everywhere (no tilts, no offset shadows), compact follow button, styled range inputs, dead `detail-*` CSS pruned.
+- **Native.** `components/stage.tsx` (backdrops built from Views/LinearGradient, die-cut from tinted copies, drifting ribbon text), `components/stage-studio.tsx`, new product page, `Panel`/`Ring`/`RoundButton` in `ui.tsx`, `Key` is now a flat squash-and-spring button, Discover/My Space/cards lose their shadows and tilts.
+- **Tests.** Two new e2e tests (staged product page; seller cut-out and scene flow). Both projects pass. An e2e run caught a zero-width studio preview on phones, now fixed.
+
+Verification and limits:
+
+- typecheck, vitest, ruff, mypy, pytest (23) and the Playwright suite pass locally; axe is clean on Discover, My Space and the staged product page. Pre-existing axe notes remain on `/shop/studio-hening` (the seed theme's muted text is 4.47:1) and in the product dialogs (`<form role="dialog">`, h3 order).
+- Native was checked by typecheck, an Expo web export rendered in Chromium and the SDK bundle export. **It has not been run on a physical iPhone in this session**, so the photo picker → cut-out flow, tinted-image die-cut edges, blurred shadow and ribbon drift performance on device still need a hands-on check.
+- Native has no colour wheel or sliders (Expo doesn't ship them): colours come from the palette, size/position use steppers.
+- Cut-out quality is model-limited (hair, glass, clutter); sellers can upload a transparent PNG instead.

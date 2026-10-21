@@ -1,23 +1,15 @@
 'use client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import {
-  Plus,
-  ArrowLeft,
-  Package,
-  X,
-  ImagePlus,
-  Loader2,
-  ArrowUp,
-  ArrowDown,
-  Layers,
-} from 'lucide-react';
-import type { Product } from '@lilac/api-client';
+import { Plus, ArrowLeft, Package, X, Loader2, ArrowUp, ArrowDown, Layers } from 'lucide-react';
+import type { Product, Stage } from '@lilac/api-client';
 import { assetPath, money } from '@lilac/renderer';
 import { api } from '@/lib/api';
 import { useModal } from '@/lib/use-modal';
 import { useApp } from './provider';
 import { AuthGate } from './auth-gate';
+import { StageStudio } from './stage-studio';
+import { ProductStage } from './stage';
 interface VariantForm {
   sku: string;
   options: Record<string, string>;
@@ -31,6 +23,7 @@ interface ProductForm {
   image: string;
   category: string;
   status: string;
+  stage: Stage | null;
   variants: VariantForm[];
 }
 export function ProductsPage() {
@@ -114,7 +107,7 @@ function Products() {
               style={{ textAlign: 'left', padding: 0 }}
               onClick={() => setEditing(p)}
             >
-              <img src={assetPath(p.image)} alt={p.title} />
+              <ProductStage stage={p.stage} image={p.image} alt={p.title} ratio="1 / 1" priv />
               <div>
                 <h3>{p.title}</h3>
                 <p>
@@ -346,6 +339,7 @@ function ProductModal({
           image: product.image,
           category: product.category,
           status: product.status,
+          stage: product.stage ?? null,
           variants: product.variants.map((v) => ({
             sku: v.sku,
             options: v.options,
@@ -360,6 +354,7 @@ function ProductModal({
           image: 'seed_product_0',
           category: 'Home & living',
           status: 'draft',
+          stage: null,
           variants: [
             {
               sku: `ITEM-${Date.now().toString().slice(-6)}`,
@@ -371,13 +366,12 @@ function ProductModal({
         },
   );
   const [busy, setBusy] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const change = (key: keyof ProductForm, value: unknown) => setForm({ ...form, [key]: value });
   return (
     <div className="modal-backdrop">
       <form
-        className="modal"
+        className="modal wide"
         role="dialog"
         aria-modal="true"
         aria-label={product ? 'Edit product' : 'Add product'}
@@ -461,31 +455,15 @@ function ProductModal({
             </select>
           </label>
         </div>
-        <label>
-          Product photo
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            disabled={uploading}
-            onChange={async (e) => {
-              const f = e.target.files?.[0];
-              if (!f) return;
-              setUploading(true);
-              try {
-                const body = new FormData();
-                body.set('file', f);
-                body.set('shop_id', shopId);
-                body.set('alt', form.title || 'Product photo');
-                const r = await api<{ id: string }>('/uploads', { method: 'POST', body });
-                change('image', r.id);
-              } catch (e) {
-                setError((e as Error).message);
-              } finally {
-                setUploading(false);
-              }
-            }}
-          />
-        </label>
+        <StageStudio
+          shopId={shopId}
+          title={form.title}
+          image={form.image}
+          stage={form.stage}
+          onImage={(id) => setForm((f) => ({ ...f, image: id }))}
+          onStage={(stage) => setForm((f) => ({ ...f, stage }))}
+          onError={setError}
+        />
         <h3 style={{ margin: '20px 0 15px' }}>Variants & inventory</h3>
         {form.variants.map((v, i) => (
           <div
@@ -594,8 +572,8 @@ function ProductModal({
           </select>
         </label>
         {error && <div className="error">{error}</div>}
-        <button className="button primary wide" disabled={busy || uploading}>
-          {busy || uploading ? <Loader2 className="spin" size={15} /> : <CheckIcon />}Save product
+        <button className="button primary wide" disabled={busy}>
+          {busy ? <Loader2 className="spin" size={15} /> : <CheckIcon />}Save product
         </button>
         <p className="fineprint">
           Stock and prices are stored by the shop service. All orders remain sandbox only.

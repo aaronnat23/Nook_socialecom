@@ -39,8 +39,26 @@ Fonts are bundled locally (web: `apps/web/public/fonts`, native: `apps/mobile/as
 
 Short, springy, and switched off for reduced motion on both platforms.
 
-- Web: `components/motion.tsx` (`Reveal` scroll reveals, `Words` headline rise, `CountUp`, `useParallax`), `app/template.tsx` (page enter), a sliding pill in the header and mobile dock, hero doors that float and follow the pointer, a marquee ticker, hearts that burst, buttons that sink onto their shadow.
-- Native: `components/motion.tsx` (Reanimated: `RevealScroll` + `Reveal`, `Bob`, `Swing`, `Spin`, `Marquee`, `Key` physical-key buttons, `PopIn`), a floating dock whose pill springs between tabs, a spring-in sheet and toast.
+- Web: `components/motion.tsx` (`Reveal` scroll reveals, `Words` headline rise, `CountUp`, `useParallax`), `app/template.tsx` (page enter), a sliding pill in the header and mobile dock, hero doors that float and follow the pointer, a marquee ticker, hearts that burst, buttons that squash under the pointer, a cut-out that pops onto its stage and then bobs, ribbon text that drifts.
+- Native: `components/motion.tsx` (Reanimated: `RevealScroll` + `Reveal`, `Bob`, `Swing`, `Spin`, `Marquee`, `Key` squash-and-spring buttons, `PopIn`), `components/stage.tsx` (the cut-out pops onto its stage and bobs; ribbon text drifts), a floating dock whose pill springs between tabs, a spring-in sheet and toast.
+
+## Surfaces: flat tiles, not shadow stickers
+
+The first pass leaned on tilted cards with hard offset ink shadows. That read as a stock "neo-brutalist" look, so it was replaced with something closer to a paper die-cut kit:
+
+- **Double-stroke tiles.** Pastel fills with a thick ink outline and a pale keyline just inside it (`box-shadow: inset 0 0 0 6px rgb(255 255 255 / .55)` on web; the `Panel` and `Ring` components natively). No drop shadows, no tilts.
+- **Round floating buttons** (back, share, save) are the only things that get a soft shadow, along with the dock, modals and the buy bar, because they genuinely float.
+- **Ink pill buttons** with a persimmon arrow disc; the product page ends in a black buy bar holding the price and a paper "Add to bag" pill.
+- **Die-cut cut-outs.** A product with the background removed gets an optional white sticker edge on a seller-chosen backdrop (solid, glow, arch, ribbon of their own words, stripes, dots, sunburst or a photo).
+
+## Product stage
+
+Sellers can upload a product photo, remove its background and place the cut-out on a backdrop of their own. Everything is stored as data (`Product.stage`, a small validated JSON object: cut-out asset, backdrop kind and two colours, optional ribbon words or scene photo, scale, x/y offsets, die-cut and shadow toggles), never as markup, so it renders identically on web and native and cannot carry script or CSS. Without a stage a product simply shows its photo, so nothing existing breaks.
+
+- Web: `components/stage.tsx` (`ProductStage`), `components/stage-studio.tsx` (the editor inside the product dialog), `ProductDetail` in `components/commerce.tsx` (swipeable pager: styled view, then the original photo).
+- Native: `components/stage.tsx`, `components/stage-studio.tsx` (size and position use −/+ steppers because Expo ships no slider), `app/product/[slug].tsx`.
+- Shared: presets, palettes and limits in `packages/storefront-renderer/src/stage.ts`; types in `@lilac/schema`.
+- API: `POST /api/v1/shops/{shop_id}/cutouts` removes the background from one of the shop's own uploads (U²-Net-P via onnxruntime on CPU, bundled in `apps/api/models`, see its README for the licence); `/uploads` takes `keep_alpha` for photos that are already transparent. Stage assets are only public once a published product references them.
 
 ## Where seller expression lives
 

@@ -10,11 +10,10 @@ import { useApp } from './provider';
 import { Text } from './text';
 import { font } from './fonts';
 import { Reveal, usePop } from './motion';
-import { hardShadow, ui, C } from './ui';
+import { Panel, Ring, RoundButton, ui, C } from './ui';
+import { ProductStage } from './stage';
 
-const tilts = [-1.6, 1.2, -0.8, 1.8];
 const tones = [C.butter, C.lilac, C.pink, C.mint, C.sky, C.peach];
-const imageTones = ['#FFE9B0', '#E3D6FF', '#FFD6E3', '#D3F0DD', '#D6E8FF', '#FFDCC4'];
 
 export function initials(name: string) {
   return name
@@ -59,29 +58,26 @@ export function ProductCard({
             plain
               ? { borderRadius: 16, overflow: 'hidden', backgroundColor: '#EDE5F5' }
               : {
-                  borderWidth: 2,
+                  borderWidth: 2.5,
                   borderColor: C.ink,
-                  borderRadius: 22,
+                  borderRadius: 26,
                   overflow: 'hidden',
-                  backgroundColor: imageTones[index % imageTones.length],
-                  transform: [{ rotate: `${tilts[index % tilts.length]}deg` }],
+                  backgroundColor: C.paper2,
                 }
           }
         >
-          <Image source={{ uri: imageUri(p.image) }} style={{ width: '100%', aspectRatio: 0.8 }} />
+          <ProductStage stage={p.stage} image={p.image} ratio={0.8} />
+          {!plain && <Ring width={5} opacity={0.7} radius={23.5} />}
           {label && (
             <View
               style={{
                 position: 'absolute',
-                left: 8,
-                bottom: 10,
+                left: 12,
+                bottom: 12,
                 backgroundColor: note ? C.pink : C.butter,
-                borderWidth: 1.5,
-                borderColor: C.ink,
                 borderRadius: 20,
-                paddingHorizontal: 9,
-                paddingVertical: 3,
-                transform: [{ rotate: '-3deg' }],
+                paddingHorizontal: 10,
+                paddingVertical: 4,
               }}
             >
               <Text style={{ fontSize: 9.5, fontWeight: '800', letterSpacing: 1, color: C.ink }}>
@@ -113,13 +109,9 @@ export function ProductCard({
               alignSelf: 'flex-start',
               marginTop: 7,
               backgroundColor: C.butter,
-              borderWidth: 2,
-              borderColor: C.ink,
-              borderRadius: 10,
-              paddingHorizontal: 9,
-              paddingVertical: 1,
-              transform: [{ rotate: '1.5deg' }],
-              ...hardShadow(2, 2),
+              borderRadius: 20,
+              paddingHorizontal: 11,
+              paddingVertical: 3,
             }}
           >
             <Text style={{ fontSize: 14, fontWeight: '800', color: C.ink }}>
@@ -134,10 +126,12 @@ export function ProductCard({
           {p.shop_name} ↗
         </Text>
       </Pressable>
-      <Animated.View style={[{ position: 'absolute', top: 8, right: 8 }, heart.style]}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={saved ? `Unsave ${p.title}` : `Save ${p.title}`}
+      <Animated.View style={[{ position: 'absolute', top: 12, right: 12 }, heart.style]}>
+        <RoundButton
+          size={38}
+          icon={saved ? 'heart' : 'heart-outline'}
+          active={saved}
+          label={saved ? `Unsave ${p.title}` : `Save ${p.title}`}
           onPress={async () => {
             if (!requireAuth()) return;
             try {
@@ -148,19 +142,7 @@ export function ProductCard({
               notify((e as Error).message);
             }
           }}
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            backgroundColor: saved ? C.persimmon : C.card,
-            borderWidth: 2,
-            borderColor: C.ink,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Ionicons name={saved ? 'heart' : 'heart-outline'} size={18} color={C.ink} />
-        </Pressable>
+        />
       </Animated.View>
     </View>
   );
@@ -180,33 +162,10 @@ export function ShopCard({ shop: s, index = 0 }: { shop: Shop; index?: number })
   const { me, requireAuth, refresh, notify } = useApp();
   const followed = me?.following.includes(s.id);
   const follow = usePop();
-  const inner = SHOP_CARD_WIDTH - 28;
+  const inner = SHOP_CARD_WIDTH - 34;
   return (
-    <Reveal
-      pop
-      delay={index * 70}
-      style={{ width: SHOP_CARD_WIDTH, paddingBottom: 5, paddingRight: 4 }}
-    >
-      <View
-        style={{
-          position: 'absolute',
-          left: 4,
-          right: 0,
-          top: 5,
-          bottom: 0,
-          borderRadius: 30,
-          backgroundColor: C.ink,
-        }}
-      />
-      <View
-        style={{
-          backgroundColor: tones[index % tones.length],
-          borderWidth: 2,
-          borderColor: C.ink,
-          borderRadius: 30,
-          padding: 12,
-        }}
-      >
+    <Reveal pop delay={index * 70} style={{ width: SHOP_CARD_WIDTH }}>
+      <Panel tone={tones[index % tones.length]} radius={32} ring={5} style={{ padding: 14 }}>
         <Pressable
           onPress={() => router.push(`/shop/${s.slug}`)}
           accessibilityLabel={`Visit ${s.name}`}
@@ -220,7 +179,7 @@ export function ShopCard({ shop: s, index = 0 }: { shop: Shop; index?: number })
                 borderTopRightRadius: inner / 2,
                 borderBottomLeftRadius: 14,
                 borderBottomRightRadius: 14,
-                borderWidth: 2,
+                borderWidth: 2.5,
                 borderColor: C.ink,
                 overflow: 'hidden',
                 backgroundColor: C.card,
@@ -230,19 +189,26 @@ export function ShopCard({ shop: s, index = 0 }: { shop: Shop; index?: number })
                 source={{ uri: imageUri(s.cover) }}
                 style={{ width: '100%', height: '100%' }}
               />
+              <Ring
+                width={5}
+                opacity={0.7}
+                style={{
+                  borderTopLeftRadius: inner / 2 - 2,
+                  borderTopRightRadius: inner / 2 - 2,
+                  borderBottomLeftRadius: 12,
+                  borderBottomRightRadius: 12,
+                }}
+              />
             </View>
             <View
               style={{
                 position: 'absolute',
-                left: -4,
-                top: 18,
+                left: 12,
+                top: 14,
                 backgroundColor: C.card,
-                borderWidth: 2,
-                borderColor: C.ink,
                 borderRadius: 20,
                 paddingHorizontal: 11,
-                paddingVertical: 3,
-                transform: [{ rotate: '-5deg' }],
+                paddingVertical: 4,
               }}
             >
               <Text style={{ fontSize: 12, fontWeight: '700', color: C.ink }}>{s.category}</Text>
@@ -310,7 +276,7 @@ export function ShopCard({ shop: s, index = 0 }: { shop: Shop; index?: number })
           </Text>
         </Pressable>
         <Animated.View
-          style={[{ position: 'absolute', right: 12, top: inner * 1.1 + 22 }, follow.style]}
+          style={[{ position: 'absolute', right: 14, top: inner * 1.1 + 29 }, follow.style]}
         >
           <Pressable
             accessibilityRole="button"
@@ -343,7 +309,7 @@ export function ShopCard({ shop: s, index = 0 }: { shop: Shop; index?: number })
             />
           </Pressable>
         </Animated.View>
-      </View>
+      </Panel>
     </Reveal>
   );
 }

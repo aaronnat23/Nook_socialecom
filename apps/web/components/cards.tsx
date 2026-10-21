@@ -6,6 +6,7 @@ import type { Product, Shop } from '@lilac/api-client';
 import { assetPath, money } from '@lilac/renderer';
 import { useApp } from './provider';
 import { Reveal } from './motion';
+import { ProductStage } from './stage';
 import { api } from '@/lib/api';
 
 const tilts = [-1.4, 1.1, -0.6, 1.6, -1.1, 0.7];
@@ -115,7 +116,7 @@ export function ProductCard({
     <>
       <div className={`product-image tone-${index % 6}`}>
         <Link href={`/product/${product.slug}`} aria-label={product.title} tabIndex={-1}>
-          <img src={assetPath(product.image)} alt={product.title} loading="lazy" />
+          <ProductStage stage={product.stage} image={product.image} alt={product.title} />
         </Link>
         <FavoriteButton product={product} />
         {!plain && index === 0 ? (

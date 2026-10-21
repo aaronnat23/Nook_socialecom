@@ -89,6 +89,7 @@ class Product(Record, Base):
     category: Mapped[str] = mapped_column(String(40), default="Lifestyle")
     status: Mapped[str] = mapped_column(String(24), default="draft")
     tags: Mapped[list[str]] = mapped_column(JSONB, default=list)
+    stage: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
     __table_args__ = (
         CheckConstraint("price_minor >= 0"),
         Index("ix_products_public", "status", "category", "created_at"),

@@ -1,4 +1,5 @@
-import type { Document } from '@lilac/schema';
+import type { Document, Stage } from '@lilac/schema';
+export type { Stage, Backdrop, BackdropKind } from '@lilac/schema';
 export interface Shop {
   id: string;
   slug: string;
@@ -34,6 +35,7 @@ export interface Product {
   category: string;
   status: string;
   variants: Variant[];
+  stage?: Stage | null;
   created_at: string;
   shipping_minor?: number;
   return_policy?: string;

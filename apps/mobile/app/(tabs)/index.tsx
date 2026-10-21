@@ -28,7 +28,7 @@ import {
   Swing,
 } from '../../components/motion';
 import { Text } from '../../components/text';
-import { Loading, hardShadow, ui, C } from '../../components/ui';
+import { Loading, Panel, Ring, ui, C } from '../../components/ui';
 
 const ticker = [
   'Small shops',
@@ -176,8 +176,6 @@ export default function Discover() {
             accessibilityState={{ selected: c === category }}
             color={c === category ? C.ink : C.card}
             borderColor={C.ink}
-            shadowColor={c === category ? C.persimmon : C.ink}
-            depth={2}
             innerStyle={{ paddingVertical: 9, paddingHorizontal: 16 }}
           >
             <Text
@@ -330,7 +328,6 @@ function Stage({ shops }: { shops: Shop[] }) {
           backgroundColor: C.persimmon,
           borderWidth: 3,
           borderColor: C.ink,
-          ...hardShadow(6, 7),
         }}
       />
       {doors.map(({ shop, left, bottom, w, h, delay }, i) => (
@@ -357,12 +354,21 @@ function Stage({ shops }: { shops: Shop[] }) {
                   borderColor: C.ink,
                   overflow: 'hidden',
                   backgroundColor: C.card,
-                  ...hardShadow(5, 5),
                 }}
               >
                 <Image
                   source={{ uri: imageUri(shop.cover) }}
                   style={{ width: '100%', height: '100%' }}
+                />
+                <Ring
+                  width={5}
+                  opacity={0.7}
+                  style={{
+                    borderTopLeftRadius: w / 2 - 3,
+                    borderTopRightRadius: w / 2 - 3,
+                    borderBottomLeftRadius: 15,
+                    borderBottomRightRadius: 15,
+                  }}
                 />
               </View>
               <View
@@ -402,7 +408,6 @@ function Stage({ shops }: { shops: Shop[] }) {
               paddingTop: 6,
               paddingBottom: 4,
               alignItems: 'center',
-              ...hardShadow(3, 4),
             }}
           >
             <Text style={{ fontFamily: font.display, fontSize: 24, color: C.ink }}>OPEN</Text>
@@ -424,7 +429,6 @@ function Stage({ shops }: { shops: Shop[] }) {
             alignItems: 'center',
             justifyContent: 'center',
             transform: [{ rotate: '-8deg' }],
-            ...hardShadow(3, 4),
           }}
         >
           <Spin duration={22000} style={{ position: 'absolute', width: 76, height: 76 }}>
@@ -491,7 +495,6 @@ function HowItWorks() {
       text: 'Claim your corner. Add your name, your story and the things you make.',
       icon: 'key-outline',
       tone: C.lilac,
-      tilt: -1.6,
     },
     {
       n: '02',
@@ -499,7 +502,6 @@ function HowItWorks() {
       text: 'Pick a look, swap the colours, change the type. Make it unmistakably yours.',
       icon: 'color-palette-outline',
       tone: C.butter,
-      tilt: 1.1,
     },
     {
       n: '03',
@@ -507,7 +509,6 @@ function HowItWorks() {
       text: 'Publish when you’re ready. Shoppers drop in, browse, follow and buy.',
       icon: 'storefront-outline',
       tone: C.mint,
-      tilt: -0.8,
     },
   ] as const;
   return (
@@ -520,32 +521,8 @@ function HowItWorks() {
       </Reveal>
       <View style={{ gap: 22, marginTop: 26 }}>
         {steps.map((s, i) => (
-          <Reveal
-            key={s.n}
-            delay={i * 80}
-            from={44}
-            style={{ transform: [{ rotate: `${s.tilt}deg` }] }}
-          >
-            <View
-              style={{
-                position: 'absolute',
-                left: 4,
-                right: -4,
-                top: 5,
-                bottom: -5,
-                borderRadius: 28,
-                backgroundColor: C.ink,
-              }}
-            />
-            <View
-              style={{
-                backgroundColor: s.tone,
-                borderWidth: 2,
-                borderColor: C.ink,
-                borderRadius: 28,
-                padding: 22,
-              }}
-            >
+          <Reveal key={s.n} delay={i * 80} from={44}>
+            <Panel tone={s.tone} radius={32} ring={6} style={{ padding: 24 }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -564,7 +541,7 @@ function HowItWorks() {
               <Text style={{ fontSize: 16, lineHeight: 23, color: C.ink, marginTop: 8 }}>
                 {s.text}
               </Text>
-            </View>
+            </Panel>
           </Reveal>
         ))}
       </View>
@@ -601,7 +578,6 @@ function Finale() {
             accessibilityRole="button"
             color={C.persimmon}
             borderColor={C.paper}
-            shadowColor={C.paper}
             style={{ alignSelf: 'flex-start' }}
             innerStyle={styles.big}
           >
@@ -655,12 +631,7 @@ const styles = StyleSheet.create({
     letterSpacing: -1.5,
     color: C.ink,
   },
-  nook: {
-    color: C.persimmon,
-    textShadowColor: C.ink,
-    textShadowOffset: { width: 3, height: 3 },
-    textShadowRadius: 0,
-  },
+  nook: { color: C.persimmon },
   h2: {
     fontFamily: font.display,
     fontSize: 36,
@@ -680,8 +651,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     paddingVertical: 7,
     paddingHorizontal: 14,
-    transform: [{ rotate: '-1.6deg' }],
-    ...hardShadow(0, 3),
   },
   liveDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#1FA862' },
   big: {

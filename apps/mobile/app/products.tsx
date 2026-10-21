@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Image } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Text } from '../components/text';
-import * as ImagePicker from 'expo-image-picker';
-import type { Product } from '@lilac/api-client';
+import type { Product, Stage } from '@lilac/api-client';
 import { money } from '@lilac/renderer';
-import { api, imageUri } from '../lib';
+import { api } from '../lib';
 import { AuthGate, useApp } from '../components/provider';
-import { Button, Field, Loading, ui, C } from '../components/ui';
+import { Button, Field, Loading, ui } from '../components/ui';
 import { Collections } from '../components/collections';
 import { Sheet } from '../components/sheet';
+import { ProductStage } from '../components/stage';
+import { StageStudio } from '../components/stage-studio';
 interface Form {
   title: string;
   description: string;
   price_minor: number;
   image: string;
+  stage: Stage | null;
   category: string;
   status: string;
   variants: { sku: string; options: Record<string, string>; price_minor: number; stock: number }[];
@@ -23,6 +25,7 @@ const blank = (): Form => ({
   description: '',
   price_minor: 5000,
   image: 'seed_product_0',
+  stage: null,
   category: 'Lifestyle',
   status: 'draft',
   variants: [
@@ -50,34 +53,8 @@ function Products() {
   useEffect(() => {
     void load();
   }, [me]);
-  const change = (key: keyof Form, v: unknown) => setForm({ ...form!, [key]: v });
-  const upload = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) return;
-    const r = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-    });
-    if (r.canceled) return;
-    setBusy(true);
-    try {
-      const f = r.assets[0];
-      const body = new FormData();
-      body.append('file', {
-        uri: f.uri,
-        name: f.fileName || 'product.jpg',
-        type: f.mimeType || 'image/jpeg',
-      } as unknown as Blob);
-      body.append('shop_id', me!.shop.id);
-      body.append('alt', form?.title || 'Product photo');
-      const a = await api<{ id: string }>('/uploads', { method: 'POST', body });
-      change('image', a.id);
-    } catch (e) {
-      notify((e as Error).message);
-    } finally {
-      setBusy(false);
-    }
-  };
+  // functional update, so two changes in a row (a new photo, then its stage) both stick
+  const change = (key: keyof Form, v: unknown) => setForm((f) => (f ? { ...f, [key]: v } : f));
   return (
     <ScrollView style={ui.screen} contentContainerStyle={ui.content}>
       <Text style={ui.eyebrow}>YOUR SELLER STUDIO</Text>
@@ -99,10 +76,13 @@ function Products() {
       {products?.map((p) => (
         <View key={p.id} style={[ui.card, { marginTop: 20 }]}>
           <View style={ui.row}>
-            <Image
-              source={{ uri: imageUri(p.image) }}
-              accessibilityLabel={p.title}
-              style={{ width: 70, height: 80, borderRadius: 9 }}
+            <ProductStage
+              stage={p.stage}
+              image={p.image}
+              ratio={0.875}
+              priv
+              alt={p.title}
+              style={{ width: 70, borderRadius: 14 }}
             />
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: '600' }}>{p.title}</Text>
@@ -123,6 +103,7 @@ function Products() {
                 description: p.description,
                 price_minor: p.price_minor,
                 image: p.image,
+                stage: p.stage ?? null,
                 category: p.category,
                 status: p.status,
                 variants: p.variants.map((v) => ({
@@ -185,12 +166,14 @@ function Products() {
                 ),
               )}
             </View>
-            <Button
-              title="Choose & crop product photo"
-              soft
-              disabled={busy}
-              style={{ marginTop: 20 }}
-              onPress={() => void upload()}
+            <StageStudio
+              shopId={me!.shop.id}
+              title={form.title}
+              image={form.image}
+              stage={form.stage}
+              onImage={(id) => change('image', id)}
+              onStage={(stage) => change('stage', stage)}
+              onError={notify}
             />
             <Text style={ui.sectionTitle}>Variants & inventory</Text>
             {form.variants.map((v, i) => (

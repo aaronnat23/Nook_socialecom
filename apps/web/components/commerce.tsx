@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   ArrowLeft,
@@ -11,11 +11,11 @@ import {
   Plus,
   Minus,
   Trash2,
-  Flower2,
   CheckCircle2,
   Package,
-  Heart,
   Loader2,
+  Share2,
+  ArrowUpRight,
 } from 'lucide-react';
 import type { Product, Order, Shop, Variant } from '@lilac/api-client';
 import { money, assetPath } from '@lilac/renderer';
@@ -23,15 +23,31 @@ import { api } from '@/lib/api';
 import { useApp } from './provider';
 import { AuthGate } from './auth-gate';
 import { FavoriteButton } from './cards';
+import { ProductStage } from './stage';
 export function ProductDetail({ product: p }: { product: Product }) {
   const { requireAuth, toast } = useApp();
   const [variant, setVariant] = useState(p.variants[0]?.id || '');
   const [qty, setQty] = useState(1);
   const [busy, setBusy] = useState(false);
   const [added, setAdded] = useState(false);
+  const [tab, setTab] = useState<'Description' | 'Details' | 'Shipping & returns'>('Description');
   const v = p.variants.find((x) => x.id === variant);
+  const label = (x: Variant) => Object.values(x.options).join(' / ') || x.sku;
+  const unit = v?.price_minor ?? p.price_minor;
+  const share = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) await navigator.share({ title: p.title, url });
+      else {
+        await navigator.clipboard.writeText(url);
+        toast('Link copied. Pass it on.');
+      }
+    } catch {
+      /* the share sheet was dismissed */
+    }
+  };
   return (
-    <div className="page-wrap" id="page-content">
+    <div className="page-wrap pd" id="page-content">
       <div className="breadcrumbs">
         <Link href="/">Discover</Link>
         <span>/</span>
@@ -39,59 +55,158 @@ export function ProductDetail({ product: p }: { product: Product }) {
         <span>/</span>
         <span>{p.title}</span>
       </div>
-      <div className="detail-grid">
-        <div className="detail-photo">
-          <img src={assetPath(p.image)} alt={p.title} />
-          <FavoriteButton product={p} />
-        </div>
-        <div className="detail-copy">
-          <Link href={`/shop/${p.shop_slug}`} className="eyebrow">
-            FROM THE LITTLE WORLD OF {p.shop_name} ↗
-          </Link>
-          <h1>{p.title}</h1>
-          <span className="detail-price">{money(v?.price_minor ?? p.price_minor)}</span>
-          <p>{p.description}</p>
-          <label>
-            Choose your finish
-            <select
-              value={variant}
-              onChange={(e) => {
-                setVariant(e.target.value);
-                setQty(1);
-                setAdded(false);
-              }}
+      <div className="pd-grid">
+        <div className="pd-media">
+          <Gallery product={p}>
+            <Link
+              className="round-button pd-back"
+              href={`/shop/${p.shop_slug}`}
+              aria-label={`Back to ${p.shop_name}`}
             >
-              {p.variants.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {Object.values(v.options).join(' / ') || v.sku}
-                  {v.stock === 0 ? ' · Sold out' : ''}
-                </option>
-              ))}
-            </select>
-          </label>
-          <p className="stock-note">
-            {v && v.stock > 0
-              ? `${v.stock} available · A small-batch find`
-              : 'This little find is sold out.'}
-          </p>
-          <div className="button-row" style={{ marginTop: 25 }}>
-            <div className="quantity-control">
-              <button aria-label="Decrease quantity" onClick={() => setQty(Math.max(1, qty - 1))}>
-                <Minus size={13} />
-              </button>
-              <span>{qty}</span>
+              <ArrowLeft size={20} />
+            </Link>
+            <div className="pd-actions">
               <button
-                aria-label="Increase quantity"
-                disabled={qty >= (v?.stock || 0)}
-                onClick={() => setQty(qty + 1)}
+                type="button"
+                className="round-button"
+                aria-label="Share this find"
+                onClick={share}
               >
-                <Plus size={13} />
+                <Share2 size={18} />
               </button>
+              <FavoriteButton product={p} />
+            </div>
+          </Gallery>
+        </div>
+        <div className="pd-info">
+          <div className="pd-top">
+            <Link href={`/shop/${p.shop_slug}`} className="pd-shop">
+              <span className="shop-dot" aria-hidden="true">
+                {p.shop_name.slice(0, 1)}
+              </span>
+              {p.shop_name}
+              <ArrowUpRight size={13} />
+            </Link>
+            <span className="pd-cat">{p.category}</span>
+          </div>
+          <div className="pd-title">
+            <h1>{p.title}</h1>
+            {v && <span className="pd-variant">{label(v)}</span>}
+          </div>
+          <p className="pd-sub">A small-batch find from {p.shop_name}.</p>
+          <div className="pd-tabs" role="tablist" aria-label="About this find">
+            {(['Description', 'Details', 'Shipping & returns'] as const).map((t) => (
+              <button
+                key={t}
+                role="tab"
+                aria-selected={tab === t}
+                className={tab === t ? 'active' : ''}
+                onClick={() => setTab(t)}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          <div className="pd-panel" key={tab} role="tabpanel">
+            {tab === 'Description' && <p>{p.description}</p>}
+            {tab === 'Details' && (
+              <dl>
+                <div>
+                  <dt>Shop</dt>
+                  <dd>{p.shop_name}</dd>
+                </div>
+                <div>
+                  <dt>Category</dt>
+                  <dd>{p.category}</dd>
+                </div>
+                <div>
+                  <dt>Option</dt>
+                  <dd>{v ? label(v) : 'Original'}</dd>
+                </div>
+                <div>
+                  <dt>Availability</dt>
+                  <dd>{v && v.stock > 0 ? `${v.stock} in stock` : 'Sold out'}</dd>
+                </div>
+              </dl>
+            )}
+            {tab === 'Shipping & returns' && (
+              <ul className="pd-policies">
+                <li>
+                  <Truck size={18} />
+                  <span>
+                    <strong>Sent with care, from Malaysia</strong>
+                    {`Domestic flat-rate shipping${p.shipping_minor !== undefined ? ' · ' + money(p.shipping_minor) : ''}. Final quote shown at checkout.`}
+                  </span>
+                </li>
+                <li>
+                  <ShieldCheck size={18} />
+                  <span>
+                    <strong>A little peace of mind</strong>
+                    {p.return_policy || 'See this shop’s return policy at checkout.'}
+                  </span>
+                </li>
+              </ul>
+            )}
+          </div>
+          <div className="pd-choose">
+            <span className="pd-label" id="finish-label">
+              Choose your finish
+            </span>
+            <div className="chip-row" role="radiogroup" aria-labelledby="finish-label">
+              {p.variants.map((x) => (
+                <button
+                  key={x.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={x.id === variant}
+                  disabled={x.stock === 0}
+                  className={`chip ${x.id === variant ? 'active' : ''}`}
+                  onClick={() => {
+                    setVariant(x.id);
+                    setQty(1);
+                    setAdded(false);
+                  }}
+                >
+                  {label(x)}
+                  {x.stock === 0 ? ' · Sold out' : ''}
+                </button>
+              ))}
+            </div>
+            <div className="pd-qty-row">
+              <div className="quantity-control">
+                <button aria-label="Decrease quantity" onClick={() => setQty(Math.max(1, qty - 1))}>
+                  <Minus size={13} />
+                </button>
+                <span>{qty}</span>
+                <button
+                  aria-label="Increase quantity"
+                  disabled={qty >= (v?.stock || 0)}
+                  onClick={() => setQty(qty + 1)}
+                >
+                  <Plus size={13} />
+                </button>
+              </div>
+              <p className="stock-note">
+                {v && v.stock > 0
+                  ? v.stock <= 4
+                    ? `Only ${v.stock} left`
+                    : `${v.stock} available`
+                  : 'This little find is sold out.'}
+              </p>
+            </div>
+          </div>
+          <div className="sandbox-note">
+            <ShieldCheck size={16} />
+            <span>Sample catalog · Sandbox checkout. This preview does not charge real money.</span>
+          </div>
+          <div className="buy-bar">
+            <div className="buy-price">
+              <span>Price</span>
+              <strong>{money(unit * qty)}</strong>
             </div>
             <button
-              className="button primary"
+              className="buy-cta"
               disabled={busy || !v || v.stock === 0}
-              style={{ flex: 1, maxWidth: 300 }}
               onClick={async () => {
                 if (!requireAuth()) return;
                 setBusy(true);
@@ -109,44 +224,81 @@ export function ProductDetail({ product: p }: { product: Product }) {
                 }
               }}
             >
-              {busy ? <Loader2 size={16} className="spin" /> : <ShoppingBag size={16} />}{' '}
               {added ? 'Added to your bag' : 'Add to bag'}
+              <span className="cta-disc">
+                {busy ? (
+                  <Loader2 size={16} className="spin" />
+                ) : added ? (
+                  <CheckCircle2 size={17} />
+                ) : (
+                  <ShoppingBag size={16} />
+                )}
+              </span>
             </button>
           </div>
           {added && (
-            <Link href="/cart" className="text-button" style={{ marginTop: 12 }}>
+            <Link href="/cart" className="text-button pd-bag-link">
               Take a look at your bag <ArrowRight size={14} />
             </Link>
           )}
-          <div className="detail-policies">
-            <div>
-              <Truck size={17} />
-              <div>
-                <strong>Sent with care, from Malaysia</strong>
-                <span>{`Domestic flat-rate shipping${p.shipping_minor !== undefined ? ' · ' + money(p.shipping_minor) : ''}. Final quote shown at checkout.`}</span>
-              </div>
-            </div>
-            <div>
-              <ShieldCheck size={17} />
-              <div>
-                <strong>A little peace of mind</strong>
-                <span>{p.return_policy || 'See this shop’s return policy at checkout.'}</span>
-              </div>
-            </div>
-            <div>
-              <Flower2 size={17} />
-              <div>
-                <strong>Independent looks good on you</strong>
-                <span>Every purchase starts with a real person and a little idea.</span>
-              </div>
-            </div>
-          </div>
-          <div className="sandbox-note">
-            <ShieldCheck size={16} />
-            <span>Sample catalog · Sandbox checkout. This preview does not charge real money.</span>
-          </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** The product's hero: the staged view first, then the plain photo, as a swipeable pager. */
+function Gallery({ product: p, children }: { product: Product; children?: React.ReactNode }) {
+  const track = useRef<HTMLDivElement>(null);
+  const [index, setIndex] = useState(0);
+  const staged = !!p.stage?.cutout;
+  const slides = staged ? 2 : 1;
+  const go = (i: number) => {
+    const el = track.current;
+    if (el) el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
+  };
+  return (
+    <div className="pd-hero">
+      <div
+        className="pd-track"
+        role="region"
+        aria-label="Product photos"
+        tabIndex={0}
+        ref={track}
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          setIndex(Math.round(el.scrollLeft / Math.max(1, el.clientWidth)));
+        }}
+      >
+        <div className="pd-slide">
+          <ProductStage stage={p.stage} image={p.image} alt={p.title} className="is-hero" eager />
+        </div>
+        {staged && (
+          <div className="pd-slide">
+            <ProductStage
+              stage={null}
+              image={p.image}
+              alt={`${p.title}, the original photo`}
+              eager
+            />
+          </div>
+        )}
+      </div>
+      {children}
+      {slides > 1 && (
+        <div className="pager" role="group" aria-label="Photo views">
+          {Array.from({ length: slides }, (_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={i === 0 ? 'Show the styled view' : 'Show the original photo'}
+              aria-current={index === i}
+              className={index === i ? 'active' : ''}
+              onClick={() => go(i)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

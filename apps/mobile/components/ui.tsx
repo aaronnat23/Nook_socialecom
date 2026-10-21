@@ -1,12 +1,21 @@
 import { useState } from 'react';
 import {
+  Pressable,
   StyleSheet,
   TextInput,
   View,
+  type StyleProp,
   type TextInputProps,
   type ViewStyle,
   ActivityIndicator,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 import { tokens } from '@lilac/ui';
 import { contrastRatio } from '@lilac/renderer';
 import { Key, useReducedMotion } from './motion';
@@ -17,13 +26,120 @@ import { NookMark } from './brand';
 export const C = tokens.colors;
 export { Text };
 
-/** Hard offset shadow that works on iOS; Android falls back to the outline. */
-export const hardShadow = (x = 3, y = 3, color: string = C.ink) => ({
-  shadowColor: color,
-  shadowOpacity: 1,
-  shadowRadius: 0,
-  shadowOffset: { width: x, height: y },
+/** A soft, low shadow for things that float above the page (round buttons, bars, sheets). */
+export const lift = (strength = 1) => ({
+  shadowColor: C.ink,
+  shadowOpacity: 0.16 * strength,
+  shadowRadius: 12 * strength,
+  shadowOffset: { width: 0, height: 6 * strength },
+  elevation: 5 * strength,
 });
+
+/**
+ * The inner white keyline that sits just inside a surface's outline. Together with the outline it
+ * gives Nook's double-stroke tiles. Place it last inside a clipped parent.
+ */
+export function Ring({
+  width = 5,
+  opacity = 0.6,
+  radius,
+  style,
+}: {
+  width?: number;
+  opacity?: number;
+  radius?: number;
+  style?: StyleProp<ViewStyle>;
+}) {
+  return (
+    <View
+      pointerEvents="none"
+      style={[
+        StyleSheet.absoluteFill,
+        {
+          borderWidth: width,
+          borderColor: `rgba(255,255,255,${opacity})`,
+          borderRadius: radius,
+        },
+        style,
+      ]}
+    />
+  );
+}
+
+/** A flat, pastel tile with a thick outline and a white keyline inside it. */
+export function Panel({
+  tone = C.card,
+  radius = 28,
+  ring = 6,
+  style,
+  children,
+}: {
+  tone?: string;
+  radius?: number;
+  ring?: number;
+  style?: StyleProp<ViewStyle>;
+  children: React.ReactNode;
+}) {
+  return (
+    <View
+      style={[
+        {
+          backgroundColor: tone,
+          borderWidth: 3,
+          borderColor: C.ink,
+          borderRadius: radius,
+          overflow: 'hidden',
+        },
+        style,
+      ]}
+    >
+      {children}
+      <Ring width={ring} radius={Math.max(0, radius - 3)} />
+    </View>
+  );
+}
+
+/** A round, borderless button that floats over images and bars. */
+export function RoundButton({
+  icon,
+  label,
+  onPress,
+  dark = false,
+  active = false,
+  size = 46,
+}: {
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  label: string;
+  onPress: () => void;
+  dark?: boolean;
+  active?: boolean;
+  size?: number;
+}) {
+  const press = useSharedValue(0);
+  const a = useAnimatedStyle(() => ({ transform: [{ scale: 1 - press.value * 0.1 }] }));
+  const bg = active ? C.persimmon : dark ? C.ink : C.card;
+  return (
+    <Animated.View
+      style={[
+        { width: size, height: size, borderRadius: size / 2, backgroundColor: bg },
+        lift(),
+        a,
+      ]}
+    >
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        onPress={onPress}
+        onPressIn={() => (press.value = withTiming(1, { duration: 70 }))}
+        onPressOut={() => (press.value = withSpring(0, { damping: 7, stiffness: 260 }))}
+        hitSlop={4}
+        style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Ionicons name={icon} size={size * 0.42} color={dark && !active ? C.paper : C.ink} />
+      </Pressable>
+    </Animated.View>
+  );
+}
 
 export const ui = StyleSheet.create({
   screen: { flex: 1, backgroundColor: C.background },
@@ -54,12 +170,11 @@ export const ui = StyleSheet.create({
   },
   card: {
     backgroundColor: C.card,
-    borderWidth: 2,
+    borderWidth: 2.5,
     borderColor: C.ink,
-    borderRadius: 24,
+    borderRadius: 26,
     padding: 20,
     marginBottom: 18,
-    ...hardShadow(3, 4),
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 },
@@ -86,6 +201,15 @@ export const ui = StyleSheet.create({
     gap: 8,
   },
   buttonText: { fontSize: 15, color: C.ink, fontWeight: '700' },
+  disc: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: C.persimmon,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 6,
+  },
   soft: { backgroundColor: C.lilac },
   softText: { color: C.ink },
   error: {
@@ -135,9 +259,12 @@ export function Button({
   style?: ViewStyle;
 }) {
   const custom = typeof style?.backgroundColor === 'string' ? style.backgroundColor : undefined;
-  const background = soft ? C.lilac : custom || C.persimmon;
-  const foreground =
-    /^#[\dA-Fa-f]{6}$/.test(background) && contrastRatio(C.ink, background) < 4.5
+  // The main button is ink with a persimmon arrow disc; soft and custom ones are plain pills.
+  const primary = !soft && !custom;
+  const background = soft ? C.lilac : custom || C.ink;
+  const foreground = primary
+    ? C.paper
+    : /^#[\dA-Fa-f]{6}$/.test(background) && contrastRatio(C.ink, background) < 4.5
       ? '#FFFFFF'
       : C.ink;
   const { backgroundColor: _drop, ...outer } = style || {};
@@ -150,9 +277,18 @@ export function Button({
       color={background}
       borderColor={C.ink}
       style={[outer, { minHeight: style?.minHeight || 52 }]}
-      innerStyle={[ui.button, { minHeight: (style?.minHeight as number) || 52 }]}
+      innerStyle={[
+        ui.button,
+        { minHeight: (style?.minHeight as number) || 52 },
+        primary && { paddingRight: 8 },
+      ]}
     >
-      <Text style={[ui.buttonText, { color: foreground }]}>{title}</Text>
+      <Text style={[ui.buttonText, { color: foreground }]}>{title.replace(/\s*[↗→]$/, '')}</Text>
+      {primary && (
+        <View style={ui.disc}>
+          <Ionicons name="arrow-forward" size={16} color={C.ink} />
+        </View>
+      )}
     </Key>
   );
 }
@@ -174,7 +310,7 @@ export function Field({ label, ...props }: TextInputProps & { label: string }) {
         }}
         style={[
           ui.input,
-          focused && { borderColor: C.ink, backgroundColor: '#FFFFFF', ...hardShadow(0, 3) },
+          focused && { borderColor: C.ink, backgroundColor: '#FFFFFF' },
           props.multiline && { minHeight: 96, textAlignVertical: 'top' },
           props.style,
         ]}

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     supabase_publishable_key: str = ""
     supabase_service_role_key: str = ""
     supabase_storage_bucket: str = "shop-assets"
+    cutout_model_path: str = ""
 
 
 settings = Settings()

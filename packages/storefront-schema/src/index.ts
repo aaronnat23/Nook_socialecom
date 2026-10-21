@@ -93,6 +93,33 @@ export interface Document {
   };
   sections: { id: string; type: 'section'; style?: Style; children: Block[] }[];
 }
+/** How a product is presented: its cut-out, the backdrop behind it and how the two sit together. */
+export type BackdropKind =
+  | 'color'
+  | 'gradient'
+  | 'stripes'
+  | 'dots'
+  | 'sunburst'
+  | 'arch'
+  | 'ribbon'
+  | 'photo';
+export interface Backdrop {
+  kind: BackdropKind;
+  a: string;
+  b: string;
+  text: string;
+  asset_id: string | null;
+}
+export interface Stage {
+  v: 1;
+  cutout: string | null;
+  backdrop: Backdrop;
+  scale: number;
+  x: number;
+  y: number;
+  outline: boolean;
+  shadow: boolean;
+}
 export const themes = themeFixtures as {
   id: string;
   name: string;

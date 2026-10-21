@@ -291,16 +291,14 @@ export function Marquee({
 }
 
 /**
- * A pressable that behaves like a physical key: it sinks onto its own hard shadow when pressed and
- * springs back when released.
+ * A flat, outlined pressable that squashes a little under the finger and springs back on release.
+ * `color` fills it; `borderColor` outlines it.
  */
 export function Key({
   children,
   color,
   borderColor,
-  shadowColor,
   radius = 999,
-  depth = 3,
   borderWidth = 2,
   style,
   innerStyle,
@@ -310,43 +308,29 @@ export function Key({
   children: ReactNode;
   color: string;
   borderColor: string;
-  shadowColor?: string;
   radius?: number;
-  depth?: number;
   borderWidth?: number;
   style?: StyleProp<ViewStyle>;
   innerStyle?: StyleProp<ViewStyle>;
 }) {
   const reduced = useReducedMotion();
-  const sink = useSharedValue(0);
-  const a = useAnimatedStyle(() => ({ transform: [{ translateY: sink.value * depth }] }));
+  const press = useSharedValue(0);
+  const a = useAnimatedStyle(() => ({ transform: [{ scale: 1 - press.value * 0.045 }] }));
   return (
-    <View style={[{ paddingBottom: depth, opacity: disabled ? 0.45 : 1 }, style]}>
-      <View
-        pointerEvents="none"
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          top: depth,
-          borderRadius: radius,
-          backgroundColor: shadowColor || borderColor,
-        }}
-      />
+    <Animated.View style={[{ opacity: disabled ? 0.45 : 1 }, style, a]}>
       <Pressable
         {...rest}
         disabled={disabled}
         onPressIn={(e) => {
-          sink.value = reduced ? 1 : withTiming(1, { duration: 70 });
+          press.value = reduced ? 1 : withTiming(1, { duration: 80 });
           rest.onPressIn?.(e);
         }}
         onPressOut={(e) => {
-          sink.value = reduced ? 0 : withSpring(0, { damping: 9, stiffness: 260 });
+          press.value = reduced ? 0 : withSpring(0, { damping: 8, stiffness: 240 });
           rest.onPressOut?.(e);
         }}
       >
-        <Animated.View
+        <View
           style={[
             {
               backgroundColor: color,
@@ -356,13 +340,12 @@ export function Key({
               overflow: 'hidden',
             },
             innerStyle,
-            a,
           ]}
         >
           {children}
-        </Animated.View>
+        </View>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 }
 

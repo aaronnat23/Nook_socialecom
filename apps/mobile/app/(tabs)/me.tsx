@@ -14,7 +14,7 @@ import type { Order, Product } from '@lilac/api-client';
 import { money } from '@lilac/renderer';
 import { api, imageUri } from '../../lib';
 import { AuthGate, useApp } from '../../components/provider';
-import { Button, hardShadow, ui, C } from '../../components/ui';
+import { Button, Panel, ui, C } from '../../components/ui';
 import { TemplateGallery } from '../../components/templates';
 import { Bob, Key, PopIn, Reveal, RevealScroll, useReducedMotion } from '../../components/motion';
 import { NookMark } from '../../components/brand';
@@ -139,28 +139,8 @@ function Space() {
     <RevealScroll style={ui.screen} contentContainerStyle={{ paddingBottom: 130 }}>
       <View style={{ paddingHorizontal: 20, paddingTop: 12 }}>
         <Reveal pop from={30}>
-          <View style={{ paddingBottom: 6, paddingRight: 5 }}>
-            <View
-              style={{
-                position: 'absolute',
-                left: 5,
-                right: 0,
-                top: 6,
-                bottom: 0,
-                borderRadius: 38,
-                backgroundColor: C.ink,
-              }}
-            />
-            <View
-              style={{
-                backgroundColor: wall,
-                borderWidth: 3,
-                borderColor: C.ink,
-                borderRadius: 36,
-                padding: 22,
-                overflow: 'hidden',
-              }}
-            >
+          <View>
+            <Panel tone={wall} radius={36} ring={6} style={{ padding: 22 }}>
               <Text style={{ fontFamily: font.hand, fontSize: 28, color: roomText }}>
                 welcome home, {firstName}
               </Text>
@@ -199,8 +179,6 @@ function Space() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginTop: 16,
-                  transform: [{ rotate: '-7deg' }],
-                  ...hardShadow(3, 3),
                 }}
               >
                 <Text style={{ fontFamily: font.display, fontSize: 30, color: C.ink }}>
@@ -246,7 +224,6 @@ function Space() {
                         borderRadius: 20,
                         paddingHorizontal: 13,
                         paddingVertical: 5,
-                        transform: [{ rotate: i % 2 ? '1.6deg' : '-2deg' }],
                       }}
                     >
                       <Text style={{ fontSize: 13, fontWeight: '700', color: C.ink }}>{chip}</Text>
@@ -269,7 +246,7 @@ function Space() {
                   </Key>
                 )}
               </View>
-            </View>
+            </Panel>
           </View>
         </Reveal>
 
@@ -280,7 +257,6 @@ function Space() {
               value: published.length,
               note: 'products published',
               tone: C.lilac,
-              tilt: -1.3,
               icon: 'cube-outline',
             },
             {
@@ -288,7 +264,6 @@ function Space() {
               value: shop.followers,
               note: 'people following you',
               tone: C.butter,
-              tilt: 1,
               icon: 'people-outline',
             },
             {
@@ -296,7 +271,6 @@ function Space() {
               value: orders.length,
               note: 'sandbox orders only',
               tone: C.pink,
-              tilt: -0.8,
               icon: 'receipt-outline',
             },
             {
@@ -304,56 +278,49 @@ function Space() {
               text: money(sales),
               note: 'no real money collected',
               tone: C.mint,
-              tilt: 1.2,
               icon: 'heart-outline',
             },
           ].map((s, i) => (
-            <Reveal
-              key={s.label}
-              delay={i * 70}
-              pop
-              style={{ width: '47.6%', transform: [{ rotate: `${s.tilt}deg` }] }}
-            >
-              <View
-                style={{
-                  position: 'absolute',
-                  left: 3,
-                  right: -3,
-                  top: 4,
-                  bottom: -4,
-                  borderRadius: 24,
-                  backgroundColor: C.ink,
-                }}
-              />
-              <View
-                style={{
-                  backgroundColor: s.tone,
-                  borderWidth: 2,
-                  borderColor: C.ink,
-                  borderRadius: 24,
-                  padding: 15,
-                }}
+            <Reveal key={s.label} delay={i * 70} pop style={{ width: '47.6%' }}>
+              <Panel
+                tone={s.tone}
+                radius={30}
+                ring={5}
+                style={{ flex: 1, padding: 16, minHeight: 176 }}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Ionicons name={s.icon as 'cube-outline'} size={15} color={C.ink} />
-                  <Text style={{ fontSize: 12.5, fontWeight: '700', color: C.ink }}>{s.label}</Text>
+                <View
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: '#FFFFFF',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Ionicons name={s.icon as 'cube-outline'} size={19} color={C.ink} />
                 </View>
                 {'value' in s && s.value !== undefined ? (
                   <CountUp
                     value={s.value}
-                    style={{ fontFamily: font.display, fontSize: 40, color: C.ink, marginTop: 8 }}
+                    style={{ fontFamily: font.display, fontSize: 42, color: C.ink, marginTop: 14 }}
                   />
                 ) : (
                   <Text
-                    style={{ fontFamily: font.display, fontSize: 32, color: C.ink, marginTop: 12 }}
+                    style={{ fontFamily: font.display, fontSize: 32, color: C.ink, marginTop: 18 }}
                   >
                     {s.text}
                   </Text>
                 )}
-                <Text style={{ fontSize: 12.5, color: C.ink, opacity: 0.8, marginTop: 4 }}>
+                <Text
+                  style={{ fontFamily: font.display, fontSize: 17, color: C.ink, marginTop: 2 }}
+                >
+                  {s.label}
+                </Text>
+                <Text style={{ fontSize: 12.5, color: C.ink, opacity: 0.75, marginTop: 4 }}>
                   {s.note}
                 </Text>
-              </View>
+              </Panel>
             </Reveal>
           ))}
         </View>

@@ -43,6 +43,37 @@ class VariantInput(StrictModel):
     stock: int = Field(ge=0, le=1000000)
 
 
+HEX = r"^#[0-9a-fA-F]{6}$"
+BACKDROP_KINDS = Literal["color", "gradient", "stripes", "dots", "sunburst", "arch", "ribbon", "photo"]
+
+
+class Backdrop(StrictModel):
+    """A seller-chosen scene behind the product. Only data, never markup."""
+
+    kind: BACKDROP_KINDS = "color"
+    a: str = Field(default="#CDB8FF", pattern=HEX)
+    b: str = Field(default="#FFFBF3", pattern=HEX)
+    text: str = Field(default="", max_length=40)
+    asset_id: str | None = Field(default=None, max_length=120)
+
+
+class Stage(StrictModel):
+    """How a product is presented: its cut-out, the backdrop and how the two sit together."""
+
+    v: Literal[1] = 1
+    cutout: str | None = Field(default=None, max_length=120)
+    backdrop: Backdrop = Field(default_factory=Backdrop)
+    scale: float = Field(default=0.78, ge=0.35, le=1.2)
+    x: float = Field(default=0.0, ge=-0.4, le=0.4)
+    y: float = Field(default=0.03, ge=-0.4, le=0.4)
+    outline: bool = False
+    shadow: bool = True
+
+
+class CutoutInput(StrictModel):
+    asset_id: str = Field(pattern=r"^[a-f0-9-]{36}$")
+
+
 class ProductInput(StrictModel):
     title: str = Field(min_length=1, max_length=160)
     description: str = Field(default="", max_length=6000)
@@ -51,6 +82,7 @@ class ProductInput(StrictModel):
     category: Literal["Fashion", "Home & living", "Art & prints", "Jewelry", "Beauty", "Lifestyle"] = "Lifestyle"
     status: Literal["draft", "published", "archived"] = "draft"
     variants: list[VariantInput] = Field(min_length=1, max_length=100)
+    stage: Stage | None = None
 
     @field_validator("variants")
     @classmethod

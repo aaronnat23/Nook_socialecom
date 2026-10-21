@@ -12,4 +12,19 @@ export const setToken = (value: string | null) => {
 };
 export const api = createClient(apiBase, () => authToken);
 export const imageUri = (id: string) =>
-  id.startsWith('seed_') ? `${origin}/images/${id}.jpg` : `${origin}/media/${id}.webp`;
+  id.startsWith('seed_cutout_')
+    ? `${origin}/images/${id}.webp`
+    : id.startsWith('seed_')
+      ? `${origin}/images/${id}.jpg`
+      : `${origin}/media/${id}.webp`;
+/**
+ * Where to load an image from. A seller's unpublished uploads are private, so those are fetched
+ * from the owner endpoint with their session instead of the public address.
+ */
+export const imageSource = (id: string, priv = false) =>
+  priv && !id.startsWith('seed_')
+    ? {
+        uri: `${apiBase}/assets/${id}`,
+        headers: { Authorization: `Bearer ${authToken ?? ''}` },
+      }
+    : { uri: imageUri(id) };

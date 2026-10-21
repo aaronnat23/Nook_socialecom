@@ -13,7 +13,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from PIL import Image, ImageOps, UnidentifiedImageError
-from sqlalchemy import select, func, update, delete, or_, text
+from sqlalchemy import select, func, update, delete, or_, text, Text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from .auth import DB, User, passwords, token_for
@@ -34,6 +34,7 @@ from .contracts import (
     CollectionInput,
     RefreshInput,
     ShopInput,
+    CutoutInput,
 )
 from .models import (
     Profile,
@@ -57,7 +58,7 @@ from .models import (
 )
 from .validation import validate_document
 from .payments import provider
-from . import storage
+from . import storage, cutout
 
 app = FastAPI(title=f"{settings.app_name} Commerce API", version="1.0.0")
 app.add_middleware(
@@ -84,6 +85,8 @@ async def limits(request: Request, call_next: Callable[[Request], Awaitable[Resp
     while bucket and bucket[0] < start - 60:
         bucket.popleft()
     cap = 20 if request.method == "POST" and "/auth/" in request.url.path else 120
+    if request.method == "POST" and request.url.path.endswith("/cutouts"):
+        cap = 12
     if len(bucket) >= cap:
         return JSONResponse(
             {"error": {"code": "RATE_LIMIT", "message": "Please wait a moment and try again."}}, status_code=429
@@ -177,6 +180,7 @@ def product_data(db: Session, p: Product) -> dict[str, Any]:
                 "status",
             ]
         },
+        "stage": p.stage,
         "created_at": p.created_at.isoformat(),
         "shop_name": s.name,
         "shop_slug": s.slug,
@@ -305,7 +309,14 @@ def register(data: AuthInput, db: DB) -> dict[str, Any]:
             },
         )
     handle = data.handle.lower()
-    if not re.fullmatch(r"[a-z0-9_.]{3,30}", handle) or handle in ["admin", "api", "settings", "support", "lilac", "nook"]:
+    if not re.fullmatch(r"[a-z0-9_.]{3,30}", handle) or handle in [
+        "admin",
+        "api",
+        "settings",
+        "support",
+        "lilac",
+        "nook",
+    ]:
         raise HTTPException(422, "Choose a handle with 3–30 letters, numbers, dots or underscores.")
     u = Profile(
         email=data.email.lower(),
@@ -661,6 +672,35 @@ def seller_products(shop_id: str, db: DB, user: User) -> dict[str, Any]:
     }
 
 
+SEED_IMAGE = re.compile(r"seed_(hero_[0-7]|product_([0-9]|1[0-9]|2[0-3])|cutout_([0-9]|1[0-9]|2[0-3]))")
+
+
+def owned_image(db: Session, shop_id: str, ref: str) -> None:
+    """Accepts a bundled sample image or an asset that belongs to this shop."""
+    if ref.startswith("seed_"):
+        if not SEED_IMAGE.fullmatch(ref):
+            raise HTTPException(422, "Unknown sample image.")
+        return
+    a = db.get(Asset, ref) if re.fullmatch(r"[a-f0-9-]{36}", ref) else None
+    if not a or a.shop_id != shop_id:
+        raise HTTPException(422, "Choose an image owned by this shop.")
+
+
+def validated_stage(db: Session, shop_id: str, data: ProductInput) -> dict[str, Any] | None:
+    if data.stage is None:
+        return None
+    stage = data.stage
+    if stage.cutout:
+        owned_image(db, shop_id, stage.cutout)
+    if stage.backdrop.kind == "photo":
+        if not stage.backdrop.asset_id:
+            raise HTTPException(422, "Choose a photo for the backdrop.")
+        owned_image(db, shop_id, stage.backdrop.asset_id)
+    elif stage.backdrop.asset_id:
+        raise HTTPException(422, "Only photo backdrops use an image.")
+    return stage.model_dump()
+
+
 def apply_product(db: Session, p: Product, data: ProductInput) -> None:
     for k in ["title", "description", "image", "category", "status"]:
         setattr(p, k, getattr(data, k))
@@ -671,6 +711,7 @@ def apply_product(db: Session, p: Product, data: ProductInput) -> None:
         a = db.get(Asset, data.image)
         if not a or a.shop_id != p.shop_id:
             raise HTTPException(422, "Choose an image owned by this shop.")
+    p.stage = validated_stage(db, p.shop_id, data)
     existing = {
         v.sku: v
         for v in db.scalars(select(Variant).where(Variant.product_id == p.id).order_by(Variant.id).with_for_update())
@@ -802,6 +843,7 @@ async def upload(
     file: Annotated[UploadFile, File()],
     shop_id: Annotated[str, Form()],
     alt: Annotated[str, Form()],
+    keep_alpha: Annotated[bool, Form()] = False,
 ) -> dict[str, Any]:
     owned(db, user, shop_id)
     if len(alt) < 1 or len(alt) > 300:
@@ -816,7 +858,8 @@ async def upload(
         im: Image.Image = Image.open(io.BytesIO(raw))
         if im.format not in ["JPEG", "PNG", "WEBP"] or im.width > 6000 or im.height > 6000:
             raise ValueError("Unsupported image")
-        im = ImageOps.exif_transpose(im).convert("RGB")
+        # Transparent PNG/WebP files are kept as they are when the seller says the photo is already cut out.
+        im = ImageOps.exif_transpose(im).convert("RGBA" if keep_alpha else "RGB")
         im.thumbnail((2400, 2400))
         output = io.BytesIO()
         im.save(output, format="WEBP", quality=88)
@@ -842,6 +885,47 @@ async def upload(
     return {"id": a.id, "width": a.width, "height": a.height, "alt": a.alt, "url": f"/media/{a.id}.webp"}
 
 
+@app.post(P + "/shops/{shop_id}/cutouts", status_code=201)
+def make_cutout(shop_id: str, data: CutoutInput, db: DB, user: User) -> dict[str, Any]:
+    """Removes the background from one of this shop's uploaded photos and stores the result."""
+    owned(db, user, shop_id)
+    source = db.get(Asset, data.asset_id)
+    if not source or source.shop_id != shop_id:
+        raise HTTPException(404, "Photo not found.")
+    used = db.scalar(select(func.sum(Asset.size_bytes)).where(Asset.shop_id == shop_id)) or 0
+    if used > 480 * 1024 * 1024:
+        raise HTTPException(413, "This shop has reached its 500 MB image allowance.")
+    try:
+        original = Image.open(storage.local_path(source))
+        result = cutout.remove_background(ImageOps.exif_transpose(original))
+    except cutout.CutoutUnavailable as exc:
+        raise HTTPException(503, "Background removal isn't available on this server yet.") from exc
+    except cutout.CutoutFailed as exc:
+        raise HTTPException(422, str(exc)) from exc
+    except (UnidentifiedImageError, OSError) as exc:
+        raise HTTPException(422, "We couldn't read that photo.") from exc
+    output = io.BytesIO()
+    result.save(output, format="WEBP", quality=92, method=4)
+    payload = output.getvalue()
+    asset_id = str(uuid4())
+    path = f"{shop_id}/{asset_id}.webp"
+    storage.store(asset_id, path, payload)
+    a = Asset(
+        id=asset_id,
+        owner_user_id=user.id,
+        shop_id=shop_id,
+        path=path,
+        width=result.width,
+        height=result.height,
+        size_bytes=len(payload),
+        checksum=hashlib.sha256(payload).hexdigest(),
+        alt=f"{source.alt} (cut out)"[:300],
+    )
+    db.add(a)
+    db.commit()
+    return {"id": a.id, "width": a.width, "height": a.height, "alt": a.alt, "url": f"/media/{a.id}.webp"}
+
+
 @app.get("/media/{filename}")
 def media(filename: str, db: DB) -> FileResponse:
     if not re.fullmatch(r"[a-f0-9-]{36}\.webp", filename):
@@ -860,7 +944,12 @@ def media(filename: str, db: DB) -> FileResponse:
             .where(Version.shop_id == a.shop_id)
         )
     )
-    p = db.scalar(select(Product.id).where(Product.image == a.id, Product.status == "published"))
+    p = db.scalar(
+        select(Product.id).where(
+            Product.status == "published",
+            or_(Product.image == a.id, func.cast(Product.stage, Text).contains(a.id)),
+        )
+    )
     if not p and not any(a.id in json.dumps(doc) for doc in published_docs):
         raise HTTPException(404, "This image is private.")
     path = storage.local_path(a)

@@ -9,7 +9,8 @@ import { C } from './ui';
 export function NestedNavigation() {
   const path = usePathname();
   const inset = useSafeAreaInsets();
-  if (['/', '/me', '/settings'].includes(path)) return null;
+  // product pages dock their own buy bar where the navigation would be
+  if (['/', '/me', '/settings'].includes(path) || path.startsWith('/product/')) return null;
   return (
     <View
       accessibilityRole="tablist"

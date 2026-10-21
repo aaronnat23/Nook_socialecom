@@ -536,6 +536,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/shops/{shop_id}/cutouts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Make Cutout
+         * @description Removes the background from one of this shop's uploaded photos and stores the result.
+         */
+        post: operations["make_cutout_api_v1_shops__shop_id__cutouts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/media/{filename}": {
         parameters: {
             query?: never;
@@ -846,6 +866,35 @@ export interface components {
              */
             display_name: string;
         };
+        /**
+         * Backdrop
+         * @description A seller-chosen scene behind the product. Only data, never markup.
+         */
+        Backdrop: {
+            /**
+             * Kind
+             * @default color
+             * @enum {string}
+             */
+            kind: "color" | "gradient" | "stripes" | "dots" | "sunburst" | "arch" | "ribbon" | "photo";
+            /**
+             * A
+             * @default #CDB8FF
+             */
+            a: string;
+            /**
+             * B
+             * @default #FFFBF3
+             */
+            b: string;
+            /**
+             * Text
+             * @default
+             */
+            text: string;
+            /** Asset Id */
+            asset_id?: string | null;
+        };
         /** Body_upload_api_v1_uploads_post */
         Body_upload_api_v1_uploads_post: {
             /** File */
@@ -854,6 +903,11 @@ export interface components {
             shop_id: string;
             /** Alt */
             alt: string;
+            /**
+             * Keep Alpha
+             * @default false
+             */
+            keep_alpha: boolean;
         };
         /** CheckoutInput */
         CheckoutInput: {
@@ -874,6 +928,11 @@ export interface components {
             title: string;
             /** Product Ids */
             product_ids: string[];
+        };
+        /** CutoutInput */
+        CutoutInput: {
+            /** Asset Id */
+            asset_id: string;
         };
         /** DraftInput */
         DraftInput: {
@@ -921,6 +980,7 @@ export interface components {
             status: "draft" | "published" | "archived";
             /** Variants */
             variants: components["schemas"]["VariantInput"][];
+            stage?: components["schemas"]["Stage"] | null;
         };
         /** ProfileInput */
         ProfileInput: {
@@ -1004,6 +1064,46 @@ export interface components {
             shipping_minor: number;
             /** Return Policy */
             return_policy: string;
+        };
+        /**
+         * Stage
+         * @description How a product is presented: its cut-out, the backdrop and how the two sit together.
+         */
+        Stage: {
+            /**
+             * V
+             * @default 1
+             * @constant
+             */
+            v: 1;
+            /** Cutout */
+            cutout?: string | null;
+            backdrop?: components["schemas"]["Backdrop"];
+            /**
+             * Scale
+             * @default 0.78
+             */
+            scale: number;
+            /**
+             * X
+             * @default 0
+             */
+            x: number;
+            /**
+             * Y
+             * @default 0.03
+             */
+            y: number;
+            /**
+             * Outline
+             * @default false
+             */
+            outline: boolean;
+            /**
+             * Shadow
+             * @default true
+             */
+            shadow: boolean;
         };
         /** ValidationError */
         ValidationError: {
@@ -2184,6 +2284,43 @@ export interface operations {
         requestBody: {
             content: {
                 "multipart/form-data": components["schemas"]["Body_upload_api_v1_uploads_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    make_cutout_api_v1_shops__shop_id__cutouts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                shop_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CutoutInput"];
             };
         };
         responses: {

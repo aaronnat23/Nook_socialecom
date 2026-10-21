@@ -45,6 +45,7 @@ export function moveBlock(doc: Document, id: string, delta: number): Document {
 }
 export function assetPath(id?: string): string {
   if (!id) return '';
+  if (id.startsWith('seed_cutout_')) return `/images/${id}.webp`;
   return id.startsWith('seed_') ? `/images/${id}.jpg` : `/media/${id}.webp`;
 }
 export function money(minor: number, currency = 'MYR') {
@@ -65,3 +66,4 @@ export function contrastRatio(foreground: string, background: string): number {
     b = luminance(background);
   return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
+export * from './stage';

@@ -2,6 +2,7 @@
 
 import copy, hashlib, json
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 from .db import SessionLocal
 from .auth import passwords
 from .models import Profile, Shop, Draft, Version, Publication, Product, Variant, Collection, Order, now
@@ -75,10 +76,52 @@ PRODUCTS = [
 ]
 
 
+def sample_stage(index: int) -> dict[str, object] | None:
+    """Staged presentations for the sample products whose photos cut out cleanly."""
+    scenes: dict[int, tuple[str, str, str, str, float, float, bool]] = {
+        # index: (backdrop kind, a, b, ribbon text, scale, y offset, die-cut outline)
+        0: ("arch", "#CDB8FF", "#FFFBF3", "", 0.86, 0.1, False),
+        1: ("stripes", "#B8DAFF", "#FFFBF3", "", 0.84, 0.02, True),
+        2: ("gradient", "#FFD15C", "#FF8A6E", "", 0.7, 0.0, False),
+        3: ("ribbon", "#D6F56B", "#FFFFFF", "SMALL SHOPS", 0.8, 0.04, True),
+        4: ("sunburst", "#FFB5CC", "#FFD9E6", "", 0.8, 0.03, False),
+        8: ("color", "#B7E4C7", "#FFFBF3", "", 0.8, 0.04, False),
+        9: ("dots", "#211A2E", "#4A4158", "", 0.78, 0.0, False),
+        12: ("arch", "#FFD15C", "#FFFBF3", "", 0.7, 0.04, False),
+        18: ("gradient", "#FFC9A8", "#FFFBF3", "", 0.84, 0.02, False),
+        20: ("ribbon", "#FFB5CC", "#FFFFFF", "GOLDEN HOUR", 0.82, 0.03, True),
+    }
+    if index not in scenes:
+        return None
+    kind, a, b, text, scale, y, outline = scenes[index]
+    return {
+        "v": 1,
+        "cutout": f"seed_cutout_{index}",
+        "backdrop": {"kind": kind, "a": a, "b": b, "text": text, "asset_id": None},
+        "scale": scale,
+        "x": 0.0,
+        "y": y,
+        "outline": outline,
+        "shadow": True,
+    }
+
+
+def stage_samples(db: Session) -> int:
+    """Gives sample products their staged look; safe to run again on an existing database."""
+    changed = 0
+    for product in db.scalars(select(Product).where(Product.image.like("seed_product_%"))):
+        stage = sample_stage(int(product.image.rsplit("_", 1)[1]))
+        if stage and product.stage is None:
+            product.stage = stage
+            changed += 1
+    db.commit()
+    return changed
+
+
 def seed() -> None:
     with SessionLocal() as db:
         if db.scalar(select(Shop.id).where(Shop.slug == "studio-hening")):
-            print("Sandbox seed already present.")
+            print(f"Sandbox seed already present; staged {stage_samples(db)} sample products.")
             return
         for i, (name, slug, bio, category, city, theme) in enumerate(SHOPS):
             u = Profile(
@@ -139,6 +182,7 @@ def seed() -> None:
                     category=category,
                     status="published",
                     tags=["independent", "malaysia"],
+                    stage=sample_stage(index),
                 )
                 db.add(p)
                 db.flush()

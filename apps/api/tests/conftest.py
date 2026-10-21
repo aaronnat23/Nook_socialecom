@@ -10,6 +10,14 @@ from app.main import app, rate_buckets
 from app.db import engine, Base
 
 
+@pytest.fixture(scope="session", autouse=True)
+def fresh_schema():
+    """Rebuilds the disposable test schema once per run so new columns never need a manual migration."""
+    assert engine.url.database and engine.url.database.endswith("_test"), "Tests require a separate *_test database."
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+
+
 @pytest.fixture(autouse=True)
 def clean_db():
     assert engine.url.database and engine.url.database.endswith("_test"), "Tests require a separate *_test database."

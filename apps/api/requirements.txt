@@ -9,6 +9,8 @@ pwdlib[argon2]==0.3.0
 jsonschema==4.26.0
 python-multipart==0.0.22
 pillow==12.1.1
+numpy==2.5.4
+onnxruntime==1.31.0
 httpx==0.28.1
 pytest==9.0.2
 ruff==0.15.6

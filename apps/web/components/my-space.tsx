@@ -80,28 +80,28 @@ function Space() {
       <Reveal className="sticker-row">
         <Stat
           tone="lilac"
-          icon={<Package size={16} />}
+          icon={<Package size={20} />}
           label="On your shelves"
           value={published.length}
           note="products published"
         />
         <Stat
           tone="butter"
-          icon={<Users size={16} />}
+          icon={<Users size={20} />}
           label="Neighbours"
           value={me.shop.followers}
           note="people following you"
         />
         <Stat
           tone="pink"
-          icon={<ShoppingBag size={16} />}
+          icon={<ShoppingBag size={20} />}
           label="Shop orders"
           value={orders.length}
           note="sandbox orders only"
         />
         <Stat
           tone="mint"
-          icon={<Heart size={16} />}
+          icon={<Heart size={20} />}
           label="Sandbox sales"
           text={money(sales)}
           note="no real money collected"
@@ -411,11 +411,9 @@ function Stat({
 }) {
   return (
     <div className={`stat-card tone-${tone}`}>
-      <span>
-        {icon}
-        {label}
-      </span>
+      <span className="stat-icon">{icon}</span>
       <strong>{text ?? <CountUp value={value ?? 0} />}</strong>
+      <span className="stat-label">{label}</span>
       <p>{note}</p>
     </div>
   );

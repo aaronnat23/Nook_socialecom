@@ -85,6 +85,50 @@ test('editor edits, autosaves, undoes, previews, publishes and restores', async 
   await page.getByRole('button', { name: 'Restore', exact: true }).last().click();
   await expect(page.getByRole('status').last()).toContainText('restored as a new draft');
 });
+test('product page shows the staged scene, the original photo and tabbed details', async ({
+  page,
+}, info) => {
+  await page.goto('/product/cloud-ceramic-mug');
+  await expect(page.getByRole('heading', { name: 'Cloud ceramic mug', level: 1 })).toBeVisible();
+  const hero = page.locator('.pd-hero');
+  await expect(hero.locator('.stage.is-staged')).toHaveCount(1);
+  await expect(hero.getByRole('img', { name: 'Cloud ceramic mug' }).first()).toBeVisible();
+  await page.getByRole('button', { name: 'Show the original photo' }).click();
+  await expect(page.getByRole('button', { name: 'Show the original photo' })).toHaveAttribute(
+    'aria-current',
+    'true',
+  );
+  await page.getByRole('tab', { name: 'Shipping & returns' }).click();
+  await expect(page.getByRole('tabpanel')).toContainText('Sent with care, from Malaysia');
+  await page.getByRole('tab', { name: 'Details' }).click();
+  await expect(page.getByRole('tabpanel')).toContainText('Availability');
+  expect(
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+  ).toBeTruthy();
+  await page.screenshot({ path: `artifacts/product-${info.project.name}-tested.png` });
+});
+test('a seller can cut out a product photo and set its scene', async ({ page }) => {
+  await login(page);
+  await page.goto('/me/products');
+  await page.getByRole('button', { name: 'Add a product' }).click();
+  await page.getByLabel('Product name').fill('Studio test backpack');
+  await page.setInputFiles('.studio input[type=file]', 'apps/web/public/images/seed_product_4.jpg');
+  const cut = page.waitForResponse(
+    (r) => r.url().includes('/cutouts') && r.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: 'Remove background' }).click();
+  expect((await cut).status()).toBe(201);
+  await expect(page.locator('.studio .stage.is-staged')).toBeVisible();
+  await page.getByRole('radio', { name: 'Ribbon' }).click();
+  await expect(page.locator('.studio .stage[data-kind="ribbon"]')).toBeVisible();
+  await page.getByLabel('Ribbon words').fill('HELLO NOOK');
+  await expect(page.locator('.studio .stage-ribbon').first()).toContainText('HELLO NOOK');
+  await page.getByRole('button', { name: 'Lime colours' }).click();
+  await page.getByText('Die-cut sticker edge').click();
+  await expect(page.locator('.studio .stage-object img.die-cut')).toBeVisible();
+  await page.getByRole('button', { name: 'Use the plain photo instead' }).click();
+  await expect(page.locator('.studio .stage.is-plain')).toBeVisible();
+});
 test('sandbox purchase completes and buyer can request a refund', async ({ page }) => {
   await login(page);
   await page.goto('/product/cloud-ceramic-mug');

@@ -65,6 +65,7 @@ pg_ctl -D .local/postgres -l .local/postgres.log -o '-p 55432 -h 127.0.0.1' star
 - Discover/search/category/price/stock filters, favorites/follows, product/variant management, collections, public SSR shop/product/profile routes.
 - Separate shop carts, authoritative quotes, transactional row-locked stock reservation, idempotent checkout, timestamped HMAC sandbox webhooks, payment failure/cancel/refund stock reconciliation, order screens and seller fulfillment/tracking.
 - Report intake, role-restricted moderator queue and audited shop suspension. Validated/EXIF-stripped WebP image uploads; private draft images; local storage or a server-only Supabase Storage adapter.
+- Product stage: sellers upload a photo, remove its background on the server and set the cut-out on a backdrop (solid, glow, arch, ribbon text, stripes, dots, sunburst or their own photo) with size/position, a die-cut sticker edge and a soft shadow. The product page shows the styled view and the original photo. Details in [docs/NOOK_BRAND.md](docs/NOOK_BRAND.md#product-stage).
 - Editable shop details, domestic shipping price and returns policy. Account/profile preferences persist in PostgreSQL.
 
 See [milestone verification](docs/MILESTONES.md), [implementation decisions](docs/decisions/001-architecture.md), [pilot requirements](docs/PILOT_READINESS.md), and [operations](docs/runbooks/operations.md) for actual verification and remaining limits. This is a working local sandbox, **not a declaration that every production launch gate is complete**.
@@ -94,6 +95,10 @@ For this Mac's current Wi-Fi session, the phone link is `exp://192.168.0.137:808
 
 The mobile client uses Expo **57.0.30**, React Native **0.86.3** and React **19.2.3**, upgraded to match the SDK 57 Expo Go actually installed on the physical iPhone. Native animation/worklet versions are pinned to the Expo SDK compatibility list, including transitive optional peers. The web client keeps its own React version.
 
+## Background removal
+
+The API bundles the Apache-2.0 U²-Net-P model (`apps/api/models/u2netp.onnx`, about 4.6 MB) and runs it with onnxruntime on CPU, so no external service or API key is needed. Set `CUTOUT_MODEL_PATH` to use a different ONNX saliency model. If onnxruntime or the model is missing, `POST /api/v1/shops/{shop_id}/cutouts` answers 503 and sellers can still upload an already-transparent PNG. It needs `numpy` and `onnxruntime` (both in `apps/api/requirements.txt`; re-run setup or `pip install -r apps/api/requirements.txt`) and migration `0004` (`pnpm db:migrate`). To give an existing local database the new sample cut-out scenes, re-run `pnpm db:seed`. Cut-outs are an AI-assisted approximation: fine hair, glass and busy backgrounds may need a retouched photo uploaded as "already cut out".
+
 ## Sample assets
 
-Photos are demonstration imagery downloaded from Unsplash; the source photo IDs and download URLs are in `scripts/download-assets.py`. Shop identities, products, prices and policies are fictional sandbox fixtures. Replace them with authorized real seller content before a pilot. UI fonts are bundled locally from Google Fonts (Bricolage Grotesque, Caprasimo and Caveat, SIL Open Font License; copies of each licence sit next to the web font files). System font fallbacks remain available.
+Photos are demonstration imagery downloaded from Unsplash; the source photo IDs and download URLs are in `scripts/download-assets.py`. Shop identities, products, prices and policies are fictional sandbox fixtures. The `seed_cutout_*.webp` files are those photos run through the bundled background-removal model. Replace them with authorized real seller content before a pilot. UI fonts are bundled locally from Google Fonts (Bricolage Grotesque, Caprasimo and Caveat, SIL Open Font License; copies of each licence sit next to the web font files). System font fallbacks remain available.
