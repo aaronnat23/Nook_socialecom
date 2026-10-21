@@ -1,8 +1,16 @@
 # Lilac — session progress and handoff
 
-Updated: 2026-10-19 (Asia/Kuala_Lumpur). Read this first when continuing.
+Updated: 2026-10-21 (Asia/Kuala_Lumpur). Read this first when continuing.
 Workspace: `/Users/mba13m2/Desktop/main_install_files/ecom_social`.
-Latest implementation commit: `5a8f490` on `master`; working tree was clean before this handoff file.
+Latest implementation commit: `5a8f490`; handoff commit: `4139cfe`.
+
+## GitHub repository
+
+- User requested committing and pushing the full project to `https://github.com/aaronnat23/Nook_socialecom.git`.
+- Primary branch is `main`; remote is `origin`. Preserve the existing implementation history.
+- Local secrets, database data, dependencies and generated builds remain ignored. Environment examples and verification artifacts are tracked.
+- Before upload, checked tracked filenames and historical blobs for common secret patterns and GitHub file-size limits; no candidates were found.
+- App branding remains Lilac; the repository name does not imply a requested product rename.
 
 ## User intent and constraints
 
