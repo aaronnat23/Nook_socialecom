@@ -1,11 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { Text } from './text';
 import { Ionicons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import type { Me } from '@lilac/api-client';
 import { api, setToken } from '../lib';
 import { Button, Field, Loading, ui, C } from './ui';
 import { Sheet } from './sheet';
+import { NookMark } from './brand';
+import { Bob } from './motion';
 import { Notice, NoticeContext } from './notice';
 interface ContextValue {
   me: Me | null;
@@ -128,23 +131,13 @@ export function Provider({ children }: { children: ReactNode }) {
         <Sheet
           visible={visible}
           onClose={() => setVisible(false)}
-          title={register ? 'Make yourself at home.' : 'Lovely to see you.'}
-          eyebrow="YOUR LITTLE CORNER OF THE INTERNET"
-          subtitle="Discover independent shops. Create a space that feels like you."
+          title={register ? 'Find your nook.' : 'Good to see you again.'}
+          eyebrow={register ? 'MOVE IN' : 'COME ON IN'}
+          subtitle="Shop small, follow the makers you love, or open a corner of your own."
         >
           <ScrollView contentContainerStyle={{ padding: 24 }} keyboardShouldPersistTaps="handled">
-            <View
-              style={{
-                width: 52,
-                height: 52,
-                borderRadius: 18,
-                backgroundColor: '#EEE5FA',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 5,
-              }}
-            >
-              <Ionicons name="flower-outline" color={C.primary} size={28} />
+            <View style={{ marginBottom: 5 }}>
+              <NookMark size={52} />
             </View>
             <Field
               label="Email address"
@@ -169,13 +162,13 @@ export function Provider({ children }: { children: ReactNode }) {
             )}
             {error && <Text style={ui.error}>{error}</Text>}
             <Button
-              title={busy ? 'Opening your space…' : register ? 'Create your space' : 'Sign in'}
+              title={busy ? 'Opening your space…' : register ? 'Create your nook' : 'Sign in'}
               disabled={busy}
               onPress={() => void login()}
               style={{ marginTop: 25 }}
             />
             <Button
-              title={register ? 'Already have a space? Sign in' : 'New here? Create an account'}
+              title={register ? 'Already have a nook? Sign in' : 'New here? Create an account'}
               soft
               onPress={() => setRegister(!register)}
               style={{ marginTop: 12 }}
@@ -205,10 +198,13 @@ export function AuthGate({ children }: { children: ReactNode }) {
   if (!me)
     return (
       <View style={[ui.screen, ui.empty, { justifyContent: 'center' }]}>
+        <Bob amplitude={6} duration={2600}>
+          <NookMark size={84} />
+        </Bob>
         <Text style={ui.eyebrow}>MAKE YOURSELF AT HOME</Text>
         <Text style={[ui.title, { textAlign: 'center' }]}>A little corner. All your own.</Text>
         <Text style={[ui.subtitle, { textAlign: 'center' }]}>
-          Save the things you love. Create a space that feels like you.
+          Save the things you love and decorate a space that feels like you.
         </Text>
         <Button
           title="Open your space ↗"

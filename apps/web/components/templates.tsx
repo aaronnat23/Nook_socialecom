@@ -65,13 +65,11 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
     <section className="template-section" aria-label="Storefront templates">
       <div className="section-heading">
         <div>
-          <span className="eyebrow">
-            <Sparkles size={12} /> A LITTLE INSPIRATION
-          </span>
+          <span className="eyebrow">REDECORATE</span>
           <h2>
-            Find your kind of <em>space.</em>
+            Try on a new <span className="hl">look.</span>
           </h2>
-          <p>Different layouts. Every block is yours to customize.</p>
+          <p>Eight layouts, each one built differently. Every block is yours to change.</p>
         </div>
         <button
           className="button outline"

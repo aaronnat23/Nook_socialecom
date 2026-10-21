@@ -1,10 +1,7 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   StyleSheet,
-  Text,
   TextInput,
-  Pressable,
-  Animated,
   View,
   type TextInputProps,
   type ViewStyle,
@@ -12,93 +9,118 @@ import {
 } from 'react-native';
 import { tokens } from '@lilac/ui';
 import { contrastRatio } from '@lilac/renderer';
-import { useReducedMotion } from './motion';
+import { Key, useReducedMotion } from './motion';
+import { Text } from './text';
+import { font } from './fonts';
+import { NookMark } from './brand';
+
 export const C = tokens.colors;
+export { Text };
+
+/** Hard offset shadow that works on iOS; Android falls back to the outline. */
+export const hardShadow = (x = 3, y = 3, color: string = C.ink) => ({
+  shadowColor: color,
+  shadowOpacity: 1,
+  shadowRadius: 0,
+  shadowOffset: { width: x, height: y },
+});
+
 export const ui = StyleSheet.create({
   screen: { flex: 1, backgroundColor: C.background },
   content: { padding: 22, paddingBottom: 38 },
   eyebrow: {
-    fontSize: 9,
-    letterSpacing: 1.8,
-    color: '#8C6BAA',
-    fontWeight: '700',
-    marginBottom: 10,
+    fontSize: 11,
+    letterSpacing: 2,
+    color: C.persimmonDeep,
+    fontWeight: '800',
+    marginBottom: 12,
   },
-  title: { fontSize: 32, color: C.text, fontWeight: '600', letterSpacing: -1.25, lineHeight: 39 },
-  subtitle: { fontSize: 13, lineHeight: 22, color: C.muted, marginTop: 10 },
-  sectionTitle: {
-    fontSize: 21,
-    color: C.text,
-    fontWeight: '600',
+  title: {
+    fontFamily: font.display,
+    fontSize: 38,
+    color: C.ink,
     letterSpacing: -0.6,
-    marginTop: 25,
-    marginBottom: 15,
+    lineHeight: 42,
+  },
+  subtitle: { fontSize: 15, lineHeight: 23, color: C.ink2, marginTop: 10 },
+  sectionTitle: {
+    fontFamily: font.display,
+    fontSize: 27,
+    color: C.ink,
+    letterSpacing: -0.4,
+    lineHeight: 31,
+    marginTop: 30,
+    marginBottom: 16,
   },
   card: {
-    backgroundColor: '#FFF',
-    borderWidth: 1,
-    borderColor: C.border,
-    borderRadius: 22,
+    backgroundColor: C.card,
+    borderWidth: 2,
+    borderColor: C.ink,
+    borderRadius: 24,
     padding: 20,
-    marginBottom: 16,
-    shadowColor: '#44256A',
-    shadowOpacity: 0.035,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 5 },
+    marginBottom: 18,
+    ...hardShadow(3, 4),
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 },
   input: {
-    borderWidth: 1,
-    borderColor: C.border,
-    borderRadius: 14,
-    paddingHorizontal: 15,
+    borderWidth: 2,
+    borderColor: '#CDBD9D',
+    borderRadius: 16,
+    paddingHorizontal: 16,
     paddingVertical: 14,
-    fontSize: 14,
-    color: C.text,
-    backgroundColor: '#FDFBFF',
-    minHeight: 50,
+    fontSize: 16,
+    color: C.ink,
+    backgroundColor: C.card,
+    minHeight: 52,
+    fontFamily: font.medium,
   },
-  label: { fontSize: 11, fontWeight: '600', color: '#78638E', marginBottom: 8, marginTop: 18 },
+  label: { fontSize: 13, fontWeight: '700', color: C.ink, marginBottom: 8, marginTop: 18 },
   button: {
-    backgroundColor: C.primary,
-    borderRadius: 15,
-    minHeight: 48,
-    paddingHorizontal: 17,
+    minHeight: 52,
+    paddingHorizontal: 22,
     paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     gap: 8,
   },
-  buttonText: { fontSize: 12, color: '#FFF', fontWeight: '600', letterSpacing: 0.1 },
+  buttonText: { fontSize: 15, color: C.ink, fontWeight: '700' },
   soft: { backgroundColor: C.lilac },
-  softText: { color: C.primary },
+  softText: { color: C.ink },
   error: {
-    backgroundColor: '#FFF0F3',
-    borderRadius: 8,
-    color: '#AA5572',
-    padding: 12,
-    fontSize: 12,
-    lineHeight: 19,
+    backgroundColor: C.pink,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: C.ink,
+    color: C.ink,
+    padding: 13,
+    fontSize: 14,
+    fontWeight: '600',
+    lineHeight: 20,
     marginVertical: 12,
-  },
-  pill: {
-    backgroundColor: C.lilac,
-    color: C.primary,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-    fontSize: 9,
     overflow: 'hidden',
   },
-  image: { width: '100%', height: 190, borderRadius: 10 },
-  muted: { fontSize: 12, color: C.muted, lineHeight: 20 },
-  divider: { height: 1, backgroundColor: C.border, marginVertical: 18 },
-  price: { fontSize: 14, fontWeight: '600', color: '#79558E', marginTop: 8 },
+  pill: {
+    backgroundColor: C.butter,
+    color: C.ink,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: C.ink,
+    fontSize: 11,
+    fontWeight: '800',
+    overflow: 'hidden',
+  },
+  image: { width: '100%', height: 190, borderRadius: 14 },
+  muted: { fontSize: 14, color: C.muted, lineHeight: 21 },
+  divider: { height: 2, backgroundColor: C.border, marginVertical: 18 },
+  price: { fontSize: 15, fontWeight: '800', color: C.ink, marginTop: 8 },
   empty: { padding: 35, alignItems: 'center', gap: 15 },
-  fine: { fontSize: 10, color: '#A996B7', lineHeight: 17, marginTop: 12 },
+  fine: { fontSize: 12, color: C.muted, lineHeight: 18, marginTop: 12 },
 });
+
 export function Button({
   title,
   onPress,
@@ -112,60 +134,29 @@ export function Button({
   disabled?: boolean;
   style?: ViewStyle;
 }) {
-  const scale = useRef(new Animated.Value(1)).current;
-  const reduced = useReducedMotion();
-  const background = typeof style?.backgroundColor === 'string' ? style.backgroundColor : C.primary;
+  const custom = typeof style?.backgroundColor === 'string' ? style.backgroundColor : undefined;
+  const background = soft ? C.lilac : custom || C.persimmon;
   const foreground =
-    /^#[\dA-Fa-f]{6}$/.test(background) && contrastRatio('#FFFFFF', background) < 4.5
-      ? '#24182F'
-      : '#FFFFFF';
-  const animate = (value: number) =>
-    Animated.spring(scale, {
-      toValue: value,
-      useNativeDriver: true,
-      speed: 32,
-      bounciness: 3,
-    }).start();
+    /^#[\dA-Fa-f]{6}$/.test(background) && contrastRatio(C.ink, background) < 4.5
+      ? '#FFFFFF'
+      : C.ink;
+  const { backgroundColor: _drop, ...outer } = style || {};
   return (
-    <Animated.View style={[style, { transform: [{ scale }] }]}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityState={{ disabled }}
-        disabled={disabled}
-        onPress={onPress}
-        onPressIn={() => {
-          if (reduced === false) animate(0.97);
-        }}
-        onPressOut={() => animate(1)}
-        style={({ pressed }) => [
-          ui.button,
-          soft && ui.soft,
-          disabled && { opacity: 0.45 },
-          {
-            minHeight: style?.minHeight || 48,
-            backgroundColor: soft
-              ? pressed
-                ? '#E3D6F5'
-                : C.lilac
-              : pressed
-                ? background === C.primary
-                  ? C.primaryDark
-                  : background
-                : style?.backgroundColor || C.primary,
-            borderWidth: 1,
-            borderColor: soft ? '#E6DCF3' : '#FFFFFF20',
-            shadowColor: C.primaryDark,
-            shadowOpacity: soft ? 0 : 0.12,
-            shadowRadius: 9,
-            shadowOffset: { width: 0, height: 4 },
-          },
-        ]}
-      >
-        <Text style={[ui.buttonText, { color: foreground }, soft && ui.softText]}>{title}</Text>
-      </Pressable>
-    </Animated.View>
+    <Key
+      accessibilityRole="button"
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      color={background}
+      borderColor={C.ink}
+      style={[outer, { minHeight: style?.minHeight || 52 }]}
+      innerStyle={[ui.button, { minHeight: (style?.minHeight as number) || 52 }]}
+    >
+      <Text style={[ui.buttonText, { color: foreground }]}>{title}</Text>
+    </Key>
   );
 }
+
 export function Field({ label, ...props }: TextInputProps & { label: string }) {
   const [focused, setFocused] = useState(false);
   return (
@@ -183,28 +174,24 @@ export function Field({ label, ...props }: TextInputProps & { label: string }) {
         }}
         style={[
           ui.input,
-          focused && {
-            borderColor: '#B496DD',
-            backgroundColor: '#FFF',
-            shadowColor: C.primary,
-            shadowOpacity: 0.08,
-            shadowRadius: 7,
-            shadowOffset: { width: 0, height: 2 },
-          },
-          props.multiline && { minHeight: 90, textAlignVertical: 'top' },
+          focused && { borderColor: C.ink, backgroundColor: '#FFFFFF', ...hardShadow(0, 3) },
+          props.multiline && { minHeight: 96, textAlignVertical: 'top' },
           props.style,
         ]}
         accessibilityLabel={props.accessibilityLabel || label}
-        placeholderTextColor="#B2A2BF"
+        placeholderTextColor="#9B8FA8"
       />
     </View>
   );
 }
+
 export function Loading() {
+  const reduced = useReducedMotion();
   return (
     <View style={ui.empty}>
-      <ActivityIndicator color={C.primary} />
-      <Text style={ui.muted}>Opening your little corner…</Text>
+      <NookMark size={56} />
+      {reduced ? null : <ActivityIndicator color={C.ink} />}
+      <Text style={ui.muted}>Opening the door…</Text>
     </View>
   );
 }

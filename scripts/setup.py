@@ -123,5 +123,5 @@ run([str(root / ".venv/bin/alembic"), "upgrade", "head"], root / "apps/api")
 run([str(python), "-m", "app.seed"], root / "apps/api")
 run([sys.executable, "scripts/download-assets.py"])
 print(
-    "Lilac is ready. Run pnpm dev, then open http://127.0.0.1:3000. Native: pnpm dev:mobile."
+    "Nook is ready. Run pnpm dev, then open http://127.0.0.1:3000. Native: pnpm dev:mobile."
 )

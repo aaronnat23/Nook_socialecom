@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import {
   ScrollView,
   View,
-  Text,
   TouchableOpacity,
   Alert,
   Share,
@@ -10,6 +9,7 @@ import {
   useWindowDimensions,
   SafeAreaView,
 } from 'react-native';
+import { Text } from '../components/text';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -432,7 +432,7 @@ function Editor() {
         </View>
       )}
       <ScrollView
-        style={{ flex: 1, backgroundColor: '#F0EBF5' }}
+        style={{ flex: 1, backgroundColor: '#F0E6D2' }}
         contentContainerStyle={{ padding: 12, paddingBottom: 30 }}
       >
         <Text style={[ui.eyebrow, { textAlign: 'center', fontSize: 8, marginVertical: 10 }]}>
@@ -573,7 +573,7 @@ function Editor() {
                     key={t}
                     onPress={() => setTab(t)}
                     style={{
-                      backgroundColor: tab === t ? C.primary : '#F0EAF7',
+                      backgroundColor: tab === t ? C.primary : '#F0E6D2',
                       padding: 10,
                       borderRadius: 13,
                     }}
@@ -1296,7 +1296,7 @@ function Editor() {
                   }}
                 />
               </View>
-              <View style={[ui.card, { marginBottom: 0, borderColor: '#D7C2EE' }]}>
+              <View style={[ui.card, { marginBottom: 0, borderColor: '#211A2E' }]}>
                 <View style={[ui.row, { marginBottom: 10 }]}>
                   <Ionicons name="sparkles-outline" size={22} color={C.primary} />
                   <Text style={{ fontSize: 16, color: C.text, fontWeight: '600' }}>
@@ -1338,7 +1338,7 @@ function Editor() {
                     padding: 17,
                     borderRadius: 20,
                     borderWidth: 1,
-                    borderColor: '#E7DDEF',
+                    borderColor: '#CDBD9D',
                     backgroundColor: '#FFF',
                   }}
                 >
@@ -1347,7 +1347,7 @@ function Editor() {
                       width: 38,
                       height: 38,
                       borderRadius: 13,
-                      backgroundColor: '#F1EAF9',
+                      backgroundColor: '#F0E6D2',
                       alignItems: 'center',
                       justifyContent: 'center',
                       marginBottom: 14,
@@ -1480,7 +1480,7 @@ function Color({
               borderRadius: 18,
               backgroundColor: c,
               borderWidth: 2,
-              borderColor: value.toLowerCase() === c.toLowerCase() ? '#8D64B5' : '#E7DDED',
+              borderColor: value.toLowerCase() === c.toLowerCase() ? '#211A2E' : '#CDBD9D',
             }}
           />
         ))}

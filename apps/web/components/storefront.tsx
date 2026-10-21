@@ -20,7 +20,7 @@ const gradients = {
 };
 export function styleToCss(s: Style): CSSProperties {
   return {
-    fontFamily: s.fontFamily === 'Inter' ? 'var(--font)' : s.fontFamily,
+    fontFamily: s.fontFamily === 'Inter' ? 'var(--shop-sans)' : s.fontFamily,
     fontSize: s.fontSize,
     fontWeight: s.fontWeight,
     lineHeight: s.lineHeight,
@@ -155,7 +155,7 @@ export function Storefront({
         {
           background: doc.theme.colors.background,
           color: doc.theme.colors.text,
-          fontFamily: doc.theme.fontBody === 'Inter' ? 'var(--font)' : doc.theme.fontBody,
+          fontFamily: doc.theme.fontBody === 'Inter' ? 'var(--shop-sans)' : doc.theme.fontBody,
           '--shop-muted': doc.theme.colors.muted,
           '--shop-accent': doc.theme.colors.accent,
         } as CSSProperties
@@ -229,7 +229,7 @@ function BlockView({
 }) {
   const s = resolveStyle(b, doc.theme, width);
   const headingFace = resolveHeadingFont(b, doc.theme, width);
-  const headingFont = headingFace === 'Inter' ? 'var(--font)' : headingFace;
+  const headingFont = headingFace === 'Inter' ? 'var(--shop-sans)' : headingFace;
   const headingStyle: CSSProperties = {
     fontFamily: headingFont,
     fontSize: s.fontSize,
@@ -421,7 +421,7 @@ function BlockView({
           )}
           <div className="sf-products">
             {sorted.slice(0, p.limit || 12).map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
+              <ProductCard key={product.id} product={product} index={i} plain />
             ))}
           </div>
           {products.length === 0 && (
@@ -444,7 +444,7 @@ function BlockView({
           )}
           {product ? (
             <div style={{ maxWidth: 350 }}>
-              <ProductCard product={product} />
+              <ProductCard product={product} plain />
             </div>
           ) : (
             <p className="muted" style={{ fontSize: 12 }}>

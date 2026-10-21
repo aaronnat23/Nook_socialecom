@@ -305,7 +305,7 @@ def register(data: AuthInput, db: DB) -> dict[str, Any]:
             },
         )
     handle = data.handle.lower()
-    if not re.fullmatch(r"[a-z0-9_.]{3,30}", handle) or handle in ["admin", "api", "settings", "support", "lilac"]:
+    if not re.fullmatch(r"[a-z0-9_.]{3,30}", handle) or handle in ["admin", "api", "settings", "support", "lilac", "nook"]:
         raise HTTPException(422, "Choose a handle with 3–30 letters, numbers, dots or underscores.")
     u = Profile(
         email=data.email.lower(),

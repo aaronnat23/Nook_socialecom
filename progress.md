@@ -1,4 +1,4 @@
-# Lilac — session progress and handoff
+# Nook (formerly Lilac) — session progress and handoff
 
 Updated: 2026-10-21 (Asia/Kuala_Lumpur). Read this first when continuing.
 Workspace: `/Users/mba13m2/Desktop/main_install_files/ecom_social`.
@@ -10,7 +10,7 @@ Latest implementation commit: `5a8f490`; handoff commit: `4139cfe`.
 - Primary branch is `main`; remote is `origin`. Preserve the existing implementation history.
 - Local secrets, database data, dependencies and generated builds remain ignored. Environment examples and verification artifacts are tracked.
 - Before upload, checked tracked filenames and historical blobs for common secret patterns and GitHub file-size limits; no candidates were found.
-- App branding remains Lilac; the repository name does not imply a requested product rename.
+- ~~App branding remains Lilac~~ Superseded: the app is now **Nook**. See "Nook rebrand" below and `docs/NOOK_BRAND.md`.
 
 ## User intent and constraints
 
@@ -214,3 +214,16 @@ git diff --check
 - `35ff152` — physical-iPhone findings, storefront controls and sandbox verification.
 - `6b5b2c3` — lilac polish, animated sheets and template gallery.
 - `5a8f490` — eight distinct editable layouts, real thumbnails, renderer fixes and regressions.
+
+## Nook rebrand and redesign (latest session)
+
+User request: improve the overall design so it is not generic/AI-looking, add more and smoother animation, rename the app to **Nook**, give it personality (the My Space tab is about sellers expressing themselves) and make the main page show the brand properly.
+
+What changed:
+
+- New identity: warm paper + ink + persimmon/butter/lilac sticker colours, Caprasimo / Bricolage Grotesque / Caveat, an arch "doorway" mark. Full description in `docs/NOOK_BRAND.md`.
+- Web: new shell (sliding nav pill, hide-on-scroll header, mobile floating dock, giant wordmark footer), brand-led Discover home (hero with three shop doorways, ticker, nook cards, how-it-works, shelves, finale), neutral `plain` product cards inside seller storefronts, new My Space (room header that borrows the seller's published colours, stat stickers, furnish-your-nook checklist, framed live preview), public shop pages in a browser-window frame, restyled auth modal/toasts/forms/tables/commerce pages. Styles: `apps/web/app/globals.css` (legacy base, recoloured and pruned) + `apps/web/app/nook.css` (new layer). Motion helpers: `apps/web/components/motion.tsx`, `apps/web/app/template.tsx`.
+- Native: fonts loaded in `app/_layout.tsx`, a `Text` wrapper that maps weights to font files (`components/text.tsx`), Reanimated motion kit (`components/motion.tsx`), floating animated tab dock, redesigned Discover and My Space, cards, sheet, toast. Seller storefront rendering (`components/storefront.tsx`) deliberately keeps using React Native's own `Text`.
+- Rename: visible name, metadata, `app.json` (name/slug/scheme/bundle id), API title, reserved handle, README/docs. Internal identifiers (`@lilac/*` scope, `lilac` DB names, `lilac-*` storage keys, `demo@lilac.local`) were left alone on purpose.
+- Tests: e2e copy updated for the new headings. Desktop suite passes; the native app was verified by typecheck, an Expo web export rendered in Chromium, and the SDK bundle export. **It has not been run on the physical iPhone in this session**, so animation feel on device, font loading on first launch and reduced-motion behaviour still need a hands-on check.
+- Local env note: product descriptions in an existing database still say "Lilac sandbox catalog" until reseeded (seed text is updated). `update products set description = replace(description,'Lilac sandbox catalog','Nook sandbox catalog')` fixes it in place.

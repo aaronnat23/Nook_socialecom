@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { Text } from '../../components/text';
 import { useLocalSearchParams, router } from 'expo-router';
 import type { Order } from '@lilac/api-client';
 import { money } from '@lilac/renderer';

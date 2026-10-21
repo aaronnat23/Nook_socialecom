@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ScrollView, Text, View, Switch } from 'react-native';
+import { ScrollView, View, Switch } from 'react-native';
+import { Text } from '../../components/text';
 import { router } from 'expo-router';
 import { AuthGate, useApp } from '../../components/provider';
 import { Button, Field, ui, C } from '../../components/ui';
@@ -65,7 +66,7 @@ function Settings() {
             <Switch
               accessibilityLabel={key.replaceAll('_', ' ')}
               value={!!me!.preferences[key]}
-              trackColor={{ false: '#DDD1E8', true: '#A27BC7' }}
+              trackColor={{ false: '#E6D9BE', true: '#FF5A36' }}
               onValueChange={async (value) => {
                 try {
                   await api('/me', {
@@ -105,7 +106,7 @@ function Settings() {
       </View>
       <Button title="Sign out on this device" soft onPress={() => void signOut()} />
       <Text style={[ui.fine, { textAlign: 'center' }]}>
-        lilac. · Independent looks good on you.
+        nook · A little more independent. A little more you.
       </Text>
     </ScrollView>
   );

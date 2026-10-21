@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { Text } from './text';
 import { Ionicons } from '@expo/vector-icons';
 import type { Product } from '@lilac/api-client';
 import { api } from '../lib';

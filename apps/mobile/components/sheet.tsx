@@ -7,14 +7,14 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
+import { Text } from './text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useReducedMotion } from './motion';
 import { C } from './ui';
+import { font } from './fonts';
 import { Notice, NoticeContext } from './notice';
 
 export function Sheet({
@@ -22,7 +22,7 @@ export function Sheet({
   onClose,
   title,
   subtitle,
-  eyebrow = 'LILAC STUDIO',
+  eyebrow = 'NOOK STUDIO',
   children,
   footer,
   compact = false,
@@ -45,8 +45,8 @@ export function Sheet({
     if (visible) setMounted(true);
     const animation = Animated.timing(progress, {
       toValue: visible ? 1 : 0,
-      duration: reduced ? 0 : visible ? 340 : 210,
-      easing: Easing.out(Easing.cubic),
+      duration: reduced ? 0 : visible ? 460 : 220,
+      easing: visible ? Easing.bezier(0.22, 1, 0.36, 1) : Easing.in(Easing.cubic),
       useNativeDriver: true,
     });
     animation.start(({ finished }) => {
@@ -67,8 +67,8 @@ export function Sheet({
           style={[
             StyleSheet.absoluteFill,
             {
-              backgroundColor: '#21132F',
-              opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [0, 0.46] }),
+              backgroundColor: C.ink,
+              opacity: progress.interpolate({ inputRange: [0, 1], outputRange: [0, 0.55] }),
             },
           ]}
         />
@@ -93,13 +93,13 @@ export function Sheet({
                 opacity: progress,
                 transform: [
                   {
-                    translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [65, 0] }),
+                    translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [90, 0] }),
                   },
                 ],
               },
             ]}
           >
-            <LinearGradient colors={['#F2EAFF', '#FFFEFF']} style={styles.header}>
+            <View style={styles.header}>
               <View style={styles.handle} />
               <View style={styles.headingRow}>
                 <View style={{ flex: 1, paddingRight: 12 }}>
@@ -114,12 +114,12 @@ export function Sheet({
                   accessibilityLabel="Close panel"
                   onPress={onClose}
                   hitSlop={8}
-                  style={({ pressed }) => [styles.close, pressed && { backgroundColor: '#E9DFF7' }]}
+                  style={({ pressed }) => [styles.close, pressed && { backgroundColor: C.butter }]}
                 >
-                  <Ionicons name="close" size={20} color={C.primaryDark} />
+                  <Ionicons name="close" size={20} color={C.ink} />
                 </Pressable>
               </View>
-            </LinearGradient>
+            </View>
             <View style={{ flex: compact ? undefined : 1, flexShrink: 1 }}>{children}</View>
             {footer ? (
               <View style={[styles.footer, { paddingBottom: Math.max(inset.bottom, 18) }]}>
@@ -139,50 +139,60 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   position: { flex: 1, justifyContent: 'flex-end' },
   panel: {
-    backgroundColor: '#FAF8FD',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    backgroundColor: C.paper,
+    borderTopLeftRadius: 34,
+    borderTopRightRadius: 34,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#FFFFFFB0',
-    shadowColor: '#28153E',
-    shadowOffset: { width: 0, height: -8 },
-    shadowOpacity: 0.14,
-    shadowRadius: 24,
+    borderWidth: 3,
+    borderBottomWidth: 0,
+    borderColor: C.ink,
   },
   header: {
     paddingHorizontal: 24,
     paddingBottom: 22,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDE6F4',
+    borderBottomWidth: 3,
+    borderBottomColor: C.ink,
+    backgroundColor: C.paper2,
   },
   handle: {
-    width: 34,
-    height: 4,
+    width: 44,
+    height: 5,
     borderRadius: 5,
-    backgroundColor: '#D5C7E5',
+    backgroundColor: C.ink,
     alignSelf: 'center',
     marginTop: 10,
-    marginBottom: 22,
+    marginBottom: 20,
   },
   headingRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  eyebrow: { fontSize: 9, fontWeight: '700', letterSpacing: 2, color: '#9472B5', marginBottom: 8 },
-  title: { fontSize: 25, lineHeight: 30, letterSpacing: -0.8, fontWeight: '600', color: C.text },
-  subtitle: { fontSize: 12, lineHeight: 19, color: C.muted, marginTop: 8 },
+  eyebrow: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 2,
+    color: C.persimmonDeep,
+    marginBottom: 8,
+  },
+  title: {
+    fontFamily: font.display,
+    fontSize: 29,
+    lineHeight: 34,
+    letterSpacing: -0.4,
+    color: C.ink,
+  },
+  subtitle: { fontSize: 14, lineHeight: 21, color: C.ink2, marginTop: 8 },
   close: {
-    width: 38,
-    height: 38,
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFFFFFD9',
-    borderWidth: 1,
-    borderColor: '#E8DFF0',
+    backgroundColor: C.card,
+    borderWidth: 2,
+    borderColor: C.ink,
     alignItems: 'center',
     justifyContent: 'center',
   },
   footer: {
     padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: C.border,
-    backgroundColor: '#FFFFFFF5',
+    borderTopWidth: 3,
+    borderTopColor: C.ink,
+    backgroundColor: C.card,
   },
 });

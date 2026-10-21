@@ -1,8 +1,11 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Text } from './text';
 import { C } from './ui';
+
+/** The same three destinations as the main dock, shown on nested screens. */
 export function NestedNavigation() {
   const path = usePathname();
   const inset = useSafeAreaInsets();
@@ -15,9 +18,9 @@ export function NestedNavigation() {
         justifyContent: 'space-around',
         paddingTop: 10,
         paddingBottom: Math.max(inset.bottom, 12),
-        backgroundColor: '#FFF',
-        borderTopWidth: 1,
-        borderColor: C.border,
+        backgroundColor: C.paper,
+        borderTopWidth: 2,
+        borderColor: C.ink,
       }}
     >
       {(
@@ -27,16 +30,22 @@ export function NestedNavigation() {
           { label: 'Settings', href: '/settings', icon: 'settings-outline' },
         ] as const
       ).map((t) => (
-        <TouchableOpacity
+        <Pressable
           accessibilityRole="tab"
           accessibilityLabel={t.label}
           key={t.href}
           onPress={() => router.replace(t.href)}
-          style={{ alignItems: 'center', gap: 5, minWidth: 65, minHeight: 44 }}
+          style={{
+            alignItems: 'center',
+            gap: 3,
+            minWidth: 72,
+            minHeight: 44,
+            justifyContent: 'center',
+          }}
         >
-          <Ionicons name={t.icon} color={C.primary} size={21} />
-          <Text style={{ fontSize: 9, color: C.primary }}>{t.label}</Text>
-        </TouchableOpacity>
+          <Ionicons name={t.icon} color={C.ink} size={22} />
+          <Text style={{ fontSize: 11.5, fontWeight: '700', color: C.ink }}>{t.label}</Text>
+        </Pressable>
       ))}
     </View>
   );

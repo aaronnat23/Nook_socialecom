@@ -1,5 +1,6 @@
 import { createContext, useEffect, useRef } from 'react';
-import { AccessibilityInfo, Animated, Pressable, Text, View } from 'react-native';
+import { AccessibilityInfo, Animated, Easing, Pressable, View } from 'react-native';
+import { Text } from './text';
 import { Ionicons } from '@expo/vector-icons';
 import { useReducedMotion } from './motion';
 import { C } from './ui';
@@ -14,7 +15,8 @@ export function Notice({ message, onClose }: { message: string; onClose: () => v
     AccessibilityInfo.announceForAccessibility(message);
     Animated.timing(progress, {
       toValue: 1,
-      duration: reduced ? 0 : 250,
+      duration: reduced ? 0 : 420,
+      easing: Easing.bezier(0.22, 1.2, 0.36, 1),
       useNativeDriver: true,
     }).start();
     const timeout = setTimeout(onClose, Math.max(5500, message.length * 65));
@@ -24,32 +26,32 @@ export function Notice({ message, onClose }: { message: string; onClose: () => v
   return (
     <View
       pointerEvents="box-none"
-      style={{ position: 'absolute', left: 18, right: 18, bottom: 108, zIndex: 100 }}
+      style={{ position: 'absolute', left: 18, right: 18, bottom: 112, zIndex: 100 }}
     >
       <Animated.View
         style={{
           opacity: progress,
           transform: [
-            { translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) },
+            { translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [34, 0] }) },
+            { scale: progress.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] }) },
           ],
-          backgroundColor: '#342344',
-          borderWidth: 1,
-          borderColor: '#8C6BAA',
-          borderRadius: 20,
-          padding: 18,
+          backgroundColor: C.ink,
+          borderRadius: 26,
+          paddingVertical: 15,
+          paddingHorizontal: 18,
           flexDirection: 'row',
           alignItems: 'center',
           gap: 13,
-          shadowColor: '#28133C',
-          shadowOpacity: 0.2,
+          shadowColor: C.ink,
+          shadowOpacity: 0.3,
           shadowRadius: 16,
-          shadowOffset: { width: 0, height: 6 },
+          shadowOffset: { width: 0, height: 8 },
         }}
       >
-        <Ionicons name="sparkles-outline" size={20} color="#D9BDFB" />
+        <Ionicons name="star" size={18} color={C.butter} />
         <Text
           accessibilityLiveRegion="polite"
-          style={{ color: '#FAF6FE', fontSize: 12, lineHeight: 19, flex: 1 }}
+          style={{ color: C.paper, fontSize: 14.5, lineHeight: 20, fontWeight: '600', flex: 1 }}
         >
           {message}
         </Text>
@@ -59,7 +61,7 @@ export function Notice({ message, onClose }: { message: string; onClose: () => v
           onPress={onClose}
           hitSlop={12}
         >
-          <Ionicons name="close" size={18} color="#D9BDFB" />
+          <Ionicons name="close" size={18} color={C.paper} />
         </Pressable>
       </Animated.View>
     </View>

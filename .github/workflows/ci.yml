@@ -1,4 +1,4 @@
-name: Verify Lilac
+name: Verify Nook
 on: [push, pull_request]
 jobs:
   app:

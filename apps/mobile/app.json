@@ -1,19 +1,20 @@
 {
   "expo": {
-    "name": "Lilac",
-    "slug": "lilac-spaces",
-    "scheme": "lilac",
+    "name": "Nook",
+    "slug": "nook",
+    "scheme": "nook",
     "version": "0.1.0",
     "orientation": "default",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "studio.lilac.commerce"
+      "bundleIdentifier": "studio.nook.app"
     },
     "android": {
-      "package": "studio.lilac.commerce",
+      "package": "studio.nook.app",
       "adaptiveIcon": {
-        "backgroundColor": "#EEE7FB"
+        "backgroundColor": "#F8F1E4",
+        "foregroundImage": "./assets/adaptive-icon.png"
       }
     },
     "plugins": [
@@ -23,6 +24,8 @@
     ],
     "experiments": {
       "typedRoutes": false
-    }
+    },
+    "backgroundColor": "#F8F1E4",
+    "icon": "./assets/icon.png"
   }
 }

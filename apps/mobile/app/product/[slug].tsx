@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Image, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Image, TouchableOpacity } from 'react-native';
+import { Text } from '../../components/text';
 import { useLocalSearchParams, router } from 'expo-router';
 import type { Product } from '@lilac/api-client';
 import { money } from '@lilac/renderer';
@@ -55,7 +56,7 @@ export default function Page() {
                 borderRadius: 8,
                 borderWidth: 1,
                 borderColor: variant === v.id ? C.primary : C.border,
-                backgroundColor: variant === v.id ? C.lilac : '#FFF',
+                backgroundColor: variant === v.id ? C.butter : C.card,
               }}
             >
               <Text style={{ fontSize: 11, color: C.primary }}>

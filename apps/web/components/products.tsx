@@ -144,7 +144,7 @@ function Products() {
         <div>
           <span className="eyebrow">GOOD THINGS, TOGETHER</span>
           <h2>
-            Your <em>collections.</em>
+            Your <span className="hl">collections.</span>
           </h2>
         </div>
         <button

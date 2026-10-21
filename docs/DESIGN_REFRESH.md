@@ -1,3 +1,5 @@
+> **Superseded.** This describes the earlier lilac look. The app has since been rebranded as **Nook** with a new visual identity and motion system; see [NOOK_BRAND.md](NOOK_BRAND.md). The template layout notes below still apply.
+
 # Lilac design refresh
 
 The design refresh is implemented in the native iPhone app and responsive web app. It preserves the three main destinations, existing catalog and sandbox commerce flows.

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, Text, View, Switch } from 'react-native';
+import { ScrollView, View, Switch } from 'react-native';
+import { Text } from '../../components/text';
 import { router, useLocalSearchParams } from 'expo-router';
 import type { Order } from '@lilac/api-client';
 import { money } from '@lilac/renderer';
@@ -103,7 +104,7 @@ function Checkout() {
                 accessibilityLabel="Accept sandbox checkout and return policy"
                 value={accepted}
                 onValueChange={setAccepted}
-                trackColor={{ true: '#A27BC7', false: '#DDD1E8' }}
+                trackColor={{ true: '#FF5A36', false: '#E6D9BE' }}
               />
               <Text style={[ui.fine, { margin: 0, flex: 1 }]}>
                 I understand this is a sandbox purchase and have read the return policy.

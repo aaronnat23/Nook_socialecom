@@ -3,14 +3,14 @@ async function login(page: Page) {
   await page.goto('/me');
   await page.getByRole('button', { name: 'Open your space', exact: true }).click();
   await page.getByRole('button', { name: 'Continue as demo shop owner' }).click();
-  await expect(page.getByRole('heading', { name: /Make yourself at home/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Studio Hening', level: 1 })).toBeVisible();
 }
 test('discover has useful search, filters and exactly three mobile destinations', async ({
   page,
 }, info) => {
   await page.goto('/');
   await expect(
-    page.getByRole('heading', { name: 'Good finds. Your kind of people.' }),
+    page.getByRole('heading', { name: 'Every shop deserves a nook.', level: 1 }),
   ).toBeVisible();
   await expect(page.locator('.bottom-nav a')).toHaveCount(3);
   await page.getByRole('button', { name: 'Fashion', exact: true }).click();

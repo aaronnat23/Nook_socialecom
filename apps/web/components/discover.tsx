@@ -1,11 +1,9 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
-  Sparkles,
-  Flower2,
   SlidersHorizontal,
   Shirt,
   Armchair,
@@ -13,19 +11,33 @@ import {
   Diamond,
   Leaf,
   Shapes,
-  Check,
   Search,
   X,
+  Sparkles,
 } from 'lucide-react';
 import type { Product, Shop } from '@lilac/api-client';
+import { assetPath } from '@lilac/renderer';
 import { api } from '@/lib/api';
-import { ProductCard, ShopCard } from './cards';
+import { ProductCard, ShopCard, initials } from './cards';
 import { useApp } from './provider';
+import { Arrow, Burst, NookMark, Squiggle } from './brand';
+import { CountUp, Reveal, Words, useParallax } from './motion';
+
 interface Feed {
   shops: Shop[];
   products: Product[];
   categories: string[];
 }
+
+const ticker = [
+  'Small shops',
+  'Big personality',
+  'Made by real people',
+  'Decorate it your way',
+  'Your corner of the internet',
+  'Come on in',
+];
+
 export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?: string }) {
   const { me, openAuth } = useApp();
   const [category, setCategory] = useState('All finds');
@@ -73,7 +85,8 @@ export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?
   }, [category, sort, maxPrice, inStock, searchQuery, initial.products]);
   const visible =
     tab === 'Following' ? products.filter((p) => me?.following.includes(p.shop_id)) : products;
-  const icons = [Shapes, Shirt, Armchair, Paintbrush, Diamond, Leaf, Flower2];
+  const icons = [Shapes, Shirt, Armchair, Paintbrush, Diamond, Leaf, Sparkles];
+  const swap = `${category}-${sort}-${maxPrice}-${inStock}-${tab}-${searchQuery ?? ''}`;
   return (
     <div className="page-wrap discover-page" id="page-content">
       <form action="/search" className="mobile-search">
@@ -82,7 +95,7 @@ export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?
           aria-label="Search products and shops"
           name="q"
           defaultValue={searchQuery || ''}
-          placeholder="Find your kind of thing…"
+          placeholder="Poke around for something…"
         />
         <button aria-label="Search" type="submit">
           <ArrowRight size={17} />
@@ -90,94 +103,23 @@ export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?
       </form>
       {searchQuery === undefined ? (
         <>
-          <div className="page-intro">
-            <div>
-              <span className="tiny-sparkle">✳</span> A home for independent spirits.
-            </div>
-            <span className="intro-note">Good things come from little shops.</span>
-          </div>
-          <section className="discover-hero">
-            <div className="hero-copy">
-              <span className="eyebrow">
-                <span className="little-line" /> SMALL SHOPS. BIG PERSONALITY.
-              </span>
-              <h1>
-                Good finds.
-                <br />
-                Your kind of <em>people.</em>
-              </h1>
-              <p>
-                A world of independent shops and thoughtfully made things.
-                <br className="desktop-only" /> Find a little something that feels a lot like you.
-              </p>
-              <a className="button primary" href="#finds">
-                Find your next favorite <ArrowUpRight size={18} />
-              </a>
-              <div className="hero-footnote">
-                <span className="mini-avatars">
-                  <img src="/images/seed_hero_0.jpg" alt="" />
-                  <img src="/images/seed_hero_3.jpg" alt="" />
-                  <img src="/images/seed_hero_6.jpg" alt="" />
-                </span>
-                <span>Made by real people. Discovered by you.</span>
-              </div>
-            </div>
-            <div className="hero-collage" aria-label="A collection of independent finds">
-              <div className="collage-orbit" />
-              <div className="collage-card collage-one">
-                <img src="/images/seed_product_0.jpg" alt="Handcrafted ceramic collection" />
-                <div>
-                  <span>A slower kind of beautiful</span>
-                  <Flower2 size={16} />
-                </div>
-              </div>
-              <div className="collage-card collage-two">
-                <img src="/images/seed_product_9.jpg" alt="Thoughtful everyday jewelry" />
-                <div>
-                  <span>Little everyday treasures</span>
-                  <HeartIcon />
-                </div>
-              </div>
-              <span className="collage-sticker">
-                <Flower2 size={29} />
-                <span>
-                  INDEPENDENT
-                  <br />
-                  LOOKS GOOD ON YOU
-                </span>
-              </span>
-              <span className="collage-sparkle one">✧</span>
-              <span className="collage-sparkle two">✳</span>
-              <span className="handwritten">find your people ↗</span>
-            </div>
-          </section>
-          <div className="value-strip">
-            <span>
-              <Flower2 size={16} /> A little less ordinary
-            </span>
-            <span>
-              <Shapes size={16} /> Independent by nature
-            </span>
-            <span>
-              <Leaf size={16} /> Thoughtfully chosen
-            </span>
-            <span>
-              <Sparkles size={16} /> Your space to be you
-            </span>
-          </div>
+          <Hero shops={initial.shops} products={initial.products} />
+          <Ticker />
         </>
       ) : (
         <div className="search-heading">
-          <span className="eyebrow">A LITTLE DISCOVERY</span>
+          <span className="eyebrow">POKING AROUND</span>
           <h1>{searchQuery ? <>Finds for “{searchQuery}”</> : 'Explore all the little things.'}</h1>
-          <p className="muted">Find your kind of thing, from independent Malaysian shops.</p>
+          <p className="muted">
+            Small shops, thoughtfully made things, all within a doorway of each other.
+          </p>
         </div>
       )}
       {searchQuery !== undefined && searchShops.length > 0 && (
         <section className="shops-section">
           <div className="section-heading">
             <h2>
-              Spaces to <em>discover.</em>
+              Nooks to <span className="hl">peek into</span>
             </h2>
           </div>
           <div className="shop-grid">
@@ -189,18 +131,21 @@ export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?
       )}
       {searchQuery === undefined && (
         <section className="shops-section">
-          <div className="section-heading">
+          <Reveal className="section-heading">
             <div>
-              <span className="eyebrow">THE PEOPLE BEHIND THE FINDS</span>
+              <span className="eyebrow">MEET THE NEIGHBOURS</span>
               <h2>
-                Small shops. <em>Big heart.</em>
+                Every nook has <span className="hl">someone</span> in it.
               </h2>
+              <p className="section-sub">
+                Peek through the doorway. Each shop decorates its own corner, so no two look alike.
+              </p>
             </div>
             <button className="text-button" onClick={() => setAllShops(!allShops)}>
-              {allShops ? 'Show less' : 'Meet the shops'}
+              {allShops ? 'Show fewer' : 'See every nook'}
               <ArrowRight size={16} />
             </button>
-          </div>
+          </Reveal>
           <div className="shop-grid">
             {initial.shops.slice(0, allShops ? 8 : 4).map((s, i) => (
               <ShopCard key={s.id} shop={s} index={i} />
@@ -208,29 +153,46 @@ export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?
           </div>
         </section>
       )}
-      <section id="finds" className="finds-section">
-        <div className="section-heading">
+      {searchQuery === undefined && <HowItWorks />}
+      <section
+        id="finds"
+        className={`finds-section ${searchQuery !== undefined ? 'is-search' : ''}`}
+      >
+        <Reveal className="section-heading">
           <div>
-            <span className="eyebrow">CURATED WITH A LITTLE CURIOSITY</span>
+            <span className="eyebrow">
+              {searchQuery !== undefined ? 'WHAT TURNED UP' : 'FRESH ON THE SHELVES'}
+            </span>
             <h2>
-              Find your next <em>favorite.</em>
+              {searchQuery !== undefined ? (
+                <>
+                  {visible.length} little{' '}
+                  <span className="hl">{visible.length === 1 ? 'find' : 'finds'}</span>.
+                </>
+              ) : (
+                <>
+                  Little things worth <span className="hl">keeping</span>.
+                </>
+              )}
             </h2>
           </div>
-          <div className="feed-tabs">
+          <div className="feed-tabs" role="tablist" aria-label="Feed">
             {['For you', 'Following', 'New arrivals'].map((t) => (
               <button
                 key={t}
+                role="tab"
+                aria-selected={tab === t}
                 className={tab === t ? 'active' : ''}
                 onClick={() => {
                   setTab(t);
                   if (t === 'New arrivals') setSort('newest');
                 }}
               >
-                {t === 'For you' && <Sparkles size={13} />} {t}
+                {t}
               </button>
             ))}
           </div>
-        </div>
+        </Reveal>
         <div className="filter-row">
           <div className="category-chips">
             {initial.categories.map((c, i) => {
@@ -250,6 +212,7 @@ export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?
           <button
             className={`filter-button ${filters ? 'active' : ''}`}
             onClick={() => setFilters(!filters)}
+            aria-expanded={filters}
           >
             <SlidersHorizontal size={15} />
             Filters
@@ -306,18 +269,18 @@ export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?
             {error}
           </div>
         )}
-        <div className={`product-grid ${busy ? 'is-loading' : ''}`}>
+        <div key={swap} className={`product-grid ${busy ? 'is-loading' : ''}`}>
           {visible.map((p, i) => (
             <ProductCard key={p.id} product={p} index={i} />
           ))}
         </div>
         {visible.length === 0 && !busy && (
           <div className="empty-state">
-            <Search size={30} />
+            <NookMark size={54} />
             <h3>
               {tab === 'Following'
-                ? 'Your kind of people are out there.'
-                : 'No little finds here just yet.'}
+                ? 'Your neighbours are out there.'
+                : 'Nothing on this shelf just yet.'}
             </h3>
             <p>
               {tab === 'Following'
@@ -331,28 +294,273 @@ export function Discover({ initial, searchQuery }: { initial: Feed; searchQuery?
             )}
           </div>
         )}
-        <div className="end-note">
-          <Flower2 size={18} />
+        <Reveal className="end-note">
+          <Squiggle className="end-squiggle" />
           <span>Every find has a person behind it. Thanks for shopping small.</span>
-        </div>
+        </Reveal>
       </section>
-      <section className="create-banner">
-        <div>
-          <span className="eyebrow">A SPACE THAT’S UNIQUELY YOURS</span>
-          <h2>
-            Your story deserves
-            <br />a little corner of its own.
-          </h2>
-          <p>Make it personal. Make it a shop. Make it you.</p>
-        </div>
-        <Link href="/me" className="button primary">
-          Create your space <ArrowUpRight size={18} />
-        </Link>
-        <Flower2 className="banner-flower" size={200} strokeWidth={0.6} />
-      </section>
+      <Finale />
     </div>
   );
 }
-function HeartIcon() {
-  return <span aria-hidden="true">♡</span>;
+
+function Hero({ shops, products }: { shops: Shop[]; products: Product[] }) {
+  const stage = useRef<HTMLDivElement>(null);
+  useParallax(stage);
+  const [a, b, c] = shops;
+  const doors = [
+    { shop: a, cls: 'door-a' },
+    { shop: b, cls: 'door-b' },
+    { shop: c, cls: 'door-c' },
+  ].filter((d) => d.shop);
+  return (
+    <section className="nk-hero" ref={stage}>
+      <div className="hero-copy">
+        <span className="hero-pill">
+          <span className="live-dot" aria-hidden="true" />
+          <strong>
+            <CountUp value={shops.length} /> nooks
+          </strong>{' '}
+          open right now
+        </span>
+        <h1>
+          <Words text="Every shop" />
+          <br />
+          <Words text="deserves a" start={160} />{' '}
+          <span className="word hero-nook">
+            <span style={{ ['--i' as string]: '420ms' }}>nook.</span>
+          </span>
+        </h1>
+        <p>
+          Nook is a cosy corner of the internet where independent sellers move in, decorate it their
+          way, and show you who they really are. Come on in and have a poke around.
+        </p>
+        <div className="hero-actions">
+          <a className="button primary big" href="#finds">
+            Take a look around <ArrowUpRight size={18} />
+          </a>
+          <Link className="button outline big" href="/me">
+            Open your own nook
+          </Link>
+        </div>
+        <div className="hero-footnote">
+          <span className="mini-avatars">
+            {shops.slice(0, 4).map((s) => (
+              <span key={s.id} title={s.name}>
+                {initials(s.name).slice(0, 1)}
+              </span>
+            ))}
+          </span>
+          <span>
+            <strong>
+              <CountUp value={products.length} /> little finds
+            </strong>
+            , all from people who care how they’re made.
+          </span>
+        </div>
+      </div>
+      <div className="hero-stage" aria-label="Three shops, each in its own nook">
+        <span className="stage-glow" aria-hidden="true" />
+        {doors.map(({ shop, cls }, i) => (
+          <Link
+            key={shop.id}
+            href={`/shop/${shop.slug}`}
+            className={`door ${cls}`}
+            style={{ ['--d' as string]: `${300 + i * 140}ms` }}
+          >
+            <span className="door-frame">
+              <img src={assetPath(shop.cover)} alt="" />
+            </span>
+            <span className="door-plate">{shop.name}</span>
+          </Link>
+        ))}
+        <span className="open-sign" aria-hidden="true">
+          <i />
+          <span>
+            OPEN
+            <small>come on in</small>
+          </span>
+        </span>
+        <span className="stamp" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <defs>
+              <path id="stamp-circle" d="M60 60m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0" />
+            </defs>
+            <text>
+              <textPath href="#stamp-circle" textLength="276" lengthAdjust="spacing">
+                MOVE IN · DECORATE · OPEN UP ·
+              </textPath>
+            </text>
+          </svg>
+          <NookMark size={40} />
+        </span>
+        <span className="note" aria-hidden="true">
+          peek inside!
+          <Arrow />
+        </span>
+        <Burst className="spark spark-a" size={34} />
+        <Burst className="spark spark-b" size={20} />
+        <Burst className="spark spark-c" size={26} />
+      </div>
+    </section>
+  );
+}
+
+function Ticker() {
+  const row = [...ticker, ...ticker];
+  return (
+    <div className="ticker" aria-hidden="true">
+      <div className="ticker-track">
+        {[0, 1].map((n) => (
+          <div className="ticker-set" key={n}>
+            {row.map((t, i) => (
+              <span key={i}>
+                {t}
+                <Burst size={18} />
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HowItWorks() {
+  const steps = [
+    {
+      n: '01',
+      title: 'Move in',
+      text: 'Claim your corner. Add your name, your story and the things you make. It takes a couple of minutes.',
+      art: (
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M24 96V44C24 22 40 8 60 8s36 14 36 36v52z" fill="#211a2e" />
+          <path d="M36 96V46c0-13 10-23 24-23s24 10 24 23v50z" fill="#ffd15c" />
+          <circle cx="60" cy="82" r="10" fill="#ff5a36" />
+          <g className="key">
+            <circle cx="100" cy="30" r="9" fill="none" stroke="#211a2e" strokeWidth="4" />
+            <path
+              d="M100 39v22m0-6h7m-7 10h5"
+              stroke="#211a2e"
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+          </g>
+        </svg>
+      ),
+    },
+    {
+      n: '02',
+      title: 'Decorate it',
+      text: 'Pick a look, swap the colours, change the type, move things around. Make it feel unmistakably yours.',
+      art: (
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <rect
+            x="14"
+            y="16"
+            width="64"
+            height="70"
+            rx="10"
+            fill="#fffbf3"
+            stroke="#211a2e"
+            strokeWidth="4"
+          />
+          <rect x="24" y="28" width="44" height="20" rx="5" fill="#cdb8ff" />
+          <rect x="24" y="56" width="20" height="20" rx="5" fill="#ffb5cc" />
+          <rect x="48" y="56" width="20" height="20" rx="5" fill="#b7e4c7" />
+          <g className="brush">
+            <path d="M104 14L74 58" stroke="#211a2e" strokeWidth="6" strokeLinecap="round" />
+            <path
+              d="M74 58c-6 2-9 8-8 14 6-1 12-3 14-9z"
+              fill="#ff5a36"
+              stroke="#211a2e"
+              strokeWidth="3"
+              strokeLinejoin="round"
+            />
+          </g>
+        </svg>
+      ),
+    },
+    {
+      n: '03',
+      title: 'Open the door',
+      text: 'Publish when you’re ready. Shoppers drop in, browse, follow and buy, and you’re open for business.',
+      art: (
+        <svg viewBox="0 0 120 100" aria-hidden="true">
+          <path d="M60 4v14" stroke="#211a2e" strokeWidth="4" strokeLinecap="round" />
+          <g className="sign">
+            <rect
+              x="22"
+              y="18"
+              width="76"
+              height="52"
+              rx="12"
+              fill="#ff5a36"
+              stroke="#211a2e"
+              strokeWidth="4"
+            />
+            <text
+              x="60"
+              y="52"
+              textAnchor="middle"
+              fontSize="26"
+              fontFamily="Caprasimo, serif"
+              fill="#211a2e"
+            >
+              open
+            </text>
+          </g>
+          <path d="M20 94h80" stroke="#211a2e" strokeWidth="4" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+  ];
+  return (
+    <section className="how-section">
+      <Reveal className="section-heading centered">
+        <div>
+          <span className="eyebrow">NEW HERE?</span>
+          <h2>
+            Three steps to your <span className="hl">very own</span> nook.
+          </h2>
+        </div>
+      </Reveal>
+      <ol className="how-grid">
+        {steps.map((s, i) => (
+          <Reveal as="li" key={s.n} className={`how-card how-${i}`} delay={i * 110} variant="tilt">
+            <span className="how-art">{s.art}</span>
+            <span className="how-num">{s.n}</span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </Reveal>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function Finale() {
+  return (
+    <Reveal as="section" className="create-banner" variant="pop">
+      <div className="finale-copy">
+        <span className="eyebrow">GOT A CORNER TO FILL?</span>
+        <h2>
+          Your story deserves a <span className="hl">place of its own.</span>
+        </h2>
+        <p>
+          Start with a name and a few things you love. Make it a shop, make it a scrapbook, make it
+          you.
+        </p>
+        <Link href="/me" className="button primary big">
+          Move in to Nook <ArrowUpRight size={18} />
+        </Link>
+      </div>
+      <div className="finale-art" aria-hidden="true">
+        <span className="arch-big">
+          <NookMark size={170} className="on-dark" />
+        </span>
+        <span className="finale-note">your name here →</span>
+      </div>
+    </Reveal>
+  );
 }

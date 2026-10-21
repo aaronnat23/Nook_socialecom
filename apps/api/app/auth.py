@@ -73,7 +73,7 @@ def current_user(db: DB, credentials: Annotated[HTTPAuthorizationCredentials | N
             requested = str(metadata.get("handle", "")).lower()
             if (
                 re.fullmatch(r"[a-z0-9_.]{3,30}", requested)
-                and requested not in ["admin", "api", "settings", "support", "lilac"]
+                and requested not in ["admin", "api", "settings", "support", "lilac", "nook"]
                 and not db.scalar(select(Profile.id).where(Profile.handle == requested))
             ):
                 handle = requested

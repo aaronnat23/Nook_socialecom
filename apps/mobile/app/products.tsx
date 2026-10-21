@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Image } from 'react-native';
+import { ScrollView, View, Image } from 'react-native';
+import { Text } from '../components/text';
 import * as ImagePicker from 'expo-image-picker';
 import type { Product } from '@lilac/api-client';
 import { money } from '@lilac/renderer';

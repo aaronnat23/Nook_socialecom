@@ -133,7 +133,7 @@ def seed() -> None:
                     shop_id=s.id,
                     slug=title.lower().replace(" ", "-"),
                     title=title,
-                    description=f"{title}, thoughtfully selected by {name}. Designed for the small moments that make a day feel like yours. This is a sample product in the Lilac sandbox catalog.",
+                    description=f"{title}, thoughtfully selected by {name}. Designed for the small moments that make a day feel like yours. This is a sample product in the Nook sandbox catalog.",
                     price_minor=price,
                     image=f"seed_product_{index}",
                     category=category,

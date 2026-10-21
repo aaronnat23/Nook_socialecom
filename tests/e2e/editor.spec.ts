@@ -3,7 +3,7 @@ async function signIn(page: Page) {
   await page.goto('/me');
   await page.getByRole('button', { name: 'Open your space', exact: true }).click();
   await page.getByRole('button', { name: 'Continue as demo shop owner' }).click();
-  await expect(page.getByRole('heading', { name: /Make yourself at home/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Studio Hening', level: 1 })).toBeVisible();
   await page.goto('/me/edit');
   await expect(page.getByRole('status').first()).toContainText('All changes saved');
 }

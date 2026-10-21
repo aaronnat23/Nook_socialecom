@@ -3,7 +3,8 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 import type { Me } from '@lilac/api-client';
 import { api } from '@/lib/api';
 import { useModal } from '@/lib/use-modal';
-import { X, ArrowRight, Loader2, Sparkles } from 'lucide-react';
+import { X, ArrowRight, Loader2 } from 'lucide-react';
+import { Burst, NookMark } from './brand';
 interface AppContext {
   me: Me | null;
   loading: boolean;
@@ -106,13 +107,13 @@ export function Provider({ children }: { children: ReactNode }) {
             localStorage.setItem('lilac-token', token);
             await refresh();
             setAuth(false);
-            setNotice('Welcome to your little corner.');
+            setNotice('Welcome in. Make yourself at home.');
           }}
         />
       )}
       {notice && (
         <div className="toast" role="status">
-          <Sparkles size={17} />
+          <Burst className="toast-spark" size={18} />
           {notice}
           <button aria-label="Dismiss notification" onClick={() => setNotice('')}>
             <X size={15} />
@@ -174,12 +175,12 @@ function AuthModal({
         <button className="icon-button close" onClick={close} aria-label="Close sign in">
           <X />
         </button>
-        <span className="brand-mark large">
-          l<span>✳</span>
-        </span>
-        <span className="eyebrow">YOUR LITTLE CORNER OF THE INTERNET</span>
-        <h2 id="auth-title">{register ? 'Make yourself at home.' : 'Lovely to see you.'}</h2>
-        <p className="muted">Discover independent shops. Create a space that feels like you.</p>
+        <NookMark size={58} />
+        <span className="eyebrow">{register ? 'MOVE IN' : 'COME ON IN'}</span>
+        <h2 id="auth-title">{register ? 'Find your nook.' : 'Good to see you again.'}</h2>
+        <p className="muted">
+          Shop small, follow the makers you love, or open a corner of your own.
+        </p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -200,12 +201,7 @@ function AuthModal({
               </label>
               <label>
                 Choose a handle
-                <input
-                  name="handle"
-                  required
-                  pattern="[a-z0-9_.]{3,30}"
-                  placeholder="your_little_space"
-                />
+                <input name="handle" required pattern="[a-z0-9_.]{3,30}" placeholder="your_nook" />
               </label>
             </>
           )}
@@ -233,7 +229,7 @@ function AuthModal({
               <Loader2 className="spin" size={18} />
             ) : (
               <>
-                {register ? 'Create your space' : 'Sign in'}
+                {register ? 'Create your nook' : 'Sign in'}
                 <ArrowRight size={17} />
               </>
             )}
@@ -246,7 +242,7 @@ function AuthModal({
             setError('');
           }}
         >
-          {register ? 'Already have a space? Sign in' : 'New here? Create an account'}
+          {register ? 'Already have a nook? Sign in' : 'New here? Create an account'}
         </button>
         {demoAvailable && (
           <>

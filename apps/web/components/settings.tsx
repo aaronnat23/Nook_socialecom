@@ -178,7 +178,7 @@ function Settings() {
                 {
                   key: 'newsletter',
                   title: 'A little inspiration',
-                  description: 'Save your opt-in for the future Lilac newsletter.',
+                  description: 'Save your opt-in for the future Nook newsletter.',
                 },
               ].map((x) => (
                 <div className="toggle-row" key={x.key}>

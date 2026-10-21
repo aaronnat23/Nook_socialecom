@@ -2,10 +2,11 @@ import type { Metadata } from 'next';
 import { Provider } from '@/components/provider';
 import { Shell } from '@/components/shell';
 import './globals.css';
+import './nook.css';
 export const metadata: Metadata = {
-  title: { default: 'Lilac — A little more you.', template: '%s · Lilac' },
+  title: { default: 'Nook — a cosy corner of the internet for small shops', template: '%s · Nook' },
   description:
-    'Discover independent Malaysian shops, find thoughtful little things, and create a space that feels like you.',
+    'Nook is where independent Malaysian shops move in, decorate their own corner of the internet, and show you who they really are.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://127.0.0.1:3000'),
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {

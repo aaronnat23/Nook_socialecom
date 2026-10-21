@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[3]
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=ROOT / ".env", extra="ignore")
-    app_name: str = "Lilac"
+    app_name: str = "Nook"
     database_url: str = "postgresql+psycopg://lilac_app:lilac_local_only@127.0.0.1:55432/lilac"
     environment: str = "development"
     auth_mode: Literal["local", "supabase"] = "local"

@@ -1,26 +1,30 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   ArrowUpRight,
-  Paintbrush,
-  Package,
-  Users,
-  ShoppingBag,
-  Heart,
-  Flower2,
+  Check,
   ExternalLink,
+  Heart,
+  Package,
+  Paintbrush,
+  ShoppingBag,
+  Users,
 } from 'lucide-react';
 import type { Order, Product, Shop } from '@lilac/api-client';
-import type { Document } from '@lilac/schema';
-import { money } from '@lilac/renderer';
+import { themes, type Document } from '@lilac/schema';
+import { assetPath, money } from '@lilac/renderer';
 import { api } from '@/lib/api';
 import { useApp } from './provider';
 import { AuthGate } from './auth-gate';
 import { Storefront } from './storefront';
-import { ProductCard, ShopCard } from './cards';
+import { ProductCard, ShopCard, initials } from './cards';
 import { TemplateGallery } from './templates';
+import { NookWindow } from './frame';
+import { NookMark, Squiggle, Arrow } from './brand';
+import { CountUp, Reveal } from './motion';
+
 export function SpacePage() {
   return (
     <AuthGate>
@@ -28,10 +32,11 @@ export function SpacePage() {
     </AuthGate>
   );
 }
+
 function Space() {
   const { me, refresh, toast } = useApp();
   const search = useSearchParams();
-  const [tab, setTab] = useState(search.has('saved') ? 'Saved finds' : 'Overview');
+  const [tab, setTab] = useState(search.has('saved') ? 'Saved finds' : 'My nook');
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [pub, setPub] = useState<Document | null>(null);
@@ -57,50 +62,53 @@ function Space() {
       .catch((e) => setError(e.message));
   }, [me]);
   if (!me) return null;
+  const published = products.filter((p) => p.status === 'published');
   const sales = orders
     .filter((o) => ['paid', 'shipped', 'delivered'].includes(o.state))
     .reduce((sum, o) => sum + o.total_minor, 0);
+  const firstName = me.display_name.split(' ')[0];
   return (
-    <div className="page-wrap" id="page-content">
-      <div className="page-title">
-        <div>
-          <span className="eyebrow">YOUR LITTLE CORNER</span>
-          <h1>Make yourself at home, {me.display_name.split(' ')[0]}.</h1>
-          <p>A space to tell your story, share your finds, and make something yours.</p>
-        </div>
-        <Link className="button primary" href="/me/edit">
-          <Paintbrush size={15} />
-          Customize your space
-        </Link>
-      </div>
+    <div className="page-wrap my-space" id="page-content">
       {error && <div className="error">{error}</div>}
-      <section className="space-banner">
-        <span className="shop-logo">
-          {me.shop.name
-            .split(' ')
-            .map((x) => x[0])
-            .slice(0, 2)}
-        </span>
-        <div>
-          <h2>{me.shop.name}</h2>
-          <p>
-            @{me.handle} · {me.shop.location}
-          </p>
-        </div>
-        <div className="button-row">
-          {pub && (
-            <Link className="button outline" href={`/shop/${me.shop.slug}`}>
-              <ExternalLink size={14} />
-              View public space
-            </Link>
-          )}
-          <Link className="button soft" href="/me/edit">
-            Edit storefront <ArrowUpRight size={15} />
-          </Link>
-        </div>
-      </section>
+      <Room
+        shop={me.shop}
+        handle={me.handle}
+        firstName={firstName}
+        doc={pub}
+        livePublished={!!pub}
+      />
+      <Reveal className="sticker-row">
+        <Stat
+          tone="lilac"
+          icon={<Package size={16} />}
+          label="On your shelves"
+          value={published.length}
+          note="products published"
+        />
+        <Stat
+          tone="butter"
+          icon={<Users size={16} />}
+          label="Neighbours"
+          value={me.shop.followers}
+          note="people following you"
+        />
+        <Stat
+          tone="pink"
+          icon={<ShoppingBag size={16} />}
+          label="Shop orders"
+          value={orders.length}
+          note="sandbox orders only"
+        />
+        <Stat
+          tone="mint"
+          icon={<Heart size={16} />}
+          label="Sandbox sales"
+          text={money(sales)}
+          note="no real money collected"
+        />
+      </Reveal>
       <nav className="subnav" aria-label="Your space sections">
-        {['Overview', 'Saved finds', 'Following'].map((t) => (
+        {['My nook', 'Saved finds', 'Following'].map((t) => (
           <button key={t} className={tab === t ? 'active' : ''} onClick={() => setTab(t)}>
             {t}
           </button>
@@ -109,95 +117,100 @@ function Space() {
         <Link href="/me/orders">Shop orders</Link>
         <Link href="/orders">Your purchases</Link>
       </nav>
-      {tab === 'Overview' ? (
+      {tab === 'My nook' ? (
         <>
-          <div className="stats-grid">
-            <Stat
-              icon={<Package size={14} />}
-              label="Your products"
-              value={String(products.filter((p) => p.status === 'published').length)}
-              note="Published in your collection"
+          {me.seller_enabled ? (
+            <Furnish
+              steps={[
+                { title: 'Move in', hint: 'You’re here, so that’s done.', done: true, href: '/me' },
+                {
+                  title: 'Stock the shelves',
+                  hint: 'Add your first product with a photo and a price.',
+                  done: published.length > 0,
+                  href: '/me/products',
+                },
+                {
+                  title: 'Open the door',
+                  hint: 'Publish your space so visitors can find it.',
+                  done: !!pub,
+                  href: '/me/edit',
+                },
+                {
+                  title: 'Meet a neighbour',
+                  hint: 'Your first follower is a good sign.',
+                  done: me.shop.followers > 0,
+                  href: `/shop/${me.shop.slug}`,
+                },
+                {
+                  title: 'Make a first sale',
+                  hint: 'Sandbox orders count while you practise.',
+                  done: orders.length > 0,
+                  href: `/shop/${me.shop.slug}`,
+                },
+              ]}
             />
-            <Stat
-              icon={<Users size={14} />}
-              label="Your community"
-              value={String(me.shop.followers)}
-              note="People following your space"
-            />
-            <Stat
-              icon={<ShoppingBag size={14} />}
-              label="Shop orders"
-              value={String(orders.length)}
-              note="Sandbox orders only"
-            />
-            <Stat
-              icon={<Heart size={14} />}
-              label="Sandbox sales"
-              value={money(sales)}
-              note="No real money collected"
-            />
-          </div>
-          <TemplateGallery shop={me.shop} products={products} />
-          {!me.seller_enabled && (
-            <div className="panel" style={{ marginBottom: 25 }}>
-              <h2>Your space could be a shop.</h2>
-              <p>
-                Start with a few things you love. Sandbox selling lets you try every step before a
-                real launch.
-              </p>
-              <label className="onboarding-terms">
-                <input
-                  type="checkbox"
-                  checked={terms}
-                  onChange={(e) => setTerms(e.target.checked)}
-                />
-                I understand this enables test selling only. I’ll review seller terms, payment
-                approval and Malaysian launch requirements before taking live orders.
-              </label>
-              <button
-                disabled={!terms}
-                className="button primary"
-                onClick={async () => {
-                  try {
-                    await api('/me/seller-onboarding', {
-                      method: 'POST',
-                      body: JSON.stringify({ accepted_terms: true }),
-                    });
-                    await refresh();
-                    toast('Your sandbox shop is ready. Add your first product.');
-                  } catch (e) {
-                    toast((e as Error).message);
-                  }
-                }}
-              >
-                Start selling in sandbox <ArrowUpRight size={16} />
-              </button>
-            </div>
+          ) : (
+            <Reveal className="panel move-in-panel">
+              <NookMark size={64} />
+              <div>
+                <h2>Your space could be a shop.</h2>
+                <p>
+                  Start with a few things you love. Sandbox selling lets you try every step before a
+                  real launch.
+                </p>
+                <label className="onboarding-terms">
+                  <input
+                    type="checkbox"
+                    checked={terms}
+                    onChange={(e) => setTerms(e.target.checked)}
+                  />
+                  I understand this enables test selling only. I’ll review seller terms, payment
+                  approval and Malaysian launch requirements before taking live orders.
+                </label>
+                <button
+                  disabled={!terms}
+                  className="button primary"
+                  onClick={async () => {
+                    try {
+                      await api('/me/seller-onboarding', {
+                        method: 'POST',
+                        body: JSON.stringify({ accepted_terms: true }),
+                      });
+                      await refresh();
+                      toast('Your sandbox shop is ready. Add your first product.');
+                    } catch (e) {
+                      toast((e as Error).message);
+                    }
+                  }}
+                >
+                  Start selling in sandbox <ArrowUpRight size={16} />
+                </button>
+              </div>
+            </Reveal>
           )}
-          <div className="section-heading">
+          <TemplateGallery shop={me.shop} products={products} />
+          <Reveal className="section-heading">
             <div>
               <span className="eyebrow">AS THE WORLD SEES IT</span>
               <h2>
-                Your published <em>space.</em>
+                Your published <span className="hl">nook.</span>
               </h2>
             </div>
             <Link href="/me/edit" className="text-button">
               Make it yours <Paintbrush size={15} />
             </Link>
-          </div>
+          </Reveal>
           {pub ? (
-            <div className="storefront-container" style={{ marginBottom: 45 }}>
-              <Storefront
-                document={pub}
-                products={products.filter((p) => p.status === 'published')}
-                shop={me.shop}
-              />
-            </div>
+            <Reveal className="window-wrap">
+              <NookWindow address={`/ ${me.shop.slug}`} tag="Live preview">
+                <Storefront document={pub} products={published} shop={me.shop} />
+              </NookWindow>
+            </Reveal>
           ) : (
             <div className="empty-state">
-              <Flower2 size={30} />
+              <NookMark size={56} />
               <h3>Your story is ready to begin.</h3>
-              <p>Choose a theme, add a little personality, and publish your first space.</p>
+              <p>Choose a look, add a little personality, and publish your first space.</p>
               <Link className="button primary" href="/me/edit">
                 Open the editor
               </Link>
@@ -215,7 +228,7 @@ function Space() {
           </div>
           {me.favorites.length === 0 && (
             <div className="empty-state">
-              <Heart size={30} />
+              <Heart size={34} />
               <h3>Keep the good things close.</h3>
               <p>Tap a heart on any product to save it here.</p>
               <Link className="button soft" href="/">
@@ -235,8 +248,8 @@ function Space() {
           </div>
           {me.following.length === 0 && (
             <div className="empty-state">
-              <Users size={30} />
-              <h3>Find your kind of people.</h3>
+              <Users size={34} />
+              <h3>Find your neighbours.</h3>
               <p>Follow the shops that feel like you. They’ll be waiting here.</p>
               <Link className="button soft" href="/">
                 Meet the makers
@@ -248,24 +261,161 @@ function Space() {
     </div>
   );
 }
+
+/**
+ * The top of My Space is the shop's own room. It borrows the colours of the look
+ * the seller has published, so the page you land on already feels like yours.
+ */
+function Room({
+  shop,
+  handle,
+  firstName,
+  doc,
+  livePublished,
+}: {
+  shop: Shop;
+  handle: string;
+  firstName: string;
+  doc: Document | null;
+  livePublished: boolean;
+}) {
+  const template = themes.find((t) => t.id === shop.theme);
+  const colors = (doc || template?.document)?.theme.colors;
+  const style = colors
+    ? ({
+        ['--room-bg' as string]: `color-mix(in srgb, ${colors.accent} 26%, ${colors.background})`,
+        ['--room-text' as string]: colors.text,
+        ['--room-accent' as string]: colors.accent,
+      } as CSSProperties)
+    : undefined;
+  return (
+    <section className="nook-room" style={style}>
+      <div className="room-main">
+        <p className="welcome-note">
+          welcome home, {firstName}
+          <Squiggle className="welcome-squiggle" />
+        </p>
+        <div className="room-id">
+          <span className="room-avatar">{initials(shop.name)}</span>
+          <div>
+            <h1>{shop.name}</h1>
+            <p className="room-handle">
+              @{handle} · {shop.location}
+            </p>
+          </div>
+        </div>
+        <p className="room-bio">{shop.bio}</p>
+        <div className="vibe-chips" aria-label="Your nook's vibe">
+          <span>{shop.category}</span>
+          {template && <span>{template.name} look</span>}
+          <span>{shop.location}</span>
+        </div>
+        <div className="room-actions">
+          <Link className="button primary big" href="/me/edit">
+            <Paintbrush size={17} />
+            Customize your space
+          </Link>
+          {livePublished && (
+            <Link className="button outline big" href={`/shop/${shop.slug}`}>
+              <ExternalLink size={16} />
+              View public space
+            </Link>
+          )}
+        </div>
+      </div>
+      <div className="room-art" aria-hidden="true">
+        <span className="room-arch">
+          <img src={assetPath(shop.cover)} alt="" />
+        </span>
+        <span className="room-sticker">
+          <NookMark size={46} />
+        </span>
+        <span className="room-note">
+          that’s you!
+          <Arrow />
+        </span>
+      </div>
+    </section>
+  );
+}
+
+function Furnish({
+  steps,
+}: {
+  steps: { title: string; hint: string; done: boolean; href: string }[];
+}) {
+  const doneCount = steps.filter((s) => s.done).length;
+  const pct = Math.round((doneCount / steps.length) * 100);
+  const next = steps.findIndex((s) => !s.done);
+  return (
+    <Reveal className="furnish" variant="pop">
+      <div className="furnish-ring" style={{ ['--p' as string]: pct } as CSSProperties}>
+        <div>
+          <strong>
+            <CountUp value={pct} />%
+          </strong>
+          <span>furnished</span>
+        </div>
+      </div>
+      <div className="furnish-body">
+        <span className="eyebrow">FURNISH YOUR NOOK</span>
+        <h2>
+          {next === -1 ? (
+            <>
+              Fully <span className="hl">furnished.</span>
+            </>
+          ) : (
+            <>
+              {steps.length - doneCount} little {steps.length - doneCount === 1 ? 'step' : 'steps'}{' '}
+              to <span className="hl">go.</span>
+            </>
+          )}
+        </h2>
+        <ol className="furnish-steps">
+          {steps.map((s, i) => (
+            <li key={s.title} className={`${s.done ? 'done' : ''} ${i === next ? 'next' : ''}`}>
+              <span className="step-check" aria-hidden="true">
+                {s.done && <Check size={14} strokeWidth={3.4} />}
+              </span>
+              <span className="step-text">
+                <strong>{s.title}</strong>
+                <small>{s.hint}</small>
+              </span>
+              {i === next && (
+                <Link className="button small-button primary" href={s.href}>
+                  Do this next <ArrowUpRight size={14} />
+                </Link>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </Reveal>
+  );
+}
+
 function Stat({
   icon,
   label,
   value,
+  text,
   note,
+  tone,
 }: {
   icon: React.ReactNode;
   label: string;
-  value: string;
+  value?: number;
+  text?: string;
   note: string;
+  tone: 'lilac' | 'butter' | 'pink' | 'mint';
 }) {
   return (
-    <div className="stat-card">
+    <div className={`stat-card tone-${tone}`}>
       <span>
         {icon}
         {label}
       </span>
-      <strong>{value}</strong>
+      <strong>{text ?? <CountUp value={value ?? 0} />}</strong>
       <p>{note}</p>
     </div>
   );

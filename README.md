@@ -1,12 +1,12 @@
-# Lilac
+# Nook
 
-A seller-first social commerce app with a soft lilac visual system, a customizable storefront editor, and sandbox commerce. Built from `SOCIAL_COMMERCE_APP_TECHNICAL_SPEC.md` and `AGENT_IMPLEMENTATION_PROMPT.md`.
+Nook is a seller-first social commerce app: a cosy corner of the internet where small shops move in, decorate a space of their own with a customizable storefront editor, and sell with sandbox commerce. Its warm, playful identity is documented in [docs/NOOK_BRAND.md](docs/NOOK_BRAND.md). Built from `SOCIAL_COMMERCE_APP_TECHNICAL_SPEC.md` and `AGENT_IMPLEMENTATION_PROMPT.md`.
 
 ## Open the app
 
 Local web: **http://127.0.0.1:3000**. API documentation: **http://127.0.0.1:8000/docs**.
 
-Choose **My Space → Open your space → Continue as demo shop owner**. The fictional demo account is `demo@lilac.local` / `LilacDemo!2026`. Development credentials only; all seed accounts are local sandbox accounts.
+Choose **My Space → Open your space → Continue as demo shop owner**. The fictional demo account is `demo@lilac.local` / `LilacDemo!2026` (the address predates the Nook name and is kept so existing local databases keep working). Development credentials only; all seed accounts are local sandbox accounts.
 
 The editor is under **My Space → Customize your space**. Nothing changes on the public shop until you publish. Try all eight templates, change typography/colors/spacing, add photos and blocks, duplicate and reorder them, preview different sizes, publish, and restore an earlier version into the draft.
 
@@ -48,6 +48,10 @@ To stop/restart the local database:
 pg_ctl -D .local/postgres stop
 pg_ctl -D .local/postgres -l .local/postgres.log -o '-p 55432 -h 127.0.0.1' start
 ```
+
+## Naming
+
+ The product is called **Nook**. Internal identifiers that predate the rename are intentionally unchanged so existing setups keep working: the `@lilac/*` workspace package scope, the `lilac` / `lilac_test` databases and `lilac_app` role, the `lilac-*` browser/secure-store keys, and the demo account address. Renaming them is mechanical but needs a lockfile refresh and a local database rename, so it is left as a separate change.
 
 ## What is implemented
 
@@ -92,4 +96,4 @@ The mobile client uses Expo **57.0.30**, React Native **0.86.3** and React **19.
 
 ## Sample assets
 
-Photos are demonstration imagery downloaded from Unsplash; the source photo IDs and download URLs are in `scripts/download-assets.py`. Shop identities, products, prices and policies are fictional sandbox fixtures. Replace them with authorized real seller content before a pilot. UI fonts are bundled locally from Google Fonts (DM Sans and Manrope, SIL Open Font License). System font fallbacks remain available.
+Photos are demonstration imagery downloaded from Unsplash; the source photo IDs and download URLs are in `scripts/download-assets.py`. Shop identities, products, prices and policies are fictional sandbox fixtures. Replace them with authorized real seller content before a pilot. UI fonts are bundled locally from Google Fonts (Bricolage Grotesque, Caprasimo and Caveat, SIL Open Font License; copies of each licence sit next to the web font files). System font fallbacks remain available.
