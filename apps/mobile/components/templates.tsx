@@ -148,7 +148,7 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
         subtitle={
           theme
             ? templateDetails[theme.id].audience
-            : 'Eight distinct looks. Your products, your personality.'
+            : `${themes.length} distinct looks. Your products, your personality.`
         }
         footer={
           theme ? (
@@ -241,10 +241,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: C.ink,
     overflow: 'hidden',
-    shadowColor: C.ink,
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    shadowOffset: { width: 3, height: 4 },
   },
   art: { overflow: 'hidden' },
   miniNav: {

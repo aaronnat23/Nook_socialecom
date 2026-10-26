@@ -1,3 +1,6 @@
+"""Writes packages/storefront-schema/storefront.v1.json.
+
+The template fixtures (themes.json) are built by scripts/build-templates.py."""
 import json
 from pathlib import Path
 
@@ -22,7 +25,50 @@ def integer(lo, hi):
 
 
 color = {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"}
-fonts = {"enum": ["Inter", "Georgia", "Arial", "Courier New", "Trebuchet MS"]}
+FONTS = [
+    "Inter",
+    "Georgia",
+    "Arial",
+    "Courier New",
+    "Trebuchet MS",
+    "Caprasimo",
+    "Caveat",
+    "DM Serif Display",
+    "Archivo Black",
+    "Space Mono",
+]
+GRADIENTS = [
+    "none",
+    "lilac",
+    "sunset",
+    "forest",
+    "peach",
+    "candy",
+    "ocean",
+    "night",
+    "sage",
+    "butter",
+]
+ASPECTS = ["1:1", "4:3", "3:4", "4:5", "3:2", "16:9", "21:9", "auto"]
+PATTERNS = ["none", "dots", "grid", "stripes", "checker"]
+SHAPES = ["rect", "arch", "pill", "circle"]
+# Layout variants a block can take (the first is the default). Keep in sync with
+# packages/storefront-schema/src/index.ts.
+VARIANTS = {
+    "hero": ["split", "flip", "centered", "overlay", "poster", "stack"],
+    "profileHeader": ["row", "centered", "banner", "minimal"],
+    "text": ["plain", "quote", "note", "letter"],
+    "image": ["plain", "framed", "polaroid"],
+    "gallery": ["grid", "filmstrip", "polaroid", "masonry"],
+    "productGrid": ["grid", "list", "carousel", "mosaic", "lookbook"],
+    "featuredProduct": ["card", "spotlight"],
+    "announcement": ["bar", "marquee", "pill"],
+    "divider": ["line", "dots", "wave", "stars", "ornament"],
+    "button": ["solid", "outline", "link"],
+    "socialLinks": ["links", "chips"],
+    "columns": ["even", "wideLeft", "wideRight"],
+}
+fonts = {"enum": FONTS}
 style = obj(
     {
         **{
@@ -38,7 +84,7 @@ style = obj(
             ]
         },
         "fontFamily": fonts,
-        "fontSize": integer(10, 96),
+        "fontSize": integer(10, 160),
         "fontWeight": {"enum": [400, 500, 600, 700, 800]},
         "lineHeight": {"type": "number", "minimum": 1, "maximum": 2.2},
         "letterSpacing": {"type": "number", "minimum": -2, "maximum": 10},
@@ -52,12 +98,15 @@ style = obj(
         "maxWidth": integer(280, 1440),
         "minHeight": integer(0, 800),
         "imageFit": {"enum": ["cover", "contain"]},
-        "aspectRatio": {"enum": ["1:1", "4:3", "3:4", "16:9", "auto"]},
+        "aspectRatio": {"enum": ASPECTS},
         "focalX": integer(0, 100),
         "focalY": integer(0, 100),
         "visibility": {"enum": ["visible", "hidden"]},
         "shadow": {"enum": ["none", "soft", "lifted"]},
-        "gradient": {"enum": ["none", "lilac", "sunset", "forest"]},
+        "gradient": {"enum": GRADIENTS},
+        "pattern": {"enum": PATTERNS},
+        "patternColor": color,
+        "shape": {"enum": SHAPES},
         "uppercase": {"type": "boolean"},
         "width": {"enum": ["full", "contained"]},
         "order": integer(0, 80),
@@ -155,6 +204,8 @@ blocks = {
 }
 block_schemas = []
 for kind, p in blocks.items():
+    if kind in VARIANTS:
+        p = {**p, "properties": {**p["properties"], "variant": {"enum": VARIANTS[kind]}}}
     fields = {
         "id": {"type": "string", "pattern": "^[a-zA-Z0-9_-]{1,80}$"},
         "type": {"const": kind},
@@ -225,184 +276,4 @@ schema = {
 }
 (root / "packages/storefront-schema/storefront.v1.json").write_text(
     json.dumps(schema, indent=2)
-)
-names = [
-    "Minimal Studio",
-    "Vintage Film",
-    "Y2K Diary",
-    "Dark Editorial",
-    "Handmade Market",
-    "Streetwear Drop",
-    "Botanical",
-    "Art Gallery",
-]
-palettes = [
-    ["#FAF9F6", "#FFFFFF", "#29252F", "#7550B5", "#77717F"],
-    ["#F6EDE1", "#FFFAF3", "#493725", "#925E45", "#786B60"],
-    ["#F6EEFF", "#FFFFFF", "#38234A", "#8753CD", "#7C688E"],
-    ["#18171B", "#242229", "#F8F5FB", "#C8ADFA", "#B6AEBF"],
-    ["#FFF7EE", "#FFFFFF", "#493128", "#BB694A", "#836E60"],
-    ["#F0F0ED", "#FFFFFF", "#171717", "#5F35C9", "#70706B"],
-    ["#F0F4EA", "#FAFCF6", "#2F432E", "#55784D", "#6B7E63"],
-    ["#FCFAF8", "#FFFFFF", "#29252A", "#8D4B7B", "#8C7C87"],
-]
-headlines = [
-    "Everyday things, thoughtfully made.",
-    "A little old soul. A lot of character.",
-    "Welcome to my little universe.",
-    "Quiet objects. Bold intentions.",
-    "Made slowly. Loved for a long time.",
-    "Wear your own story.",
-    "A slower kind of beautiful.",
-    "Objects with a point of view.",
-]
-fixtures = []
-for i, name in enumerate(names):
-    slug = name.lower().replace(" ", "-")
-    c = palettes[i]
-    blocks = [
-        {
-            "id": "identity",
-            "type": "profileHeader",
-            "props": {
-                "headline": name,
-                "subtitle": "Independent design, from our corner of Malaysia.",
-            },
-            "style": {"paddingTop": 24, "paddingBottom": 24},
-        },
-        {
-            "id": "hero",
-            "type": "hero",
-            "props": {
-                "headline": headlines[i],
-                "subtitle": "A collection of little things that feel like you.",
-                "imageAssetId": f"seed_hero_{i}",
-                "alt": "Independent creative studio collection",
-                "cta": {"label": "Explore the collection", "url": "#products"},
-            },
-            "style": {
-                "backgroundColor": c[1],
-                "fontSize": 48,
-                "minHeight": 320,
-                "borderRadius": 12,
-                "paddingTop": 32,
-                "paddingBottom": 32,
-            },
-            "responsive": {"mobile": {"style": {"fontSize": 30, "minHeight": 240}}},
-        },
-        {
-            "id": "products",
-            "type": "productGrid",
-            "props": {
-                "headline": "The latest little things",
-                "source": "all",
-                "limit": 12,
-            },
-            "style": {"columns": 3, "gap": 20, "paddingTop": 32},
-            "responsive": {"mobile": {"style": {"columns": 2, "gap": 12}}},
-        },
-        {
-            "id": "story",
-            "type": "text",
-            "props": {
-                "headline": "Behind the little things",
-                "text": "We believe the things you bring into your life should mean something. Every piece in this collection is chosen with care, and sent with a little love from Malaysia.",
-            },
-            "style": {
-                "textAlign": "center",
-                "paddingTop": 48,
-                "paddingBottom": 48,
-                "maxWidth": 680,
-            },
-        },
-        {
-            "id": "photos",
-            "type": "gallery",
-            "props": {
-                "headline": "From our studio",
-                "images": [
-                    {"imageAssetId": f"seed_hero_{i}", "alt": "Our studio collection"},
-                    {
-                        "imageAssetId": f"seed_product_{i * 3}",
-                        "alt": "A detail from our collection",
-                    },
-                ],
-            },
-            "style": {"columns": 2, "gap": 16, "borderRadius": 12},
-        },
-    ]
-    if i in [1, 4, 6]:
-        blocks.insert(
-            0,
-            {
-                "id": "announce",
-                "type": "announcement",
-                "props": {"text": "Small batches. Good intentions. Made in Malaysia."},
-                "style": {
-                    "backgroundColor": c[3],
-                    "textColor": "#FFFFFF",
-                    "paddingTop": 12,
-                    "paddingBottom": 12,
-                    "textAlign": "center",
-                    "fontSize": 13,
-                },
-            },
-        )
-    if i in [2, 7]:
-        blocks[2:4] = blocks[2:4][::-1]
-    if i == 5:
-        blocks[1]["style"].update(
-            {
-                "uppercase": True,
-                "fontFamily": "Arial",
-                "fontWeight": 800,
-                "fontSize": 64,
-                "borderRadius": 0,
-            }
-        )
-    if i == 3:
-        blocks[1]["style"].update({"backgroundColor": c[0], "textColor": c[2]})
-    doc = {
-        "schemaVersion": 1,
-        "shopId": "template",
-        "pageId": f"page_{slug}",
-        "theme": {
-            "fontHeading": [
-                "Georgia",
-                "Georgia",
-                "Trebuchet MS",
-                "Georgia",
-                "Georgia",
-                "Arial",
-                "Georgia",
-                "Georgia",
-            ][i],
-            "fontBody": "Inter",
-            "colors": dict(
-                zip(["background", "surface", "text", "accent", "muted"], c)
-            ),
-            "contentWidth": 1100,
-            "radius": [8, 4, 24, 0, 16, 0, 12, 4][i],
-        },
-        "sections": [{"id": "main", "type": "section", "children": blocks}],
-    }
-    fixtures.append(
-        {
-            "id": slug,
-            "name": name,
-            "description": [
-                "Less, but lovelier.",
-                "Nostalgia, beautifully collected.",
-                "A playful corner of the internet.",
-                "Contrast with confidence.",
-                "For the things made by hand.",
-                "Your next drop starts here.",
-                "Rooted in the natural world.",
-                "A canvas for your point of view.",
-            ][i],
-            "document": doc,
-        }
-    )
-(root / "packages/storefront-schema/fixtures/themes.json").write_text(
-    json.dumps(fixtures, indent=2)
 )

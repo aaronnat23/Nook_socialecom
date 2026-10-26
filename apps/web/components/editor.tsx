@@ -40,9 +40,15 @@ import {
   Search,
 } from 'lucide-react';
 import {
+  aspects,
   blockTypes,
+  fonts,
+  gradients,
   makeBlock,
+  patterns,
+  shapes,
   themes,
+  variantOptions,
   personalizeTemplate,
   validateDocument,
   type Block,
@@ -796,7 +802,7 @@ function Editor() {
                     value={String(styleValue('fontFamily') || doc.theme.fontHeading)}
                     onChange={(e) => updateStyle('fontFamily', e.target.value)}
                   >
-                    {['Inter', 'Georgia', 'Arial', 'Trebuchet MS', 'Courier New'].map((f) => (
+                    {fonts.map((f) => (
                       <option key={f}>{f}</option>
                     ))}
                   </select>
@@ -805,7 +811,7 @@ function Editor() {
                   label="Text size"
                   value={Number(style.fontSize || 32)}
                   min={10}
-                  max={96}
+                  max={160}
                   onChange={(v) => updateStyle('fontSize', v)}
                 />
                 <label>
@@ -850,7 +856,36 @@ function Editor() {
                     value={style.gradient || 'none'}
                     onChange={(e) => updateStyle('gradient', e.target.value)}
                   >
-                    {['none', 'lilac', 'sunset', 'forest'].map((x) => (
+                    {gradients.map((x) => (
+                      <option key={x}>{x}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Background pattern
+                  <select
+                    value={style.pattern || 'none'}
+                    onChange={(e) => updateStyle('pattern', e.target.value)}
+                  >
+                    {patterns.map((x) => (
+                      <option key={x}>{x}</option>
+                    ))}
+                  </select>
+                </label>
+                {style.pattern && style.pattern !== 'none' && (
+                  <ColorField
+                    label="Pattern colour"
+                    value={style.patternColor || doc.theme.colors.accent}
+                    onChange={(v) => updateStyle('patternColor', v)}
+                  />
+                )}
+                <label>
+                  Image shape
+                  <select
+                    value={style.shape || 'rect'}
+                    onChange={(e) => updateStyle('shape', e.target.value)}
+                  >
+                    {shapes.map((x) => (
                       <option key={x}>{x}</option>
                     ))}
                   </select>
@@ -878,7 +913,7 @@ function Editor() {
                     value={style.aspectRatio || 'auto'}
                     onChange={(e) => updateStyle('aspectRatio', e.target.value)}
                   >
-                    {['auto', '1:1', '4:3', '3:4', '16:9'].map((x) => (
+                    {aspects.map((x) => (
                       <option key={x}>{x}</option>
                     ))}
                   </select>
@@ -1141,7 +1176,7 @@ function Editor() {
                 )
               }
             >
-              {['Inter', 'Georgia', 'Arial', 'Trebuchet MS', 'Courier New'].map((x) => (
+              {fonts.map((x) => (
                 <option key={x}>{x}</option>
               ))}
             </select>
@@ -1157,7 +1192,7 @@ function Editor() {
                 )
               }
             >
-              {['Inter', 'Georgia', 'Arial', 'Trebuchet MS', 'Courier New'].map((x) => (
+              {fonts.map((x) => (
                 <option key={x}>{x}</option>
               ))}
             </select>
@@ -1171,7 +1206,7 @@ function Editor() {
             }}
           >
             <Paintbrush size={12} />
-            Browse eight starter themes
+            Browse {themes.length} starter templates
           </button>
         </aside>
       </div>
@@ -1486,8 +1521,26 @@ function ContentInspector({
   uploading: boolean;
 }) {
   const p = b.props;
+  const variants = variantOptions[b.type];
   return (
     <>
+      {variants && (
+        <label>
+          Layout style
+          <select
+            value={p.variant || variants[0].value}
+            onChange={(e) =>
+              update('variant', e.target.value === variants[0].value ? undefined : e.target.value)
+            }
+          >
+            {variants.map((v) => (
+              <option key={v.value} value={v.value}>
+                {v.label} — {v.hint}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       {[
         'hero',
         'profileHeader',

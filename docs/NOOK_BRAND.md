@@ -60,6 +60,13 @@ Sellers can upload a product photo, remove its background and place the cut-out 
 - Shared: presets, palettes and limits in `packages/storefront-renderer/src/stage.ts`; types in `@lilac/schema`.
 - API: `POST /api/v1/shops/{shop_id}/cutouts` removes the background from one of the shop's own uploads (U²-Net-P via onnxruntime on CPU, bundled in `apps/api/models`, see its README for the licence); `/uploads` takes `keep_alpha` for photos that are already transparent. Stage assets are only public once a published product references them.
 
+## Templates
+
+Starter templates are where sellers' personalities differ most, so they are deliberately unlike one
+another: different type pairings, layouts, textures and shapes, not just colours. Fourteen are
+built on one shared vocabulary of layout variants, patterns and shapes; see [TEMPLATES.md](TEMPLATES.md).
+Nook's own chrome stays neutral around them.
+
 ## Where seller expression lives
 
 My Space opens as the shop's own room. It borrows the colours of the look the seller has published, shows their name, handle, vibe chips and cover in an arched window, then offers a "furnish your nook" checklist, stats stickers, the template gallery ("Try on a new look") and a live preview of the public shop inside a little browser window. Public shop pages use the same window frame, so a visit feels like stepping into someone's place. Everything a shop publishes still goes through the safe block schema; Nook chrome never leaks into a seller's own theme (product cards and buttons inside a storefront are neutral and follow the seller's colours).

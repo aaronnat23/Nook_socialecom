@@ -54,6 +54,41 @@
   font-display: swap;
   src: url(/fonts/nook-caveat-700.ttf) format('truetype');
 }
+@font-face {
+  font-family: 'DM Serif Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/shop-dm-serif-display.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'DM Serif Display';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/shop-dm-serif-display-italic.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Archivo Black';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/shop-archivo-black.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/shop-space-mono-400.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Space Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/fonts/shop-space-mono-700.ttf) format('truetype');
+}
 :root {
   /* Nook palette: warm paper, deep ink, and a handful of sticker colours. */
   --paper: #f8f1e4;

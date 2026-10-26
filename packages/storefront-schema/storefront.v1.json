@@ -20,10 +20,32 @@
       "additionalProperties": false,
       "properties": {
         "fontHeading": {
-          "enum": ["Inter", "Georgia", "Arial", "Courier New", "Trebuchet MS"]
+          "enum": [
+            "Inter",
+            "Georgia",
+            "Arial",
+            "Courier New",
+            "Trebuchet MS",
+            "Caprasimo",
+            "Caveat",
+            "DM Serif Display",
+            "Archivo Black",
+            "Space Mono"
+          ]
         },
         "fontBody": {
-          "enum": ["Inter", "Georgia", "Arial", "Courier New", "Trebuchet MS"]
+          "enum": [
+            "Inter",
+            "Georgia",
+            "Arial",
+            "Courier New",
+            "Trebuchet MS",
+            "Caprasimo",
+            "Caveat",
+            "DM Serif Display",
+            "Archivo Black",
+            "Space Mono"
+          ]
         },
         "colors": {
           "type": "object",
@@ -136,12 +158,23 @@
           "maximum": 160
         },
         "fontFamily": {
-          "enum": ["Inter", "Georgia", "Arial", "Courier New", "Trebuchet MS"]
+          "enum": [
+            "Inter",
+            "Georgia",
+            "Arial",
+            "Courier New",
+            "Trebuchet MS",
+            "Caprasimo",
+            "Caveat",
+            "DM Serif Display",
+            "Archivo Black",
+            "Space Mono"
+          ]
         },
         "fontSize": {
           "type": "integer",
           "minimum": 10,
-          "maximum": 96
+          "maximum": 160
         },
         "fontWeight": {
           "enum": [400, 500, 600, 700, 800]
@@ -200,7 +233,7 @@
           "enum": ["cover", "contain"]
         },
         "aspectRatio": {
-          "enum": ["1:1", "4:3", "3:4", "16:9", "auto"]
+          "enum": ["1:1", "4:3", "3:4", "4:5", "3:2", "16:9", "21:9", "auto"]
         },
         "focalX": {
           "type": "integer",
@@ -219,7 +252,28 @@
           "enum": ["none", "soft", "lifted"]
         },
         "gradient": {
-          "enum": ["none", "lilac", "sunset", "forest"]
+          "enum": [
+            "none",
+            "lilac",
+            "sunset",
+            "forest",
+            "peach",
+            "candy",
+            "ocean",
+            "night",
+            "sage",
+            "butter"
+          ]
+        },
+        "pattern": {
+          "enum": ["none", "dots", "grid", "stripes", "checker"]
+        },
+        "patternColor": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "shape": {
+          "enum": ["rect", "arch", "pill", "circle"]
         },
         "uppercase": {
           "type": "boolean"
@@ -284,6 +338,9 @@
                     }
                   },
                   "required": ["label", "url"]
+                },
+                "variant": {
+                  "enum": ["split", "flip", "centered", "overlay", "poster", "stack"]
                 }
               },
               "required": ["headline"]
@@ -352,6 +409,9 @@
                 "alt": {
                   "type": "string",
                   "maxLength": 300
+                },
+                "variant": {
+                  "enum": ["row", "centered", "banner", "minimal"]
                 }
               },
               "required": ["headline"]
@@ -407,6 +467,9 @@
                 "text": {
                   "type": "string",
                   "maxLength": 600
+                },
+                "variant": {
+                  "enum": ["bar", "marquee", "pill"]
                 }
               },
               "required": ["text"]
@@ -489,6 +552,9 @@
                     },
                     "required": ["type", "text"]
                   }
+                },
+                "variant": {
+                  "enum": ["plain", "quote", "note", "letter"]
                 }
               },
               "required": []
@@ -553,6 +619,9 @@
                 "caption": {
                   "type": "string",
                   "maxLength": 300
+                },
+                "variant": {
+                  "enum": ["plain", "framed", "polaroid"]
                 }
               },
               "required": ["imageAssetId", "alt"]
@@ -628,6 +697,9 @@
                     },
                     "required": ["imageAssetId", "alt"]
                   }
+                },
+                "variant": {
+                  "enum": ["grid", "filmstrip", "polaroid", "masonry"]
                 }
               },
               "required": ["images"]
@@ -698,6 +770,9 @@
                 },
                 "sort": {
                   "enum": ["newest", "price_asc", "price_desc"]
+                },
+                "variant": {
+                  "enum": ["grid", "list", "carousel", "mosaic", "lookbook"]
                 }
               },
               "required": []
@@ -757,6 +832,9 @@
                 "productId": {
                   "type": "string",
                   "maxLength": 80
+                },
+                "variant": {
+                  "enum": ["card", "spotlight"]
                 }
               },
               "required": ["productId"]
@@ -817,6 +895,9 @@
                   "type": "string",
                   "maxLength": 2048,
                   "pattern": "^(https://[^\\s<>]+|/(shop|product|u)/[a-zA-Z0-9_.-]+|#[a-zA-Z0-9_-]+)$"
+                },
+                "variant": {
+                  "enum": ["solid", "outline", "link"]
                 }
               },
               "required": ["label", "url"]
@@ -868,7 +949,11 @@
             "props": {
               "type": "object",
               "additionalProperties": false,
-              "properties": {},
+              "properties": {
+                "variant": {
+                  "enum": ["line", "dots", "wave", "stars", "ornament"]
+                }
+              },
               "required": []
             },
             "style": {
@@ -988,6 +1073,9 @@
                     },
                     "required": ["label", "url"]
                   }
+                },
+                "variant": {
+                  "enum": ["links", "chips"]
                 }
               },
               "required": ["links"]
@@ -1043,6 +1131,9 @@
                 "headline": {
                   "type": "string",
                   "maxLength": 200
+                },
+                "variant": {
+                  "enum": ["even", "wideLeft", "wideRight"]
                 }
               },
               "required": []

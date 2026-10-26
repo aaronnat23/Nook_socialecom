@@ -1,4 +1,4 @@
-import type { Block, Document, Style } from '@lilac/schema';
+import { gradientStops, type Block, type Document, type Font, type Style } from '@lilac/schema';
 export const breakpoints = { mobile: 768, tablet: 1024 };
 export function resolveStyle(block: Block, theme: Document['theme'], width: number): Style {
   const base: Style = {
@@ -29,6 +29,73 @@ export function resolveColumns(block: Block, theme: Document['theme'], width: nu
   return width < 768
     ? block.responsive?.mobile?.style?.columns || 1
     : resolveStyle(block, theme, width).columns || 2;
+}
+/** A block's layout variant, falling back to the first (default) option for its type. */
+export function variantOf(block: Block, fallback: string): string {
+  return block.props.variant || fallback;
+}
+/** CSS font stack for a face a seller picked. */
+export function fontStack(font?: Font): string | undefined {
+  switch (font) {
+    case undefined:
+      return undefined;
+    case 'Inter':
+      return 'var(--shop-sans)';
+    case 'Georgia':
+      return "Georgia, 'Times New Roman', serif";
+    case 'Courier New':
+      return "'Courier New', Courier, monospace";
+    case 'Arial':
+      return 'Arial, Helvetica, sans-serif';
+    case 'Trebuchet MS':
+      return "'Trebuchet MS', Verdana, sans-serif";
+    case 'Caprasimo':
+      return "'Caprasimo', Georgia, serif";
+    case 'Caveat':
+      return "'Caveat', 'Comic Sans MS', cursive";
+    case 'DM Serif Display':
+      return "'DM Serif Display', Georgia, serif";
+    case 'Archivo Black':
+      return "'Archivo Black', Impact, 'Arial Black', sans-serif";
+    case 'Space Mono':
+      return "'Space Mono', 'Courier New', monospace";
+  }
+}
+/** CSS layers for a background pattern: image(s) and the matching size(s). */
+export function patternCss(
+  pattern: Style['pattern'],
+  color: string,
+): { image: string; size: string } | undefined {
+  switch (pattern) {
+    case 'dots':
+      return {
+        image: `radial-gradient(circle, ${color} 2px, transparent 2.5px)`,
+        size: '24px 24px',
+      };
+    case 'grid':
+      return {
+        image: `linear-gradient(${color} 1px, transparent 1px), linear-gradient(90deg, ${color} 1px, transparent 1px)`,
+        size: '28px 28px, 28px 28px',
+      };
+    case 'stripes':
+      return {
+        image: `repeating-linear-gradient(45deg, ${color} 0 8px, transparent 8px 20px)`,
+        size: 'auto',
+      };
+    case 'checker':
+      return {
+        image: `conic-gradient(${color} 25%, transparent 0 50%, ${color} 0 75%, transparent 0)`,
+        size: '64px 64px',
+      };
+    default:
+      return undefined;
+  }
+}
+/** The linear gradient for a named gradient. */
+export function gradientCss(name?: Style['gradient']): string | undefined {
+  if (!name || name === 'none') return undefined;
+  const [a, b] = gradientStops[name];
+  return `linear-gradient(125deg,${a},${b})`;
 }
 export function blocksOf(doc: Document): Block[] {
   return doc.sections.flatMap((s) => s.children);

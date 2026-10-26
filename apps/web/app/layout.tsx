@@ -3,6 +3,7 @@ import { Provider } from '@/components/provider';
 import { Shell } from '@/components/shell';
 import './globals.css';
 import './nook.css';
+import './storefront-variants.css';
 export const metadata: Metadata = {
   title: { default: 'Nook — a cosy corner of the internet for small shops', template: '%s · Nook' },
   description:

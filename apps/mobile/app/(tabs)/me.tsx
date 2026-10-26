@@ -489,18 +489,7 @@ function Space() {
       <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
         {doc ? (
           <Reveal pop>
-            <View style={{ paddingBottom: 5, paddingRight: 4 }}>
-              <View
-                style={{
-                  position: 'absolute',
-                  left: 4,
-                  right: 0,
-                  top: 5,
-                  bottom: 0,
-                  borderRadius: 26,
-                  backgroundColor: C.ink,
-                }}
-              />
+            <View>
               <View
                 style={{
                   backgroundColor: C.card,

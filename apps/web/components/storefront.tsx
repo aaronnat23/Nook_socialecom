@@ -1,109 +1,20 @@
 'use client';
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { Fragment, useEffect, useRef, useState, type CSSProperties } from 'react';
 import Link from 'next/link';
-import type { Block, Document, Style } from '@lilac/schema';
+import type { Block, Document } from '@lilac/schema';
 import type { Product, Shop } from '@lilac/api-client';
 import {
-  assetPath,
   resolveStyle,
   resolveHeadingFont,
   resolveColumns,
   contrastRatio,
+  fontStack,
 } from '@lilac/renderer';
 import { api } from '@/lib/api';
 import { ProductCard, FollowButton } from './cards';
-const gradients = {
-  none: undefined,
-  lilac: 'linear-gradient(125deg,#efe5f9,#ded0f2)',
-  sunset: 'linear-gradient(125deg,#f9e8d7,#ebccdc)',
-  forest: 'linear-gradient(125deg,#edf2e4,#cddbc9)',
-};
-export function styleToCss(s: Style): CSSProperties {
-  return {
-    fontFamily: s.fontFamily === 'Inter' ? 'var(--shop-sans)' : s.fontFamily,
-    fontSize: s.fontSize,
-    fontWeight: s.fontWeight,
-    lineHeight: s.lineHeight,
-    letterSpacing: s.letterSpacing,
-    textAlign: s.textAlign,
-    color: s.textColor,
-    background: s.gradient && s.gradient !== 'none' ? gradients[s.gradient] : s.backgroundColor,
-    borderRadius: s.borderRadius,
-    borderColor: s.borderColor,
-    borderWidth: s.borderWidth,
-    borderStyle: s.borderWidth ? 'solid' : undefined,
-    paddingTop: s.paddingTop,
-    paddingBottom: s.paddingBottom,
-    paddingLeft: s.paddingLeft,
-    paddingRight: s.paddingRight,
-    marginTop: s.marginTop,
-    marginBottom: s.marginBottom,
-    maxWidth: s.width === 'full' ? '100%' : s.maxWidth,
-    minHeight: s.minHeight,
-    display: s.visibility === 'hidden' ? 'none' : undefined,
-    textTransform: s.uppercase ? 'uppercase' : undefined,
-    boxShadow:
-      s.shadow === 'soft'
-        ? '0 3px 14px #0000000d'
-        : s.shadow === 'lifted'
-          ? '0 10px 30px #0000001a'
-          : undefined,
-    '--columns': s.columns,
-    '--gap': `${s.gap ?? 16}px`,
-  } as CSSProperties;
-}
-export function AssetImage({
-  id,
-  alt,
-  privateImage = false,
-  className,
-  style,
-}: {
-  id?: string;
-  alt: string;
-  privateImage?: boolean;
-  className?: string;
-  style?: CSSProperties;
-}) {
-  const [src, setSrc] = useState(assetPath(id));
-  useEffect(() => {
-    if (!id) {
-      setSrc('');
-      return;
-    }
-    if (!privateImage || id.startsWith('seed_')) {
-      setSrc(assetPath(id));
-      return;
-    }
-    let url = '';
-    let active = true;
-    fetch(`/api/v1/assets/${id}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('lilac-token') || ''}` },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error();
-        return r.blob();
-      })
-      .then((b) => {
-        url = URL.createObjectURL(b);
-        if (active) setSrc(url);
-      })
-      .catch(() => {
-        if (active) setSrc('');
-      });
-    return () => {
-      active = false;
-      if (url) URL.revokeObjectURL(url);
-    };
-  }, [id, privateImage]);
-  if (!src)
-    return (
-      <div className="image-unavailable" role="img" aria-label={alt || 'Add an image'}>
-        Add your image
-      </div>
-    );
-  return <img src={src} alt={alt} className={className} style={style} loading="lazy" />;
-}
+import { Divider, Marquee, ProductIndex, Spotlight } from './storefront-parts';
+import { AssetImage, backgroundLayers, shapeCss, styleToCss } from './storefront-base';
+export { AssetImage, styleToCss };
 interface Props {
   document: Document;
   products: Product[];
@@ -166,7 +77,7 @@ export function Storefront({
           className="sf-section"
           key={section.id}
           style={{
-            ...styleToCss(section.style || {}),
+            ...styleToCss(section.style || {}, doc.theme.colors.accent),
             maxWidth:
               section.style?.width === 'full'
                 ? '100%'
@@ -229,7 +140,7 @@ function BlockView({
 }) {
   const s = resolveStyle(b, doc.theme, width);
   const headingFace = resolveHeadingFont(b, doc.theme, width);
-  const headingFont = headingFace === 'Inter' ? 'var(--shop-sans)' : headingFace;
+  const headingFont = fontStack(headingFace);
   const headingStyle: CSSProperties = {
     fontFamily: headingFont,
     fontSize: s.fontSize,
@@ -239,6 +150,8 @@ function BlockView({
     textAlign: s.textAlign,
   };
   const p = b.props;
+  const accent = doc.theme.colors.accent;
+  const onAccent = contrastRatio('#FFFFFF', accent) >= 4.5 ? '#FFFFFF' : '#24182F';
   const [idOver, setIdOver] = useState(false);
   const imgStyle: CSSProperties = {
     objectFit: s.imageFit || 'cover',
@@ -246,53 +159,105 @@ function BlockView({
     aspectRatio: s.aspectRatio === 'auto' ? undefined : s.aspectRatio?.replace(':', '/'),
     borderRadius: s.borderRadius,
     height: s.aspectRatio && s.aspectRatio !== 'auto' ? 'auto' : undefined,
+    maxHeight: s.aspectRatio && s.aspectRatio !== 'auto' ? 'none' : undefined,
+    ...shapeCss(s),
   };
   let content: React.ReactNode = null;
   const cta = (label: string, url: string) => (
     <Link
       href={url}
       className="button primary"
-      style={{
-        background: doc.theme.colors.accent,
-        borderRadius: doc.theme.radius,
-        color: contrastRatio('#FFFFFF', doc.theme.colors.accent) >= 4.5 ? '#FFFFFF' : '#24182F',
-      }}
+      style={{ background: accent, borderRadius: doc.theme.radius, color: onAccent }}
       target={url.startsWith('https:') ? '_blank' : undefined}
       rel="noopener noreferrer"
     >
       {label} ↗
     </Link>
   );
+  const title = p.headline ? (
+    <h2 className="sf-title" style={headingStyle}>
+      {p.headline}
+    </h2>
+  ) : null;
+  const textNodes = p.nodes?.map((n, i) =>
+    n.type === 'h2' ? (
+      <h2 key={i}>{n.text}</h2>
+    ) : n.type === 'h3' ? (
+      <h3 key={i}>{n.text}</h3>
+    ) : n.type === 'bold' ? (
+      <p key={i}>
+        <strong>{n.text}</strong>
+      </p>
+    ) : n.type === 'italic' ? (
+      <p key={i}>
+        <em>{n.text}</em>
+      </p>
+    ) : n.type === 'link' && n.url ? (
+      <p key={i}>
+        <a href={n.url} rel="noopener noreferrer">
+          {n.text}
+        </a>
+      </p>
+    ) : n.type === 'listItem' ? (
+      <ul key={i}>
+        <li>{n.text}</li>
+      </ul>
+    ) : (
+      <p key={i}>{n.text}</p>
+    ),
+  );
+  const photo = (id: string | undefined, alt: string, style: CSSProperties = imgStyle) => (
+    <AssetImage id={id} alt={alt} privateImage={editing} style={style} />
+  );
   switch (b.type) {
-    case 'profileHeader':
+    case 'profileHeader': {
+      const v = p.variant || (s.textAlign === 'center' ? 'centered' : 'row');
       content = (
-        <div className={`sf-profile ${s.textAlign === 'center' ? 'sf-profile-centered' : ''}`}>
-          <span
-            className="shop-logo"
-            style={{ background: doc.theme.colors.accent + '22', color: doc.theme.colors.accent }}
-          >
-            {p.imageAssetId ? (
-              <AssetImage
-                id={p.imageAssetId}
-                alt={p.alt || shop.name}
-                privateImage={editing}
-                style={{ width: 50, height: 50, borderRadius: '50%' }}
-              />
-            ) : (
-              shop.name.slice(0, 1)
-            )}
-          </span>
+        <div
+          className={`sf-profile sfv-profile-${v} ${v === 'centered' ? 'sf-profile-centered' : ''}`}
+          style={
+            v === 'banner'
+              ? ({ background: accent, color: onAccent, '--on-accent': onAccent } as CSSProperties)
+              : undefined
+          }
+        >
+          {v !== 'minimal' && (
+            <span className="shop-logo" style={{ background: accent + '22', color: accent }}>
+              {p.imageAssetId ? (
+                <AssetImage
+                  id={p.imageAssetId}
+                  alt={p.alt || shop.name}
+                  privateImage={editing}
+                  style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                />
+              ) : (
+                shop.name.slice(0, 1)
+              )}
+            </span>
+          )}
           <div>
             <h2 style={headingStyle}>{p.headline || shop.name}</h2>
-            <p>{p.subtitle || shop.bio}</p>
+            {v !== 'minimal' && <p>{p.subtitle || shop.bio}</p>}
           </div>
           <FollowButton shop={shop} />
         </div>
       );
       break;
-    case 'hero':
+    }
+    case 'hero': {
+      const v = p.variant || 'split';
       content = (
-        <div className="sf-hero" style={{ minHeight: s.minHeight }}>
+        <div
+          className={`sf-hero sfv-hero-${v}`}
+          data-shape={s.shape}
+          data-align={s.textAlign}
+          style={
+            {
+              minHeight: s.minHeight,
+              '--ov-color': s.textColor || '#FFFFFF',
+            } as CSSProperties
+          }
+        >
           <div className="sf-hero-copy">
             <h1
               style={{
@@ -304,126 +269,250 @@ function BlockView({
             >
               {p.headline}
             </h1>
-            {p.subtitle && <p>{p.subtitle}</p>}
-            {p.cta && cta(p.cta.label, p.cta.url)}
+            {v === 'poster' ? (
+              <div className="sfv-hero-poster-aside">
+                {p.subtitle && <p>{p.subtitle}</p>}
+                {p.cta && cta(p.cta.label, p.cta.url)}
+              </div>
+            ) : (
+              <>
+                {p.subtitle && <p>{p.subtitle}</p>}
+                {p.cta && cta(p.cta.label, p.cta.url)}
+              </>
+            )}
           </div>
-          {p.imageAssetId && (
+          {p.imageAssetId && photo(p.imageAssetId, p.alt || '')}
+        </div>
+      );
+      break;
+    }
+    case 'text': {
+      const v = p.variant || 'plain';
+      if (v === 'quote') {
+        content = (
+          <figure className="sfv-quote">
+            <span
+              className="sfv-quote-mark"
+              aria-hidden="true"
+              style={{ fontFamily: headingFont, color: accent }}
+            >
+              “
+            </span>
+            <blockquote style={{ ...headingStyle, fontSize: s.fontSize }}>{p.headline}</blockquote>
+            {p.text && <figcaption>{p.text}</figcaption>}
+          </figure>
+        );
+      } else if (v === 'note') {
+        content = (
+          <div
+            className="sfv-note"
+            style={
+              {
+                backgroundColor: s.backgroundColor || doc.theme.colors.surface,
+                ...backgroundLayers(s, accent),
+                '--tape': accent,
+              } as CSSProperties
+            }
+          >
+            {title}
+            {p.text && <p>{p.text}</p>}
+            {textNodes}
+          </div>
+        );
+      } else if (v === 'letter') {
+        content = (
+          <div className="sfv-letter">
+            {p.headline && (
+              <h2 className="sf-title" style={{ ...headingStyle, fontStyle: 'italic' }}>
+                {p.headline}
+              </h2>
+            )}
+            {p.text && (
+              <p
+                className="sfv-letter-body"
+                style={{ '--drop': accent, '--drop-font': headingFont } as CSSProperties}
+              >
+                {p.text}
+              </p>
+            )}
+            {textNodes}
+            <p className="sfv-sign" style={{ fontFamily: headingFont }}>
+              — {shop.name}
+            </p>
+          </div>
+        );
+      } else {
+        content = (
+          <div className="sf-text">
+            {title}
+            {p.text && <p>{p.text}</p>}
+            {textNodes}
+          </div>
+        );
+      }
+      break;
+    }
+    case 'announcement': {
+      const v = p.variant || 'bar';
+      content =
+        v === 'marquee' ? (
+          <Marquee text={p.text || ''} fontSize={s.fontSize || 12} />
+        ) : v === 'pill' ? (
+          <p className="sfv-pill" style={{ fontSize: s.fontSize || 12 }}>
+            {p.text}
+          </p>
+        ) : (
+          <p style={{ fontSize: s.fontSize || 12 }}>{p.text}</p>
+        );
+      break;
+    }
+    case 'image': {
+      const v = p.variant || 'plain';
+      const caption = p.caption && (
+        <figcaption className="sf-image-caption">{p.caption}</figcaption>
+      );
+      content =
+        v === 'framed' ? (
+          <figure
+            className="sfv-framed"
+            style={{
+              borderColor: s.borderColor || s.textColor || doc.theme.colors.text,
+              ...(s.shape && s.shape !== 'rect' ? shapeCss(s) : { borderRadius: s.borderRadius }),
+            }}
+          >
             <AssetImage
               id={p.imageAssetId}
               alt={p.alt || ''}
               privateImage={editing}
+              className="sf-image"
+              style={{ ...imgStyle, borderRadius: 0 }}
+            />
+            {caption}
+          </figure>
+        ) : v === 'polaroid' ? (
+          <figure className="sfv-polaroid">
+            <AssetImage
+              id={p.imageAssetId}
+              alt={p.alt || ''}
+              privateImage={editing}
+              className="sf-image"
+              style={{ ...imgStyle, borderRadius: 0, aspectRatio: imgStyle.aspectRatio || '4 / 5' }}
+            />
+            <figcaption>{p.caption || p.alt}</figcaption>
+          </figure>
+        ) : (
+          <figure style={{ margin: 0 }}>
+            <AssetImage
+              id={p.imageAssetId}
+              alt={p.alt || ''}
+              privateImage={editing}
+              className="sf-image"
               style={imgStyle}
             />
-          )}
+            {caption}
+          </figure>
+        );
+      break;
+    }
+    case 'gallery': {
+      const v = p.variant || 'grid';
+      const images = p.images || [];
+      const grid = (
+        <div className="sf-gallery">
+          {images.map((im, i) => (
+            <Fragment key={i}>{photo(im.imageAssetId, im.alt)}</Fragment>
+          ))}
         </div>
       );
-      break;
-    case 'text':
-      content = (
-        <div className="sf-text">
-          {p.headline && (
-            <h2 className="sf-title" style={headingStyle}>
-              {p.headline}
-            </h2>
-          )}
-          {p.text && <p>{p.text}</p>}
-          {p.nodes?.map((n, i) =>
-            n.type === 'h2' ? (
-              <h2 key={i}>{n.text}</h2>
-            ) : n.type === 'h3' ? (
-              <h3 key={i}>{n.text}</h3>
-            ) : n.type === 'bold' ? (
-              <p key={i}>
-                <strong>{n.text}</strong>
-              </p>
-            ) : n.type === 'italic' ? (
-              <p key={i}>
-                <em>{n.text}</em>
-              </p>
-            ) : n.type === 'link' && n.url ? (
-              <p key={i}>
-                <a href={n.url} rel="noopener noreferrer">
-                  {n.text}
-                </a>
-              </p>
-            ) : n.type === 'listItem' ? (
-              <ul key={i}>
-                <li>{n.text}</li>
-              </ul>
-            ) : (
-              <p key={i}>{n.text}</p>
-            ),
-          )}
-        </div>
-      );
-      break;
-    case 'announcement':
-      content = <p style={{ fontSize: s.fontSize || 12 }}>{p.text}</p>;
-      break;
-    case 'image':
-      content = (
-        <figure style={{ margin: 0 }}>
-          <AssetImage
-            id={p.imageAssetId}
-            alt={p.alt || ''}
-            privateImage={editing}
-            className="sf-image"
-            style={imgStyle}
-          />
-          {p.caption && <figcaption className="sf-image-caption">{p.caption}</figcaption>}
-        </figure>
-      );
-      break;
-    case 'gallery':
       content = (
         <>
-          {p.headline && (
-            <h2 className="sf-title" style={headingStyle}>
-              {p.headline}
-            </h2>
+          {title}
+          {v === 'filmstrip' ? (
+            <div
+              className="sfv-film"
+              style={{ '--hole': doc.theme.colors.background } as CSSProperties}
+            >
+              <div className="sfv-film-track" role="region" aria-label="Photos" tabIndex={0}>
+                {images.map((im, i) => (
+                  <div className="sfv-film-frame" key={i}>
+                    {photo(im.imageAssetId, im.alt, {
+                      ...imgStyle,
+                      borderRadius: 2,
+                      aspectRatio: imgStyle.aspectRatio || '3 / 2',
+                      height: 'auto',
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : v === 'polaroid' ? (
+            <div className="sfv-polaroids">
+              {images.map((im, i) => (
+                <figure className="sfv-polaroid" key={i}>
+                  {photo(im.imageAssetId, im.alt, {
+                    ...imgStyle,
+                    borderRadius: 0,
+                    aspectRatio: imgStyle.aspectRatio || '4 / 5',
+                    height: 'auto',
+                  })}
+                  <figcaption>{im.alt}</figcaption>
+                </figure>
+              ))}
+            </div>
+          ) : v === 'masonry' ? (
+            <div className="sfv-masonry">
+              {images.map((im, i) => (
+                <div className="sfv-masonry-tile" key={i}>
+                  {photo(im.imageAssetId, im.alt, {
+                    ...imgStyle,
+                    aspectRatio: undefined,
+                    height: '100%',
+                  })}
+                </div>
+              ))}
+            </div>
+          ) : (
+            grid
           )}
-          <div className="sf-gallery">
-            {p.images?.map((im, i) => (
-              <AssetImage
-                key={i}
-                id={im.imageAssetId}
-                alt={im.alt}
-                privateImage={editing}
-                style={imgStyle}
-              />
-            ))}
-          </div>
         </>
       );
       break;
+    }
     case 'productGrid': {
+      const v = p.variant || 'grid';
       const collection = p.source === 'collection' ? collections[p.collectionId || ''] : undefined;
       const filtered = collection
         ? products
             .filter((product) => collection.includes(product.id))
-            .sort((a, b) => collection.indexOf(a.id) - collection.indexOf(b.id))
+            .sort((a, c) => collection.indexOf(a.id) - collection.indexOf(c.id))
         : p.source === 'collection'
           ? []
           : products;
       const sorted = [...filtered].sort(
         p.sort === 'price_asc'
-          ? (a, b) => a.price_minor - b.price_minor
+          ? (a, c) => a.price_minor - c.price_minor
           : p.sort === 'price_desc'
-            ? (a, b) => b.price_minor - a.price_minor
+            ? (a, c) => c.price_minor - a.price_minor
             : () => 0,
       );
+      const shown = sorted.slice(0, p.limit || 12);
       content = (
         <>
-          {p.headline && (
-            <h2 className="sf-title" style={headingStyle}>
-              {p.headline}
-            </h2>
+          {title}
+          {v === 'list' ? (
+            <ProductIndex products={shown} headingFont={headingFont} />
+          ) : (
+            <div
+              className={`sf-products sfv-products-${v}`}
+              {...(v === 'carousel'
+                ? { role: 'region', 'aria-label': 'Products', tabIndex: 0 }
+                : {})}
+            >
+              {shown.map((product, i) => (
+                <ProductCard key={product.id} product={product} index={i} plain />
+              ))}
+            </div>
           )}
-          <div className="sf-products">
-            {sorted.slice(0, p.limit || 12).map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} plain />
-            ))}
-          </div>
           {products.length === 0 && (
             <div className="empty-state" style={{ minHeight: 150, fontSize: 12 }}>
               Your collection is on its way.
@@ -435,46 +524,100 @@ function BlockView({
     }
     case 'featuredProduct': {
       const product = products.find((x) => x.id === p.productId);
-      content = (
-        <>
-          {p.headline && (
-            <h2 className="sf-title" style={headingStyle}>
-              {p.headline}
-            </h2>
-          )}
-          {product ? (
-            <div style={{ maxWidth: 350 }}>
-              <ProductCard product={product} plain />
-            </div>
-          ) : (
-            <p className="muted" style={{ fontSize: 12 }}>
-              Choose a product in the inspector.
-            </p>
-          )}
-        </>
-      );
+      const v = p.variant || 'card';
+      content =
+        v === 'spotlight' && product ? (
+          <Spotlight
+            product={product}
+            eyebrow={p.headline}
+            headingStyle={headingStyle}
+            accent={accent}
+            onAccent={onAccent}
+            radius={doc.theme.radius}
+          />
+        ) : (
+          <>
+            {title}
+            {product ? (
+              <div style={{ maxWidth: 350 }}>
+                <ProductCard product={product} plain />
+              </div>
+            ) : (
+              <p className="muted" style={{ fontSize: 12 }}>
+                Choose a product in the inspector.
+              </p>
+            )}
+          </>
+        );
       break;
     }
-    case 'button':
-      content = cta(p.label || 'Explore', p.url || '#products');
+    case 'button': {
+      const v = p.variant || 'solid';
+      const label = p.label || 'Explore';
+      const url = p.url || '#products';
+      content =
+        v === 'outline' ? (
+          <Link
+            href={url}
+            className="button"
+            style={{
+              background: 'transparent',
+              border: `2px solid ${accent}`,
+              color: accent,
+              borderRadius: doc.theme.radius,
+            }}
+            target={url.startsWith('https:') ? '_blank' : undefined}
+            rel="noopener noreferrer"
+          >
+            {label} ↗
+          </Link>
+        ) : v === 'link' ? (
+          <Link
+            href={url}
+            className="sfv-textlink"
+            style={{ color: accent }}
+            target={url.startsWith('https:') ? '_blank' : undefined}
+            rel="noopener noreferrer"
+          >
+            {label} ↗
+          </Link>
+        ) : (
+          cta(label, url)
+        );
       break;
-    case 'divider':
-      content = (
-        <hr
-          style={{
-            border: 0,
-            borderTop: `${s.borderWidth || 1}px solid ${s.borderColor || doc.theme.colors.accent + '33'}`,
-            width: '100%',
-          }}
-        />
-      );
+    }
+    case 'divider': {
+      const v = p.variant || 'line';
+      content =
+        v === 'line' ? (
+          <hr
+            style={{
+              border: 0,
+              borderTop: `${s.borderWidth || 1}px solid ${s.borderColor || accent + '33'}`,
+              width: '100%',
+            }}
+          />
+        ) : (
+          <Divider variant={v} color={s.borderColor || accent} />
+        );
       break;
+    }
     case 'spacer':
       content = <div style={{ height: s.minHeight || 40 }} />;
       break;
     case 'socialLinks':
       content = (
-        <div className="sf-social">
+        <div
+          className={`sf-social ${p.variant === 'chips' ? 'sfv-chips' : ''}`}
+          style={{
+            justifyContent:
+              s.textAlign === 'center'
+                ? 'center'
+                : s.textAlign === 'right'
+                  ? 'flex-end'
+                  : undefined,
+          }}
+        >
           {p.links?.map((l, i) => (
             <a
               href={l.url}
@@ -488,12 +631,17 @@ function BlockView({
         </div>
       );
       break;
-    case 'columns':
+    case 'columns': {
+      const n = resolveColumns(b, doc.theme, width);
+      const v = p.variant || 'even';
+      const weights = Array.from({ length: n }, (_, i) =>
+        v === 'wideLeft' ? (i === 0 ? 2 : 1) : v === 'wideRight' ? (i === n - 1 ? 2 : 1) : 1,
+      );
       content = (
         <div
           className="sf-columns"
           style={{
-            gridTemplateColumns: `repeat(${resolveColumns(b, doc.theme, width)},minmax(0,1fr))`,
+            gridTemplateColumns: weights.map((w) => `minmax(0,${w}fr)`).join(' '),
           }}
         >
           {b.children?.map((child) => (
@@ -517,6 +665,7 @@ function BlockView({
         </div>
       );
       break;
+    }
     default:
       content = <p className="muted">This section needs a newer renderer.</p>;
   }
@@ -525,7 +674,13 @@ function BlockView({
       id={omitIds ? undefined : b.id}
       className={`sf-block sf-inner ${b.type === 'productGrid' ? 'sf-catalog' : ''}`}
       data-block-type={b.type}
-      style={styleToCss(s)}
+      data-variant={p.variant}
+      style={styleToCss(
+        b.type === 'text' && p.variant === 'note'
+          ? { ...s, backgroundColor: undefined, gradient: undefined, pattern: undefined }
+          : s,
+        accent,
+      )}
     >
       {content}
     </div>

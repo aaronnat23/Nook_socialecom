@@ -146,8 +146,8 @@ def test_private_tenant_authorization(client, user, other, product):
     assert client.post(f"{P}/products/{product['id']}/archive", headers=other["headers"]).status_code == 404
 
 
-def test_all_eight_templates_and_strict_schema(client, user):
-    assert len(client.get(P + "/themes").json()["items"]) == 8
+def test_all_starter_templates_and_strict_schema(client, user):
+    assert len(client.get(P + "/themes").json()["items"]) == 14
     for theme in THEMES:
         d = draft(client, user)
         d["document"] = copy.deepcopy(theme["document"])

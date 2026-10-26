@@ -15,15 +15,21 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import {
   blockTypes,
+  fonts,
+  gradients,
   makeBlock,
+  aspects,
+  patterns,
+  shapes,
   themes,
   personalizeTemplate,
   templateDetails,
   validateDocument,
+  variantOptions,
   type Block,
   type BlockType,
-  type Style,
   type Font,
+  type Style,
 } from '@lilac/schema';
 import type { Product, Draft } from '@lilac/api-client';
 import { api } from '../lib';
@@ -171,6 +177,15 @@ function Editor() {
     editor.commit(next);
   };
   const props = (k: string, v: unknown) => change((b) => ({ ...b, props: { ...b.props, [k]: v } }));
+  /** The first option of a block type is its default, so choosing it just clears the prop. */
+  const setVariant = (v: string) =>
+    change((b) => {
+      const { variant: _previous, ...rest } = b.props;
+      return {
+        ...b,
+        props: v === variantOptions[b.type]?.[0]?.value ? rest : { ...rest, variant: v },
+      };
+    });
   const style = (k: keyof Style, v: unknown, responsive = false) =>
     change((b) =>
       responsive && breakpoint !== 'desktop'
@@ -554,7 +569,7 @@ function Editor() {
           panel === 'add'
             ? 'Thoughtful building blocks for a space of your own.'
             : panel === 'themes'
-              ? 'Eight starting points. Endless ways to make them yours.'
+              ? `${themes.length} starting points. Endless ways to make them yours.`
               : panel === 'layers'
                 ? 'Arrange the story, one section at a time.'
                 : undefined
@@ -884,24 +899,17 @@ function Editor() {
                 </>
               ) : tab === 'Style' ? (
                 <>
-                  <Text style={ui.label}>Font family</Text>
-                  <View style={ui.wrap}>
-                    {(['Inter', 'Georgia', 'Arial', 'Trebuchet MS', 'Courier New'] as Font[]).map(
-                      (f) => (
-                        <Button
-                          key={f}
-                          title={`${s.fontFamily === f ? '✓ ' : ''}${f}`}
-                          soft
-                          onPress={() => style('fontFamily', f)}
-                        />
-                      ),
-                    )}
-                  </View>
+                  <Choice
+                    label="Font family"
+                    options={fonts.map((f) => ({ value: f }))}
+                    value={s.fontFamily || ''}
+                    onChange={(v) => style('fontFamily', v)}
+                  />
                   <Numeric
                     label="Heading / text size"
                     value={s.fontSize || 32}
                     min={10}
-                    max={96}
+                    max={160}
                     onChange={(v) => style('fontSize', v)}
                   />
                   <Text style={ui.label}>Text alignment</Text>
@@ -920,18 +928,37 @@ function Editor() {
                     value={s.backgroundColor || doc.theme.colors.background}
                     onChange={(v) => style('backgroundColor', v)}
                   />
-                  <Text style={ui.label}>Background gradient</Text>
-                  <View style={ui.wrap}>
-                    {['none', 'lilac', 'sunset', 'forest'].map((v) => (
-                      <Button key={v} title={v} soft onPress={() => style('gradient', v)} />
-                    ))}
-                  </View>
+                  <Choice
+                    label="Background gradient"
+                    options={gradients.map((g) => ({ value: g }))}
+                    value={s.gradient || 'none'}
+                    onChange={(v) => style('gradient', v)}
+                  />
+                  <Choice
+                    label="Pattern"
+                    options={patterns.map((x) => ({ value: x }))}
+                    value={s.pattern || 'none'}
+                    onChange={(v) => style('pattern', v)}
+                  />
+                  {s.pattern && s.pattern !== 'none' && (
+                    <Color
+                      label="Pattern colour"
+                      value={s.patternColor || doc.theme.colors.accent}
+                      onChange={(v) => style('patternColor', v)}
+                    />
+                  )}
                   <Text style={ui.label}>Image aspect ratio</Text>
                   <View style={ui.wrap}>
-                    {['auto', '1:1', '4:3', '3:4', '16:9'].map((v) => (
+                    {aspects.map((v) => (
                       <Button key={v} title={v} soft onPress={() => style('aspectRatio', v)} />
                     ))}
                   </View>
+                  <Choice
+                    label="Shape"
+                    options={shapes.map((x) => ({ value: x }))}
+                    value={s.shape || 'rect'}
+                    onChange={(v) => style('shape', v)}
+                  />
                   <Numeric
                     label="Rounded corners"
                     value={s.borderRadius ?? doc.theme.radius}
@@ -1016,6 +1043,17 @@ function Editor() {
                 </>
               ) : tab === 'Layout' ? (
                 <>
+                  {variantOptions[block.type] && (
+                    <Choice
+                      label="Layout style"
+                      options={variantOptions[block.type]!}
+                      value={
+                        variantOptions[block.type]!.find((o) => o.value === block.props.variant)
+                          ?.value || variantOptions[block.type]![0].value
+                      }
+                      onChange={setVariant}
+                    />
+                  )}
                   {(
                     [
                       'paddingTop',
@@ -1080,7 +1118,7 @@ function Editor() {
                       32
                     }
                     min={10}
-                    max={96}
+                    max={160}
                     onChange={(v) => style('fontSize', v, true)}
                   />
                   <Numeric
@@ -1151,36 +1189,22 @@ function Editor() {
                   }
                 />
               ))}
-              <Text style={ui.label}>Whole-space heading font</Text>
-              <View style={ui.wrap}>
-                {(['Inter', 'Georgia', 'Arial', 'Courier New', 'Trebuchet MS'] as Font[]).map(
-                  (f) => (
-                    <Button
-                      key={f}
-                      title={f}
-                      soft
-                      onPress={() =>
-                        editor.commit({ ...doc, theme: { ...doc.theme, fontHeading: f } })
-                      }
-                    />
-                  ),
-                )}
-              </View>
-              <Text style={ui.label}>Whole-space body font</Text>
-              <View style={ui.wrap}>
-                {(['Inter', 'Georgia', 'Arial', 'Courier New', 'Trebuchet MS'] as Font[]).map(
-                  (f) => (
-                    <Button
-                      key={f}
-                      title={f}
-                      soft
-                      onPress={() =>
-                        editor.commit({ ...doc, theme: { ...doc.theme, fontBody: f } })
-                      }
-                    />
-                  ),
-                )}
-              </View>
+              <Choice
+                label="Whole-space heading font"
+                options={fonts.map((f) => ({ value: f }))}
+                value={doc.theme.fontHeading}
+                onChange={(v) =>
+                  editor.commit({ ...doc, theme: { ...doc.theme, fontHeading: v as Font } })
+                }
+              />
+              <Choice
+                label="Whole-space body font"
+                options={fonts.map((f) => ({ value: f }))}
+                value={doc.theme.fontBody}
+                onChange={(v) =>
+                  editor.commit({ ...doc, theme: { ...doc.theme, fontBody: v as Font } })
+                }
+              />
             </>
           ) : panel === 'layers' ? (
             <>
@@ -1400,6 +1424,56 @@ function Editor() {
         </ScrollView>
       </Sheet>
     </SafeAreaView>
+  );
+}
+/** A row of single-choice chips. The hint, when there is one, is read out with the label. */
+function Choice({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: { value: string; label?: string; hint?: string }[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <View>
+      <Text style={ui.label}>{label}</Text>
+      <View style={ui.wrap}>
+        {options.map((o) => {
+          const on = o.value === value;
+          const name = o.label || o.value;
+          return (
+            <TouchableOpacity
+              key={o.value}
+              accessibilityRole="button"
+              accessibilityLabel={name}
+              accessibilityHint={o.hint}
+              accessibilityState={{ selected: on }}
+              activeOpacity={0.8}
+              onPress={() => onChange(o.value)}
+              style={{
+                minHeight: 44,
+                paddingHorizontal: 16,
+                paddingVertical: 8,
+                borderRadius: 999,
+                borderWidth: 2,
+                borderColor: C.ink,
+                backgroundColor: on ? C.butter : C.lilac,
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: '700', color: C.ink }}>
+                {on ? '✓ ' : ''}
+                {name}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
   );
 }
 function Numeric({

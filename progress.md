@@ -246,3 +246,13 @@ Verification and limits:
 - Native was checked by typecheck, an Expo web export rendered in Chromium and the SDK bundle export. **It has not been run on a physical iPhone in this session**, so the photo picker → cut-out flow, tinted-image die-cut edges, blurred shadow and ribbon drift performance on device still need a hands-on check.
 - Native has no colour wheel or sliders (Expo doesn't ship them): colours come from the palette, size/position use steppers.
 - Cut-out quality is model-limited (hair, glass, clutter); sellers can upload a transparent PNG instead.
+
+## Distinct templates, 14 of them (round 3)
+
+User request: some templates looked too alike; make them more unique and add more.
+
+- The old eight differed mostly in colour and block order (six shared Georgia/Inter and one grid). The renderers only knew one hero, one product grid and one gallery, so the fix had to be in the vocabulary: layout **variants** per block (hero, header, text, image, gallery, product grid, featured product, announcement, divider, button, social links, columns), background **patterns**, photo **shapes**, ten **gradients**, five more **fonts** and more aspect ratios. All additive to schema v1 and validated on web and API.
+- Rendered on web (`storefront.tsx`, `storefront-parts.tsx`, `storefront-variants.css`) and native (`storefront.tsx`, `storefront-parts.tsx`, built by a delegated agent and then reviewed and fixed here), with matching controls in both editors (Layout style, pattern, pattern colour, shape, new fonts and gradients).
+- Templates are now generated from `scripts/build-templates.py`: all eight rebuilt to be distinct, six added (Candy Counter, Photocopy Zine, Atelier, Night Market, Seaside Studio, Terrazzo Studio). `scripts/create-contract.py` now writes only the schema. Details in `docs/TEMPLATES.md`.
+- Tests: unit tests check the 14 templates differ in structure and in look and that every variant is used; API tests cover validation and the 14-template count; e2e covers the 14 previews and the new editor controls. An axe scan of every template at desktop and phone width is clean. Phone layouts were checked in a browser for all 14 on web and via a browser render of the native app.
+- Limits: native was not run on a physical iPhone (Android untested); the stripe/grid patterns there use hard-stop gradients whose edge sharpness on Android is unverified; the `night` gradient is dark, so text on it needs an explicit colour. Reset-style does not clear a block's variant. Existing shops keep their current pages; templates only apply when a seller picks one.

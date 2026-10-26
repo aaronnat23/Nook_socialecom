@@ -10,6 +10,10 @@ export const font = {
   display: 'Caprasimo_400Regular',
   hand: 'Caveat_700Bold',
   handMedium: 'Caveat_500Medium',
+  serif: 'DMSerifDisplay_400Regular',
+  heavy: 'ArchivoBlack_400Regular',
+  mono: 'SpaceMono_400Regular',
+  monoBold: 'SpaceMono_700Bold',
 } as const;
 
 export function useNookFonts() {
@@ -22,5 +26,9 @@ export function useNookFonts() {
     [font.display]: require('../assets/fonts/Caprasimo_400Regular.ttf'),
     [font.hand]: require('../assets/fonts/Caveat_700Bold.ttf'),
     [font.handMedium]: require('../assets/fonts/Caveat_500Medium.ttf'),
+    [font.serif]: require('../assets/fonts/DMSerifDisplay_400Regular.ttf'),
+    [font.heavy]: require('../assets/fonts/ArchivoBlack_400Regular.ttf'),
+    [font.mono]: require('../assets/fonts/SpaceMono_400Regular.ttf'),
+    [font.monoBold]: require('../assets/fonts/SpaceMono_700Bold.ttf'),
   });
 }

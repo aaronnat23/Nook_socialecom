@@ -15,7 +15,54 @@ export type BlockType =
   | 'columns'
   | 'socialLinks'
   | 'announcement';
-export type Font = 'Inter' | 'Georgia' | 'Arial' | 'Courier New' | 'Trebuchet MS';
+/**
+ * Faces a seller can pick. The first five are system fonts; the rest are bundled on web and in the
+ * native app (all SIL Open Font License).
+ */
+export const fonts = [
+  'Inter',
+  'Georgia',
+  'Arial',
+  'Courier New',
+  'Trebuchet MS',
+  'Caprasimo',
+  'Caveat',
+  'DM Serif Display',
+  'Archivo Black',
+  'Space Mono',
+] as const;
+export type Font = (typeof fonts)[number];
+export const gradients = [
+  'none',
+  'lilac',
+  'sunset',
+  'forest',
+  'peach',
+  'candy',
+  'ocean',
+  'night',
+  'sage',
+  'butter',
+] as const;
+export type Gradient = (typeof gradients)[number];
+/** The two colours of each gradient, blended at 125 degrees. */
+export const gradientStops: Record<Exclude<Gradient, 'none'>, [string, string]> = {
+  lilac: ['#efe5f9', '#ded0f2'],
+  sunset: ['#f9e8d7', '#ebccdc'],
+  forest: ['#edf2e4', '#cddbc9'],
+  peach: ['#ffe4d1', '#ffc4b0'],
+  candy: ['#ffd9ec', '#d9d0ff'],
+  ocean: ['#d8f0f7', '#9fc8ee'],
+  night: ['#2a2342', '#13101f'],
+  sage: ['#e4ecd9', '#b9cca8'],
+  butter: ['#fff3c7', '#ffd778'],
+};
+export const aspects = ['1:1', '4:3', '3:4', '4:5', '3:2', '16:9', '21:9', 'auto'] as const;
+export type Aspect = (typeof aspects)[number];
+export const patterns = ['none', 'dots', 'grid', 'stripes', 'checker'] as const;
+export type Pattern = (typeof patterns)[number];
+export const shapes = ['rect', 'arch', 'pill', 'circle'] as const;
+export type Shape = (typeof shapes)[number];
 export interface Style {
   fontFamily?: Font;
   fontSize?: number;
@@ -39,17 +86,24 @@ export interface Style {
   maxWidth?: number;
   minHeight?: number;
   imageFit?: 'cover' | 'contain';
-  aspectRatio?: '1:1' | '4:3' | '3:4' | '16:9' | 'auto';
+  aspectRatio?: Aspect;
   focalX?: number;
   focalY?: number;
   visibility?: 'visible' | 'hidden';
   shadow?: 'none' | 'soft' | 'lifted';
-  gradient?: 'none' | 'lilac' | 'sunset' | 'forest';
+  gradient?: Gradient;
+  /** A repeating texture drawn over the background, in `patternColor`. */
+  pattern?: Pattern;
+  patternColor?: string;
+  /** Crops images into an arch, a pill or a circle. */
+  shape?: Shape;
   uppercase?: boolean;
   width?: 'full' | 'contained';
   order?: number;
 }
 export interface BlockProps {
+  /** How the block is laid out; each block type has its own list in `variantOptions`. */
+  variant?: string;
   headline?: string;
   subtitle?: string;
   text?: string;
@@ -153,51 +207,159 @@ export const templateDetails: Record<
   'minimal-studio': {
     mood: 'Soft & considered',
     audience: 'Ceramics, homeware & everyday rituals',
-    features: ['Split hero', 'Open product grid', 'Quiet studio story'],
+    features: ['Split hero', 'Open product grid', 'A letter from the studio'],
     cover: 'seed_hero_0',
+  },
+  'vintage-film': {
+    mood: 'Typewriter & found objects',
+    audience: 'Vintage finds, books & pre-loved pieces',
+    features: ['Film-strip photos', 'Numbered contact sheet', 'Marquee ticker'],
+    cover: 'seed_hero_1',
+  },
+  'y2k-diary': {
+    mood: 'Pink & playful',
+    audience: 'Accessories, jewellery & personal collections',
+    features: ['Graph-paper page', 'Polaroid scrapbook', 'Sticky notes'],
+    cover: 'seed_product_10',
   },
   'dark-editorial': {
     mood: 'After hours',
-    audience: 'Design objects, jewelry & statement pieces',
-    features: ['Cinematic cover', 'Editorial side column', 'Oversized masthead'],
+    audience: 'Design objects, jewellery & statement pieces',
+    features: ['Full-bleed cover', 'Pull quote', 'Lookbook spreads'],
     cover: 'seed_hero_3',
-  },
-  botanical: {
-    mood: 'Naturally quiet',
-    audience: 'Botanicals, beauty & slow living',
-    features: ['Image first', 'Product spotlight', 'Two-part story'],
-    cover: 'seed_hero_6',
-  },
-  'y2k-diary': {
-    mood: 'A little playful',
-    audience: 'Accessories, art & personal collections',
-    features: ['Scrapbook grid', 'Photo & note cards', 'Personal links'],
-    cover: 'seed_hero_2',
-  },
-  'vintage-film': {
-    mood: 'Collected memories',
-    audience: 'Vintage finds, books & pre-loved pieces',
-    features: ['Photo contact sheet', 'Centered title', 'Mobile archive list'],
-    cover: 'seed_hero_1',
   },
   'handmade-market': {
     mood: 'Made with feeling',
     audience: 'Handmade goods, textiles & craft',
-    features: ['Maker letter', 'Paired portraits', 'Worktable story'],
-    cover: 'seed_hero_4',
+    features: ['Arched portrait', "Maker's letter", 'Swipeable stall'],
+    cover: 'seed_hero_0',
   },
   'streetwear-drop': {
-    mood: 'Make a statement',
+    mood: 'Loud & limited',
     audience: 'Fashion, streetwear & limited drops',
-    features: ['Products first', 'Campaign spread', 'Oversized type'],
+    features: ['Poster type', 'Ticker tape', 'Mosaic drop'],
     cover: 'seed_hero_5',
   },
+  botanical: {
+    mood: 'Naturally quiet',
+    audience: 'Botanicals, beauty & slow living',
+    features: ['Arched cover', 'Spotlight product', 'Masonry of greenery'],
+    cover: 'seed_hero_6',
+  },
   'art-gallery': {
-    mood: 'Room for a point of view',
+    mood: 'White cube',
     audience: 'Art, prints & independent studios',
-    features: ['Asymmetric cover', 'Paired art wall', 'Curator captions'],
+    features: ['Museum labels', 'Framed works', 'Numbered catalogue'],
     cover: 'seed_hero_7',
   },
+  'candy-counter': {
+    mood: 'Sweet & bubbly',
+    audience: 'Gifts, treats, stationery & pretty things',
+    features: ['Polka-dot wall', 'Pill-shaped photos', 'Pick & mix mosaic'],
+    cover: 'seed_product_20',
+  },
+  'photocopy-zine': {
+    mood: 'Cut, paste & copy',
+    audience: 'Small-run clothing, zines & prints',
+    features: ['Monospaced type', 'Hazard tape', 'Taped-up notes'],
+    cover: 'seed_product_15',
+  },
+  atelier: {
+    mood: 'Tailored & calm',
+    audience: 'Fashion, tailoring & wardrobe staples',
+    features: ['Letterspaced wordmark', 'Tall lookbook spreads', 'Wide-left stories'],
+    cover: 'seed_product_16',
+  },
+  'night-market': {
+    mood: 'Lantern light',
+    audience: 'Candles, snacks, small stalls & late-night finds',
+    features: ['Night cover', 'Swipeable stalls', 'Round medallions'],
+    cover: 'seed_hero_4',
+  },
+  'seaside-studio': {
+    mood: 'Salt air & open windows',
+    audience: 'Homeware, linens & holiday goods',
+    features: ['Ocean-gradient cover', 'Arched windows', 'Gentle wave'],
+    cover: 'seed_product_12',
+  },
+  'terrazzo-studio': {
+    mood: 'Colour blocks',
+    audience: 'Prints, paper goods & bright objects',
+    features: ['Arch, circle & pill', 'Cut-paper blocks', 'Confetti checker'],
+    cover: 'seed_product_23',
+  },
+};
+export const variantOptions: Partial<
+  Record<BlockType, { value: string; label: string; hint: string }[]>
+> = {
+  hero: [
+    { value: 'split', label: 'Split', hint: 'Words on one side, photo on the other' },
+    { value: 'flip', label: 'Flipped split', hint: 'Photo first, words after' },
+    { value: 'centered', label: 'Centered', hint: 'Centered words over a wide photo' },
+    { value: 'overlay', label: 'Full-bleed', hint: 'Words laid over the photo' },
+    { value: 'poster', label: 'Poster', hint: 'Giant type with a small photo' },
+    { value: 'stack', label: 'Cover story', hint: 'Tall photo with the words beneath' },
+  ],
+  profileHeader: [
+    { value: 'row', label: 'Row', hint: 'Logo, name and follow in a line' },
+    { value: 'centered', label: 'Centered', hint: 'Stacked and centered' },
+    { value: 'banner', label: 'Banner', hint: 'A bold band in your accent colour' },
+    { value: 'minimal', label: 'Minimal', hint: 'Just a name and a follow button' },
+  ],
+  text: [
+    { value: 'plain', label: 'Plain', hint: 'A heading and paragraph' },
+    { value: 'quote', label: 'Pull quote', hint: 'Oversized quotation' },
+    { value: 'note', label: 'Paper note', hint: 'A note on a card' },
+    { value: 'letter', label: 'Letter', hint: 'A drop cap and a roomy measure' },
+  ],
+  image: [
+    { value: 'plain', label: 'Plain', hint: 'Just the photo' },
+    { value: 'framed', label: 'Framed', hint: 'A thick frame with an inner keyline' },
+    { value: 'polaroid', label: 'Polaroid', hint: 'White border with a caption strip' },
+  ],
+  gallery: [
+    { value: 'grid', label: 'Grid', hint: 'Even tiles' },
+    { value: 'filmstrip', label: 'Film strip', hint: 'A strip of frames on dark film' },
+    { value: 'polaroid', label: 'Polaroids', hint: 'Instant photos with captions' },
+    { value: 'masonry', label: 'Masonry', hint: 'Tall and short tiles interlocked' },
+  ],
+  productGrid: [
+    { value: 'grid', label: 'Grid', hint: 'Even product cards' },
+    { value: 'list', label: 'Index list', hint: 'A numbered catalogue' },
+    { value: 'carousel', label: 'Carousel', hint: 'A swipeable row' },
+    { value: 'mosaic', label: 'Mosaic', hint: 'One big feature and smaller tiles' },
+    { value: 'lookbook', label: 'Lookbook', hint: 'Large alternating spreads' },
+  ],
+  featuredProduct: [
+    { value: 'card', label: 'Card', hint: 'A standard product card' },
+    { value: 'spotlight', label: 'Spotlight', hint: 'A big stage with the details beside it' },
+  ],
+  announcement: [
+    { value: 'bar', label: 'Bar', hint: 'A full-width strip' },
+    { value: 'marquee', label: 'Marquee', hint: 'Words drifting across' },
+    { value: 'pill', label: 'Pill', hint: 'A small centered chip' },
+  ],
+  divider: [
+    { value: 'line', label: 'Line', hint: 'A simple rule' },
+    { value: 'dots', label: 'Dots', hint: 'Three dots' },
+    { value: 'wave', label: 'Wave', hint: 'A wavy line' },
+    { value: 'stars', label: 'Stars', hint: 'A row of sparkles' },
+    { value: 'ornament', label: 'Ornament', hint: 'A classic flourish' },
+  ],
+  button: [
+    { value: 'solid', label: 'Solid', hint: 'Filled with your accent' },
+    { value: 'outline', label: 'Outline', hint: 'A line around the label' },
+    { value: 'link', label: 'Link', hint: 'An underlined link' },
+  ],
+  socialLinks: [
+    { value: 'links', label: 'Links', hint: 'Underlined text links' },
+    { value: 'chips', label: 'Chips', hint: 'Rounded chips' },
+  ],
+  columns: [
+    { value: 'even', label: 'Even', hint: 'Equal columns' },
+    { value: 'wideLeft', label: 'Wide left', hint: 'The first column is twice as wide' },
+    { value: 'wideRight', label: 'Wide right', hint: 'The last column is twice as wide' },
+  ],
 };
 export const blockTypes: BlockType[] = [
   'hero',

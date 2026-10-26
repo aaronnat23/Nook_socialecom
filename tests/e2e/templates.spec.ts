@@ -28,16 +28,16 @@ test('template previews preserve drafts; applying a design backs up and can be u
     path: 'artifacts/template-collection-desktop.png',
     animations: 'disabled',
   });
-  await gallery.getByRole('button', { name: 'Browse all 8' }).click();
+  await gallery.getByRole('button', { name: 'Browse all 14' }).click();
   const dialog = page.getByRole('dialog');
-  await expect(dialog.getByRole('button', { name: /^Preview .* template$/ })).toHaveCount(8);
+  await expect(dialog.getByRole('button', { name: /^Preview .* template$/ })).toHaveCount(14);
   await dialog
     .getByRole('button', { name: 'Preview Dark Editorial template', exact: true })
     .click();
   await expect(dialog.getByRole('heading', { name: 'Dark Editorial', exact: true })).toBeVisible();
   await expect(dialog.locator('.template-live-preview .storefront')).toHaveCSS(
     'background-color',
-    'rgb(30, 24, 39)',
+    'rgb(20, 17, 26)',
   );
   expect((await (await page.request.get(`${base}/draft`, { headers })).json()).document).toEqual(
     original.document,
@@ -54,7 +54,9 @@ test('template previews preserve drafts; applying a design backs up and can be u
   );
   await choice.getByRole('button', { name: /Replace layout/ }).click();
   await expect(choice).not.toBeVisible();
-  await expect(page.locator('.editor-canvas .sf-hero h1')).toHaveText('Less ordinary. More you.');
+  await expect(page.locator('.editor-canvas .sf-hero h1')).toHaveText(
+    'Quiet objects. Bold intentions.',
+  );
   await expect(page.getByRole('status').first()).toContainText('All changes saved');
   const versions = await (await page.request.get(`${base}/versions`, { headers })).json();
   expect(versions.items[0].note).toContain('Before applying a new template');
@@ -70,7 +72,7 @@ test('template previews preserve drafts; applying a design backs up and can be u
   );
 });
 
-test('all eight previews show distinct editable structures and fit the preview panel', async ({
+test('all fourteen previews show distinct editable structures and fit the preview panel', async ({
   page,
 }, info) => {
   test.skip(info.project.name !== 'desktop', 'Native inspection uses the physical iPhone.');
@@ -78,7 +80,7 @@ test('all eight previews show distinct editable structures and fit the preview p
   await page.getByRole('button', { name: 'Open your space', exact: true }).click();
   await page.getByRole('button', { name: 'Continue as demo shop owner' }).click();
   await page.getByRole('button', { name: 'Dismiss notification' }).click();
-  await page.getByRole('button', { name: 'Browse all 8' }).click();
+  await page.getByRole('button', { name: 'Browse all 14' }).click();
   const names = [
     'Minimal Studio',
     'Dark Editorial',
@@ -88,6 +90,12 @@ test('all eight previews show distinct editable structures and fit the preview p
     'Handmade Market',
     'Streetwear Drop',
     'Art Gallery',
+    'Candy Counter',
+    'Photocopy Zine',
+    'Atelier',
+    'Night Market',
+    'Seaside Studio',
+    'Terrazzo Studio',
   ];
   const structures = new Set<string>();
   for (const name of names) {
@@ -114,5 +122,5 @@ test('all eight previews show distinct editable structures and fit the preview p
     });
     await dialog.getByRole('button', { name: 'All templates', exact: true }).click();
   }
-  expect(structures.size).toBe(8);
+  expect(structures.size).toBe(14);
 });

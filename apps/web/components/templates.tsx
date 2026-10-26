@@ -58,7 +58,7 @@ export function TemplateArtwork({
 export function TemplateGallery({ shop, products }: { shop: Shop; products: Product[] }) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
-  const featured = ['minimal-studio', 'dark-editorial', 'botanical', 'y2k-diary'].map(
+  const featured = ['dark-editorial', 'candy-counter', 'vintage-film', 'botanical'].map(
     (id) => themes.find((t) => t.id === id)!,
   );
   return (
@@ -69,7 +69,9 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
           <h2>
             Try on a new <span className="hl">look.</span>
           </h2>
-          <p>Eight layouts, each one built differently. Every block is yours to change.</p>
+          <p>
+            {themes.length} layouts, each one built differently. Every block is yours to change.
+          </p>
         </div>
         <button
           className="button outline"
@@ -78,7 +80,7 @@ export function TemplateGallery({ shop, products }: { shop: Shop; products: Prod
             setOpen(true);
           }}
         >
-          Browse all 8 <ArrowUpRight size={15} />
+          Browse all {themes.length} <ArrowUpRight size={15} />
         </button>
       </div>
       <div className="template-featured">
@@ -170,7 +172,7 @@ function TemplateDialog({
             <p>
               {theme
                 ? templateDetails[theme.id].audience
-                : 'Eight distinct looks. Your products, your personality.'}
+                : `${themes.length} distinct looks. Your products, your personality.`}
             </p>
           </div>
           <button className="icon-button" aria-label="Close template preview" onClick={close}>

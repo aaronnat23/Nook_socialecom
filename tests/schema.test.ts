@@ -4,6 +4,7 @@ import {
   validateDocument,
   makeBlock,
   personalizeTemplate,
+  variantOptions,
   type Block,
 } from '../packages/storefront-schema/src/index';
 import {
@@ -65,10 +66,11 @@ describe('shared storefront contract', () => {
   it('uses narrow-screen single-column defaults', () => {
     expect(resolveStyle(makeBlock('productGrid'), themes[0].document.theme, 320).columns).toBe(1);
   });
-  it('offers eight structurally different templates independent of color and content', () => {
+  it('offers fourteen templates that differ in structure and style, not just colour', () => {
     const structure = (blocks: Block[]): unknown[] =>
       blocks.map((b) => ({
         type: b.type,
+        variant: b.props.variant,
         columns: b.style?.columns,
         mobileColumns: b.responsive?.mobile?.style?.columns,
         children: structure(b.children || []),
@@ -76,8 +78,63 @@ describe('shared storefront contract', () => {
     const layouts = themes.map((t) =>
       JSON.stringify(t.document.sections.map((s) => structure(s.children))),
     );
-    expect(new Set(layouts).size).toBe(8);
+    expect(themes).toHaveLength(14);
+    expect(new Set(layouts).size).toBe(14);
     expect(themes.filter((t) => t.document.sections.length > 1).length).toBeGreaterThanOrEqual(6);
+  });
+  it('gives every template its own look: type pairing and set of layout variants', () => {
+    const looks = themes.map((t) => {
+      const variants = new Set<string>();
+      const walk = (blocks: Block[]) =>
+        blocks.forEach((b) => {
+          if (b.props.variant) variants.add(`${b.type}:${b.props.variant}`);
+          if (b.children) walk(b.children);
+        });
+      t.document.sections.forEach((s) => walk(s.children));
+      return JSON.stringify([
+        t.document.theme.fontHeading,
+        t.document.theme.fontBody,
+        [...variants].sort(),
+      ]);
+    });
+    expect(new Set(looks).size).toBe(14);
+    // no two templates share the same colour palette either
+    expect(new Set(themes.map((t) => Object.values(t.document.theme.colors).join())).size).toBe(14);
+  });
+  it('exercises every layout variant somewhere in the starter templates', () => {
+    const used = new Set<string>();
+    const walk = (blocks: Block[]) =>
+      blocks.forEach((b) => {
+        used.add(`${b.type}:${b.props.variant || variantOptions[b.type]?.[0].value}`);
+        if (b.children) walk(b.children);
+      });
+    themes.forEach((t) => t.document.sections.forEach((s) => walk(s.children)));
+    const missing = Object.entries(variantOptions).flatMap(([type, options]) =>
+      options!.filter((o) => !used.has(`${type}:${o.value}`)).map((o) => `${type}:${o.value}`),
+    );
+    expect(missing).toEqual([]);
+  });
+  it('accepts the new style tokens and rejects unknown variants and patterns', () => {
+    const d = structuredClone(themes[0].document);
+    const hero = d.sections[0].children.find((b) => b.type === 'hero')!;
+    hero.props.variant = 'poster';
+    Object.assign(hero.style!, {
+      pattern: 'checker',
+      patternColor: '#112233',
+      shape: 'arch',
+      gradient: 'candy',
+      fontFamily: 'Space Mono',
+      aspectRatio: '21:9',
+      fontSize: 140,
+    });
+    expect(validateDocument(d)).toEqual({ valid: true, errors: [] });
+    hero.props.variant = 'spinning';
+    expect(validateDocument(d).valid).toBe(false);
+    hero.props.variant = 'poster';
+    Object.assign(hero.style!, { pattern: 'plaid' });
+    expect(validateDocument(d).valid).toBe(false);
+    Object.assign(hero.style!, { pattern: 'dots', patternColor: 'red' });
+    expect(validateDocument(d).valid).toBe(false);
   });
   it('personalizes nested profiles and product spotlights without changing the source', () => {
     const source = structuredClone(themes.find((t) => t.id === 'botanical')!.document);

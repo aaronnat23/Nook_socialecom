@@ -124,18 +124,18 @@ test('custom heading font renders and survives reopening the editor', async ({ p
   await signIn(page);
   await page.getByRole('button', { name: 'Style', exact: true }).click();
   await page.getByRole('combobox', { name: 'Font family', exact: true }).selectOption('Georgia');
-  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', 'Georgia');
+  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', /^Georgia/);
   await page.getByRole('combobox', { name: 'Font family', exact: true }).selectOption('Arial');
-  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', 'Arial');
+  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', /^Arial/);
   await expect(page.getByRole('status').first()).toContainText('All changes saved');
   await page.reload();
-  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', 'Arial');
+  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', /^Arial/);
   await page.getByRole('button', { name: 'Edit productGrid block', exact: true }).press('Enter');
   await page.getByRole('button', { name: 'Style', exact: true }).click();
   await page.getByRole('combobox', { name: 'Font family', exact: true }).selectOption('Arial');
   await expect(
     page.getByRole('button', { name: 'Edit productGrid block', exact: true }).locator('h2'),
-  ).toHaveCSS('font-family', 'Arial');
+  ).toHaveCSS('font-family', /^Arial/);
   await page.getByLabel('Text size', { exact: true }).fill('36');
   await page.getByRole('combobox', { name: 'Weight', exact: true }).selectOption('700');
   const sectionHeading = page
@@ -144,4 +144,29 @@ test('custom heading font renders and survives reopening the editor', async ({ p
   await expect(sectionHeading).toHaveCSS('font-size', '36px');
   await expect(sectionHeading).toHaveCSS('font-weight', '700');
   await expect(page.getByRole('status').first()).toContainText('All changes saved');
+});
+
+test('layout style, pattern, shape and the new fonts restyle the selected block', async ({
+  page,
+}, info) => {
+  test.skip(info.project.name === 'mobile', 'Native rendering is verified separately.');
+  await signIn(page);
+  await page.getByRole('combobox', { name: /Layout style/ }).selectOption('poster');
+  await expect(page.locator('.sf-hero')).toHaveClass(/sfv-hero-poster/);
+  await page.getByRole('button', { name: 'Style', exact: true }).click();
+  await page
+    .getByRole('combobox', { name: 'Font family', exact: true })
+    .selectOption('DM Serif Display');
+  await expect(page.locator('.sf-hero h1')).toHaveCSS('font-family', /^"DM Serif Display"/);
+  await page.getByRole('combobox', { name: /Background pattern/ }).selectOption('dots');
+  await expect(page.locator('[data-block-type="hero"]')).toHaveCSS(
+    'background-image',
+    /radial-gradient/,
+  );
+  await page.getByRole('combobox', { name: /Image shape/ }).selectOption('arch');
+  await expect(page.locator('.sf-hero')).toHaveAttribute('data-shape', 'arch');
+  await expect(page.getByRole('status').first()).toContainText('All changes saved');
+  await page.reload();
+  await expect(page.locator('.sf-hero')).toHaveClass(/sfv-hero-poster/);
+  await expect(page.locator('.sf-hero')).toHaveAttribute('data-shape', 'arch');
 });
