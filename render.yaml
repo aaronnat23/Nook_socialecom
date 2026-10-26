@@ -1,0 +1,33 @@
+# One-click backend for a hosted preview: the Nook API plus a PostgreSQL database on Render's free plan.
+# The web app goes on Vercel (see docs/DEPLOY.md) and calls this service through its /api and /media rewrites.
+services:
+  - type: web
+    name: nook-api
+    runtime: docker
+    plan: free
+    dockerfilePath: infra/Dockerfile.api
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nook-db
+          property: connectionString
+      # Preview mode: anyone with the link can sign up. Use fictional data only.
+      - key: ENVIRONMENT
+        value: development
+      - key: AUTH_MODE
+        value: local
+      # Free web services lose their disk on every restart, so keep uploaded images in PostgreSQL.
+      - key: STORAGE_BACKEND
+        value: database
+      - key: LOCAL_AUTH_SECRET
+        generateValue: true
+      - key: SANDBOX_WEBHOOK_SECRET
+        generateValue: true
+
+databases:
+  - name: nook-db
+    plan: free
+    databaseName: nook
+    user: nook

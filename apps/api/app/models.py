@@ -1,7 +1,18 @@
 from datetime import datetime, timezone
 from typing import Any
 from uuid import uuid4
-from sqlalchemy import String, Integer, Boolean, DateTime, ForeignKey, CheckConstraint, UniqueConstraint, Index, Text
+from sqlalchemy import (
+    LargeBinary,
+    String,
+    Integer,
+    Boolean,
+    DateTime,
+    ForeignKey,
+    CheckConstraint,
+    UniqueConstraint,
+    Index,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 from .db import Base
@@ -198,3 +209,15 @@ class SessionToken(Record, Base):
     __tablename__ = "auth_sessions"
     user_id: Mapped[str] = mapped_column(ForeignKey("profiles.id"), index=True)
     revoked: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class AssetBlob(Base):
+    """Image bytes for deployments that keep uploads in PostgreSQL (STORAGE_BACKEND=database).
+
+    Deliberately not a foreign key: the bytes are written before the asset row is committed.
+    """
+
+    __tablename__ = "asset_blobs"
+    asset_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    data: Mapped[bytes] = mapped_column(LargeBinary)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)

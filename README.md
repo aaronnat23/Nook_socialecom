@@ -68,6 +68,8 @@ pg_ctl -D .local/postgres -l .local/postgres.log -o '-p 55432 -h 127.0.0.1' star
 - Product stage: sellers upload a photo, remove its background on the server and set the cut-out on a backdrop (solid, glow, arch, ribbon text, stripes, dots, sunburst or their own photo) with size/position, a die-cut sticker edge and a soft shadow. The product page shows the styled view and the original photo. Details in [docs/NOOK_BRAND.md](docs/NOOK_BRAND.md#product-stage).
 - Editable shop details, domestic shipping price and returns policy. Account/profile preferences persist in PostgreSQL.
 
+To put a preview online for someone else to review (web on Vercel, API and PostgreSQL on Render), follow [docs/DEPLOY.md](docs/DEPLOY.md).
+
 See [milestone verification](docs/MILESTONES.md), [implementation decisions](docs/decisions/001-architecture.md), [pilot requirements](docs/PILOT_READINESS.md), and [operations](docs/runbooks/operations.md) for actual verification and remaining limits. This is a working local sandbox, **not a declaration that every production launch gate is complete**.
 
 The native app has been smoke-tested on the connected **physical iPhone through iPhone Mirroring**: sign-in/persistence, three-tab navigation, storefront styling/autosave/publish/restore, reorder/undo/redo, product editing, collection order, variant pricing, checkout and refund. Device findings, fixes and untested cases are recorded in [iPhone QA](docs/IPHONE_QA.md). Android QA is deferred.

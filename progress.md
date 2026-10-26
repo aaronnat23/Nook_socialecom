@@ -256,3 +256,13 @@ User request: some templates looked too alike; make them more unique and add mor
 - Templates are now generated from `scripts/build-templates.py`: all eight rebuilt to be distinct, six added (Candy Counter, Photocopy Zine, Atelier, Night Market, Seaside Studio, Terrazzo Studio). `scripts/create-contract.py` now writes only the schema. Details in `docs/TEMPLATES.md`.
 - Tests: unit tests check the 14 templates differ in structure and in look and that every variant is used; API tests cover validation and the 14-template count; e2e covers the 14 previews and the new editor controls. An axe scan of every template at desktop and phone width is clean. Phone layouts were checked in a browser for all 14 on web and via a browser render of the native app.
 - Limits: native was not run on a physical iPhone (Android untested); the stripe/grid patterns there use hard-stop gradients whose edge sharpness on Android is unverified; the `night` gradient is dark, so text on it needs an explicit colour. Reset-style does not clear a block's variant. Existing shops keep their current pages; templates only apply when a seller picks one.
+
+## Hosted preview (round 4)
+
+User request: deploy to Vercel so a reviewer can see it.
+
+- **Not deployed from this session.** There are no Vercel credentials here and the sandbox blocks `api.vercel.com`, so the repo was made deployable instead and the steps written down in `docs/DEPLOY.md`. Vercel runs only the Next.js half; the FastAPI app and PostgreSQL go on Render via `render.yaml` (or any host that runs `infra/Dockerfile.api`).
+- **Backend changes.** `STORAGE_BACKEND=database` keeps uploaded images in a new `asset_blobs` table (migration `0005`) so a host with an ephemeral disk never loses them; the on-disk image cache falls back to the system temp dir when the repo directory is read-only. `postgres://` and `postgresql://` URLs are rewritten to the psycopg driver. The container honours `$PORT`, and installs `requirements-runtime.txt` (no pytest/ruff/mypy). Tests: `apps/api/tests/test_storage.py`.
+- **Verified.** The Docker start sequence (migrate, seed, serve) was run against a fresh database with a `postgres://` URL and the database backend; `/health` and sign-up worked. `next build` succeeds with the API unreachable. A real Vercel/Render deploy was **not** run; the Dockerfile itself was not built because no Docker daemon runs in this sandbox (the app was imported with only the runtime requirements instead).
+- **Limits.** Preview auth is the development mode (anyone with the link can sign up); free Render services sleep when idle and the free database is time-limited.
+

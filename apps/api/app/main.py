@@ -71,8 +71,6 @@ app.add_middleware(
 )
 P = "/api/v1"
 THEMES = json.loads((ROOT / "packages/storefront-schema/fixtures/themes.json").read_text())
-ASSETS = ROOT / ".local/uploads"
-ASSETS.mkdir(parents=True, exist_ok=True)
 Image.MAX_IMAGE_PIXELS = 36000000
 rate_buckets: dict[str, deque[float]] = defaultdict(deque)
 

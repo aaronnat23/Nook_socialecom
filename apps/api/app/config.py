@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Literal
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -19,6 +20,18 @@ class Settings(BaseSettings):
     supabase_service_role_key: str = ""
     supabase_storage_bucket: str = "shop-assets"
     cutout_model_path: str = ""
+    # "files" keeps uploads on local disk (development); "database" keeps them in PostgreSQL so a host
+    # with an ephemeral disk (a free web service, a serverless function) never loses them.
+    storage_backend: Literal["files", "database"] = "files"
+
+    @field_validator("database_url")
+    @classmethod
+    def driver(cls, value: str) -> str:
+        """Hosted databases hand out postgres:// or postgresql:// URLs; SQLAlchemy needs the psycopg driver."""
+        for prefix in ("postgres://", "postgresql://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg://" + value[len(prefix) :]
+        return value
 
 
 settings = Settings()
