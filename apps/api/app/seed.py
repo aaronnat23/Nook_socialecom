@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 from .db import SessionLocal
 from .auth import passwords
 from .models import Profile, Shop, Draft, Version, Publication, Product, Variant, Collection, Order, now
-from .config import ROOT
+from .config import CONTRACT
 from datetime import timedelta
 
-THEMES = json.loads((ROOT / "packages/storefront-schema/fixtures/themes.json").read_text())
+THEMES = json.loads((CONTRACT / "themes.json").read_text())
 SHOPS = [
     (
         "Studio Hening",

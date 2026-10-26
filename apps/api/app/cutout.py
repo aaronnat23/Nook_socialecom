@@ -14,9 +14,9 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageFilter
 
-from .config import ROOT, settings
+from .config import API_DIR, settings
 
-MODEL_PATH = Path(settings.cutout_model_path) if settings.cutout_model_path else ROOT / "apps/api/models/u2netp.onnx"
+MODEL_PATH = Path(settings.cutout_model_path) if settings.cutout_model_path else API_DIR / "models/u2netp.onnx"
 MAX_SIDE = 1600
 _session: object | None = None
 _load_lock = threading.Lock()

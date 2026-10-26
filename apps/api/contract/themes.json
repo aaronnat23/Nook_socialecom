@@ -1,0 +1,2937 @@
+[
+  {
+    "id": "minimal-studio",
+    "name": "Minimal Studio",
+    "description": "Quiet, spacious and serif: a split hero, an open product grid and a letter from the studio.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_minimal-studio",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#FAF9F6",
+          "surface": "#FFFFFF",
+          "text": "#29252F",
+          "accent": "#7550B5",
+          "muted": "#6B6573"
+        },
+        "contentWidth": 1120,
+        "radius": 8
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "row"
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Everyday, a little more beautiful.",
+                "subtitle": "A collection of little things that feel like you.",
+                "imageAssetId": "seed_hero_0",
+                "alt": "Speckled ceramics on a pale shelf",
+                "cta": {
+                  "label": "Explore the collection",
+                  "url": "#products"
+                },
+                "variant": "split"
+              },
+              "style": {
+                "fontSize": 60,
+                "paddingTop": 42,
+                "paddingBottom": 42,
+                "backgroundColor": "#EEE5F7",
+                "borderRadius": 24,
+                "minHeight": 340
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 36,
+                    "paddingTop": 28,
+                    "paddingBottom": 28
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "Objects for everyday rituals",
+                "source": "all",
+                "limit": 6,
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 22,
+                "paddingTop": 56
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 12
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "story",
+          "type": "section",
+          "children": [
+            {
+              "id": "letter",
+              "type": "text",
+              "props": {
+                "headline": "A note from the studio",
+                "text": "We make fewer things, and make them slowly. Each piece is glazed by hand, fired twice and checked by someone who cares whether it sits well in your palm.\n\nThank you for letting them into your mornings.",
+                "variant": "letter"
+              },
+              "style": {
+                "paddingTop": 72,
+                "paddingBottom": 48
+              }
+            },
+            {
+              "id": "rule",
+              "type": "divider",
+              "props": {
+                "variant": "line"
+              },
+              "style": {
+                "paddingTop": 8,
+                "paddingBottom": 8
+              }
+            },
+            {
+              "id": "photos",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_0",
+                    "alt": "Glazed cups on a shelf"
+                  },
+                  {
+                    "imageAssetId": "seed_product_14",
+                    "alt": "Blue plates stacked on timber"
+                  }
+                ],
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 16,
+                "aspectRatio": "16:9",
+                "borderRadius": 12,
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "visit",
+              "type": "button",
+              "props": {
+                "label": "See everything",
+                "url": "#products",
+                "variant": "solid"
+              },
+              "style": {
+                "paddingBottom": 64
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "vintage-film",
+    "name": "Vintage Film",
+    "description": "A typewriter-set archive: film-strip photos, a numbered contact sheet and found-object notes.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_vintage-film",
+      "theme": {
+        "fontHeading": "Courier New",
+        "fontBody": "Courier New",
+        "colors": {
+          "background": "#F3E9D8",
+          "surface": "#FBF4E6",
+          "text": "#3B2A1A",
+          "accent": "#A4472B",
+          "muted": "#6A5A48"
+        },
+        "contentWidth": 1040,
+        "radius": 2
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "ticker",
+              "type": "announcement",
+              "props": {
+                "text": "Found objects ✦ Est. in small moments ✦ Everything has a past life",
+                "variant": "marquee"
+              },
+              "style": {
+                "backgroundColor": "#3B2A1A",
+                "textColor": "#F3E9D8",
+                "fontSize": 11,
+                "paddingTop": 10,
+                "paddingBottom": 10,
+                "paddingLeft": 0,
+                "paddingRight": 0
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "centered"
+              },
+              "style": {
+                "paddingTop": 36,
+                "paddingBottom": 12
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "A little old soul. A lot of character.",
+                "subtitle": "Salvaged, restored and passed along.",
+                "imageAssetId": "seed_hero_1",
+                "alt": "A kraft tote bag against a grey wall",
+                "cta": {
+                  "label": "Browse the archive",
+                  "url": "#products"
+                },
+                "variant": "centered"
+              },
+              "style": {
+                "fontSize": 44,
+                "paddingTop": 24,
+                "paddingBottom": 40,
+                "textAlign": "center",
+                "fontWeight": 700,
+                "focalY": 68
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 28
+                  }
+                }
+              }
+            },
+            {
+              "id": "reel",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_1",
+                    "alt": "A kraft tote, frame 1"
+                  },
+                  {
+                    "imageAssetId": "seed_product_5",
+                    "alt": "A pressed white shirt, frame 2"
+                  },
+                  {
+                    "imageAssetId": "seed_product_22",
+                    "alt": "A pastoral painting, frame 3"
+                  },
+                  {
+                    "imageAssetId": "seed_product_19",
+                    "alt": "A candle among fairy lights, frame 4"
+                  },
+                  {
+                    "imageAssetId": "seed_product_11",
+                    "alt": "A gold chain bracelet, frame 5"
+                  }
+                ],
+                "headline": "Roll no. 7",
+                "variant": "filmstrip"
+              },
+              "style": {
+                "aspectRatio": "3:4",
+                "borderRadius": 2,
+                "paddingTop": 8,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "stars",
+              "type": "divider",
+              "props": {
+                "variant": "stars"
+              },
+              "style": {
+                "borderColor": "#A4472B",
+                "paddingTop": 12,
+                "paddingBottom": 12
+              }
+            }
+          ]
+        },
+        {
+          "id": "index",
+          "type": "section",
+          "children": [
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The contact sheet",
+                "source": "all",
+                "limit": 8,
+                "variant": "list"
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "pick",
+              "type": "featuredProduct",
+              "props": {
+                "productId": "",
+                "headline": "Pick of the month",
+                "variant": "card"
+              },
+              "style": {
+                "paddingTop": 32,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "note",
+              "type": "text",
+              "props": {
+                "headline": "Condition notes",
+                "text": "Every piece is photographed on the day it arrives. Small marks are part of the story and are always listed.",
+                "variant": "note"
+              },
+              "style": {
+                "paddingTop": 48,
+                "paddingBottom": 48
+              }
+            },
+            {
+              "id": "social",
+              "type": "socialLinks",
+              "props": {
+                "links": [
+                  {
+                    "label": "Instagram",
+                    "url": "https://instagram.com"
+                  },
+                  {
+                    "label": "Journal",
+                    "url": "#products"
+                  }
+                ],
+                "variant": "links"
+              },
+              "style": {
+                "paddingBottom": 56,
+                "textAlign": "center"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "y2k-diary",
+    "name": "Y2K Diary",
+    "description": "A pink scrapbook on graph paper: handwritten titles, polaroids and sticky notes.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_y2k-diary",
+      "theme": {
+        "fontHeading": "Caveat",
+        "fontBody": "Trebuchet MS",
+        "colors": {
+          "background": "#FFF0F9",
+          "surface": "#FFFFFF",
+          "text": "#3A1E55",
+          "accent": "#C0278A",
+          "muted": "#7C4A86"
+        },
+        "contentWidth": 980,
+        "radius": 22
+      },
+      "sections": [
+        {
+          "id": "page",
+          "type": "section",
+          "children": [
+            {
+              "id": "welcome",
+              "type": "announcement",
+              "props": {
+                "text": "✧ welcome to my little universe ✧",
+                "variant": "pill"
+              },
+              "style": {
+                "fontSize": 14,
+                "paddingTop": 28,
+                "paddingBottom": 6,
+                "textColor": "#3A1E55"
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "banner"
+              },
+              "style": {
+                "paddingTop": 12,
+                "paddingBottom": 24,
+                "fontSize": 40,
+                "fontWeight": 700
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "my favourite things, all in one place",
+                "subtitle": "pretty little finds, picked just for you ♡",
+                "imageAssetId": "seed_product_10",
+                "alt": "A necklace on a bare shoulder",
+                "cta": {
+                  "label": "peek inside",
+                  "url": "#products"
+                },
+                "variant": "flip"
+              },
+              "style": {
+                "fontSize": 62,
+                "paddingTop": 26,
+                "paddingBottom": 26,
+                "shape": "circle",
+                "fontWeight": 700,
+                "gradient": "candy",
+                "borderRadius": 40,
+                "paddingLeft": 36,
+                "paddingRight": 36
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 40
+                  }
+                }
+              }
+            },
+            {
+              "id": "polaroids",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_product_10",
+                    "alt": "gold chain, my daily wear"
+                  },
+                  {
+                    "imageAssetId": "seed_product_11",
+                    "alt": "new bracelet, who dis"
+                  },
+                  {
+                    "imageAssetId": "seed_product_20",
+                    "alt": "the prettiest bottle"
+                  }
+                ],
+                "headline": "scrapbook",
+                "variant": "polaroid"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 28,
+                "aspectRatio": "4:5",
+                "fontSize": 40,
+                "fontWeight": 700,
+                "paddingTop": 40,
+                "paddingBottom": 24
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2,
+                    "gap": 18
+                  }
+                }
+              }
+            },
+            {
+              "id": "notes",
+              "type": "columns",
+              "props": {
+                "variant": "even"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 22,
+                "paddingTop": 24,
+                "paddingBottom": 24
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "props": {
+                    "headline": "currently obsessed with",
+                    "text": "layering chains, sunset walks and anything that sparkles.",
+                    "variant": "note"
+                  },
+                  "style": {
+                    "fontSize": 34,
+                    "fontWeight": 700
+                  }
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "props": {
+                    "headline": "shipping day",
+                    "text": "i pack orders every friday with stickers and a tiny handwritten note.",
+                    "variant": "note"
+                  },
+                  "style": {
+                    "fontSize": 34,
+                    "fontWeight": 700
+                  }
+                }
+              ]
+            },
+            {
+              "id": "wave",
+              "type": "divider",
+              "props": {
+                "variant": "wave"
+              },
+              "style": {
+                "borderColor": "#C0278A",
+                "paddingTop": 12,
+                "paddingBottom": 12
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "the wishlist",
+                "source": "all",
+                "limit": 6,
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 22,
+                "fontSize": 42,
+                "fontWeight": 700,
+                "paddingTop": 20,
+                "paddingBottom": 36
+              }
+            },
+            {
+              "id": "social",
+              "type": "socialLinks",
+              "props": {
+                "links": [
+                  {
+                    "label": "Instagram",
+                    "url": "https://instagram.com"
+                  },
+                  {
+                    "label": "TikTok",
+                    "url": "https://tiktok.com"
+                  }
+                ],
+                "variant": "chips"
+              },
+              "style": {
+                "paddingBottom": 56,
+                "textAlign": "center"
+              }
+            }
+          ],
+          "style": {
+            "backgroundColor": "#FFF0F9",
+            "pattern": "grid",
+            "patternColor": "#F2C7E6"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "dark-editorial",
+    "name": "Dark Editorial",
+    "description": "A midnight magazine: a full-bleed cover, a pull quote, large spreads and a masonry wall.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_dark-editorial",
+      "theme": {
+        "fontHeading": "DM Serif Display",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#14111A",
+          "surface": "#221C2B",
+          "text": "#F4EFF8",
+          "accent": "#D4B6FF",
+          "muted": "#B7AAC4"
+        },
+        "contentWidth": 1200,
+        "radius": 0
+      },
+      "sections": [
+        {
+          "id": "cover",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "minimal"
+              },
+              "style": {
+                "paddingTop": 22,
+                "paddingBottom": 22
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Quiet objects. Bold intentions.",
+                "subtitle": "The autumn edit · Volume 04",
+                "imageAssetId": "seed_hero_3",
+                "alt": "Jewelled earrings resting on a monstera leaf",
+                "cta": {
+                  "label": "Read the edit",
+                  "url": "#products"
+                },
+                "variant": "overlay"
+              },
+              "style": {
+                "fontSize": 88,
+                "minHeight": 620,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "paddingBottom": 0,
+                "borderRadius": 0,
+                "textColor": "#F4EFF8"
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 44,
+                    "minHeight": 520
+                  }
+                }
+              }
+            }
+          ],
+          "style": {
+            "width": "full"
+          }
+        },
+        {
+          "id": "body",
+          "type": "section",
+          "children": [
+            {
+              "id": "issue",
+              "type": "announcement",
+              "props": {
+                "text": "No. 04 — Jewellery, objects & slow things",
+                "variant": "pill"
+              },
+              "style": {
+                "fontSize": 11,
+                "paddingTop": 56,
+                "paddingBottom": 8,
+                "letterSpacing": 3,
+                "uppercase": true
+              }
+            },
+            {
+              "id": "quote",
+              "type": "text",
+              "props": {
+                "headline": "We make fewer things, on purpose.",
+                "text": "The studio, on why every drop is small",
+                "variant": "quote"
+              },
+              "style": {
+                "fontSize": 52,
+                "paddingTop": 40,
+                "paddingBottom": 56
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 32
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The edit",
+                "source": "all",
+                "limit": 4,
+                "variant": "lookbook"
+              },
+              "style": {
+                "gap": 48,
+                "paddingBottom": 64
+              }
+            },
+            {
+              "id": "wall",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_hero_3",
+                    "alt": "Earrings on a leaf"
+                  },
+                  {
+                    "imageAssetId": "seed_product_18",
+                    "alt": "An amber bottle in warm light"
+                  },
+                  {
+                    "imageAssetId": "seed_product_11",
+                    "alt": "A chain bracelet on a magazine"
+                  },
+                  {
+                    "imageAssetId": "seed_product_10",
+                    "alt": "A pendant at the collarbone"
+                  },
+                  {
+                    "imageAssetId": "seed_product_21",
+                    "alt": "Still life with tulips"
+                  },
+                  {
+                    "imageAssetId": "seed_product_19",
+                    "alt": "A candle among fairy lights"
+                  }
+                ],
+                "headline": "From the notebook",
+                "variant": "masonry"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 14,
+                "borderRadius": 0,
+                "paddingBottom": 48
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            },
+            {
+              "id": "more",
+              "type": "button",
+              "props": {
+                "label": "Read the journal",
+                "url": "#products",
+                "variant": "link"
+              },
+              "style": {
+                "paddingBottom": 72,
+                "textAlign": "center"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "handmade-market",
+    "name": "Handmade Market",
+    "description": "Warm and personal: a kraft-paper banner, a maker's letter, framed portraits and a swipeable stall.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_handmade-market",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Georgia",
+        "colors": {
+          "background": "#FBF1E3",
+          "surface": "#FFF9F0",
+          "text": "#4B2E22",
+          "accent": "#B5502A",
+          "muted": "#7E6A59"
+        },
+        "contentWidth": 1080,
+        "radius": 14
+      },
+      "sections": [
+        {
+          "id": "main",
+          "type": "section",
+          "children": [
+            {
+              "id": "banner",
+              "type": "announcement",
+              "props": {
+                "text": "Made by hand ✦ Small batches ✦ Sent with care",
+                "variant": "marquee"
+              },
+              "style": {
+                "backgroundColor": "#B5502A",
+                "textColor": "#FFF8F0",
+                "fontSize": 12,
+                "paddingTop": 11,
+                "paddingBottom": 11,
+                "paddingLeft": 0,
+                "paddingRight": 0
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "row"
+              },
+              "style": {
+                "paddingTop": 28,
+                "paddingBottom": 12
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Made slowly. Loved for a long time.",
+                "subtitle": "Glazed, stitched and wrapped by two pairs of hands.",
+                "imageAssetId": "seed_hero_0",
+                "alt": "Speckled ceramics glazed by hand",
+                "cta": {
+                  "label": "Visit the stall",
+                  "url": "#products"
+                },
+                "variant": "flip"
+              },
+              "style": {
+                "fontSize": 56,
+                "paddingTop": 36,
+                "paddingBottom": 36,
+                "paddingLeft": 36,
+                "paddingRight": 36,
+                "backgroundColor": "#F2DCC3",
+                "borderRadius": 36,
+                "shape": "arch",
+                "minHeight": 420
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 34
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "bench",
+          "type": "section",
+          "children": [
+            {
+              "id": "letter",
+              "type": "text",
+              "props": {
+                "headline": "Dear neighbour,",
+                "text": "Every cup begins as a handful of wet clay on a Sunday morning. I wedge, throw and trim until it feels right in my hands, and only then does it go in the kiln.\n\nIf it feels right in yours too, it has found its home.",
+                "variant": "letter"
+              },
+              "style": {
+                "paddingTop": 64,
+                "paddingBottom": 40
+              }
+            },
+            {
+              "id": "portraits",
+              "type": "columns",
+              "props": {
+                "variant": "wideLeft"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingBottom": 24
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "p1",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_14",
+                    "alt": "Blue-glazed plates on a timber shelf",
+                    "caption": "Glaze test, batch 12",
+                    "variant": "framed"
+                  },
+                  "style": {
+                    "aspectRatio": "4:3",
+                    "borderRadius": 18
+                  }
+                },
+                {
+                  "id": "p2",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_hero_0",
+                    "alt": "Cups waiting to be fired",
+                    "caption": "Waiting for the kiln",
+                    "variant": "framed"
+                  },
+                  "style": {
+                    "aspectRatio": "3:4",
+                    "borderRadius": 18
+                  }
+                }
+              ]
+            },
+            {
+              "id": "dots",
+              "type": "divider",
+              "props": {
+                "variant": "dots"
+              },
+              "style": {
+                "borderColor": "#B5502A",
+                "paddingTop": 24,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "Fresh off the bench",
+                "source": "all",
+                "limit": 8,
+                "variant": "carousel"
+              },
+              "style": {
+                "gap": 20,
+                "paddingBottom": 40
+              }
+            },
+            {
+              "id": "social",
+              "type": "socialLinks",
+              "props": {
+                "links": [
+                  {
+                    "label": "Instagram",
+                    "url": "https://instagram.com"
+                  },
+                  {
+                    "label": "Markets I visit",
+                    "url": "#products"
+                  }
+                ],
+                "variant": "chips"
+              },
+              "style": {
+                "paddingBottom": 56
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "streetwear-drop",
+    "name": "Streetwear Drop",
+    "description": "Poster-sized type, a ticker tape, hazard stripes and a mosaic with one big hero piece.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_streetwear-drop",
+      "theme": {
+        "fontHeading": "Archivo Black",
+        "fontBody": "Arial",
+        "colors": {
+          "background": "#EFEFEA",
+          "surface": "#FFFFFF",
+          "text": "#111111",
+          "accent": "#C93509",
+          "muted": "#55554F"
+        },
+        "contentWidth": 1320,
+        "radius": 0
+      },
+      "sections": [
+        {
+          "id": "drop",
+          "type": "section",
+          "children": [
+            {
+              "id": "tape",
+              "type": "announcement",
+              "props": {
+                "text": "Drop 04 ✦ Limited run ✦ No restocks ✦ Ships Friday",
+                "variant": "marquee"
+              },
+              "style": {
+                "backgroundColor": "#111111",
+                "textColor": "#EFEFEA",
+                "fontSize": 12,
+                "paddingTop": 11,
+                "paddingBottom": 11,
+                "paddingLeft": 0,
+                "paddingRight": 0
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Wear your own story",
+                "subtitle": "Heavyweight basics, cut boxy, made in tiny runs.",
+                "imageAssetId": "seed_hero_5",
+                "alt": "A model in a plain white heavyweight tee",
+                "cta": {
+                  "label": "Shop the drop",
+                  "url": "#products"
+                },
+                "variant": "poster"
+              },
+              "style": {
+                "fontSize": 132,
+                "paddingTop": 36,
+                "paddingBottom": 24,
+                "uppercase": true
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 56,
+                    "paddingTop": 20
+                  }
+                },
+                "tablet": {
+                  "style": {
+                    "fontSize": 96
+                  }
+                }
+              }
+            },
+            {
+              "id": "hazard",
+              "type": "announcement",
+              "props": {
+                "text": "New arrivals — 12 pieces — this week only",
+                "variant": "bar"
+              },
+              "style": {
+                "backgroundColor": "#FFD500",
+                "textColor": "#111111",
+                "pattern": "stripes",
+                "patternColor": "#E0B800",
+                "fontSize": 13,
+                "fontWeight": 800,
+                "uppercase": true,
+                "letterSpacing": 2,
+                "paddingTop": 14,
+                "paddingBottom": 14,
+                "textAlign": "center",
+                "marginTop": 24
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The drop",
+                "source": "all",
+                "limit": 6,
+                "variant": "mosaic"
+              },
+              "style": {
+                "gap": 18,
+                "paddingTop": 40,
+                "paddingBottom": 24,
+                "uppercase": true,
+                "fontSize": 40
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 28
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "lookbook",
+          "type": "section",
+          "children": [
+            {
+              "id": "campaign",
+              "type": "columns",
+              "props": {
+                "variant": "wideRight"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingTop": 32,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "c1",
+                  "type": "text",
+                  "props": {
+                    "headline": "Lookbook 04",
+                    "text": "Shot on the rooftop at 6am. No retouching, no filters, no apologies."
+                  },
+                  "style": {
+                    "fontSize": 44,
+                    "uppercase": true
+                  }
+                },
+                {
+                  "id": "c2",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_4",
+                    "alt": "A navy backpack, shot at dawn",
+                    "variant": "framed"
+                  },
+                  "style": {
+                    "aspectRatio": "3:4",
+                    "borderRadius": 0,
+                    "borderColor": "#111111"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "shopall",
+              "type": "button",
+              "props": {
+                "label": "Shop all",
+                "url": "#products",
+                "variant": "outline"
+              },
+              "style": {
+                "paddingBottom": 40
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "minimal"
+              },
+              "style": {
+                "paddingTop": 12,
+                "paddingBottom": 40
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "botanical",
+    "name": "Botanical",
+    "description": "Soft sage and arched windows: a centered cover, a spotlight product and a masonry of greenery.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_botanical",
+      "theme": {
+        "fontHeading": "DM Serif Display",
+        "fontBody": "Georgia",
+        "colors": {
+          "background": "#F1F5EA",
+          "surface": "#FBFDF7",
+          "text": "#263A29",
+          "accent": "#4E7A4B",
+          "muted": "#5F735C"
+        },
+        "contentWidth": 980,
+        "radius": 20
+      },
+      "sections": [
+        {
+          "id": "intro",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "centered"
+              },
+              "style": {
+                "paddingTop": 36,
+                "paddingBottom": 16,
+                "fontSize": 28
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "A slower kind of beautiful.",
+                "subtitle": "Plant-led skincare and slow-living objects, made in small batches.",
+                "imageAssetId": "seed_hero_6",
+                "alt": "An amber dropper bottle on a wooden pedestal",
+                "cta": {
+                  "label": "Find your daily ritual",
+                  "url": "#products"
+                },
+                "variant": "centered"
+              },
+              "style": {
+                "fontSize": 54,
+                "gradient": "sage",
+                "borderRadius": 36,
+                "shape": "arch",
+                "paddingTop": 48,
+                "paddingBottom": 48,
+                "textAlign": "center"
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 34
+                  }
+                }
+              }
+            },
+            {
+              "id": "orn",
+              "type": "divider",
+              "props": {
+                "variant": "ornament"
+              },
+              "style": {
+                "borderColor": "#4E7A4B",
+                "paddingTop": 36,
+                "paddingBottom": 20
+              }
+            }
+          ]
+        },
+        {
+          "id": "shop",
+          "type": "section",
+          "children": [
+            {
+              "id": "spot",
+              "type": "featuredProduct",
+              "props": {
+                "productId": "",
+                "headline": "Rooted in the everyday",
+                "variant": "spotlight"
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 56
+              }
+            },
+            {
+              "id": "story",
+              "type": "text",
+              "props": {
+                "headline": "Grown, not manufactured.",
+                "text": "Everything here begins with a seed or a leaf. We steep, press and bottle in small batches, then send it to you with a little care card on how to use it well."
+              },
+              "style": {
+                "textAlign": "center",
+                "fontSize": 40,
+                "maxWidth": 700,
+                "paddingTop": 24,
+                "paddingBottom": 40
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30
+                  }
+                }
+              }
+            },
+            {
+              "id": "green",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_product_9",
+                    "alt": "Leaf-shadowed stones"
+                  },
+                  {
+                    "imageAssetId": "seed_product_8",
+                    "alt": "Spring blossom in white vases"
+                  },
+                  {
+                    "imageAssetId": "seed_product_19",
+                    "alt": "A candle among soft lights"
+                  },
+                  {
+                    "imageAssetId": "seed_product_18",
+                    "alt": "An amber bottle in sunlight"
+                  },
+                  {
+                    "imageAssetId": "seed_product_2",
+                    "alt": "A lamp against a sage wall"
+                  },
+                  {
+                    "imageAssetId": "seed_product_12",
+                    "alt": "A lamp against deep teal"
+                  }
+                ],
+                "headline": "From the greenhouse",
+                "variant": "masonry"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 16,
+                "borderRadius": 22,
+                "paddingBottom": 40
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The shelf",
+                "source": "all",
+                "limit": 6,
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingBottom": 40
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            },
+            {
+              "id": "ship",
+              "type": "announcement",
+              "props": {
+                "text": "Free shipping over RM120",
+                "variant": "pill"
+              },
+              "style": {
+                "fontSize": 13,
+                "paddingBottom": 64
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "art-gallery",
+    "name": "Art Gallery",
+    "description": "A white cube with museum labels: monospaced captions, framed works and a numbered catalogue.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_art-gallery",
+      "theme": {
+        "fontHeading": "Georgia",
+        "fontBody": "Space Mono",
+        "colors": {
+          "background": "#FBFAF7",
+          "surface": "#FFFFFF",
+          "text": "#1B1A1F",
+          "accent": "#7A2E4F",
+          "muted": "#625C63"
+        },
+        "contentWidth": 1240,
+        "radius": 0
+      },
+      "sections": [
+        {
+          "id": "front",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "minimal"
+              },
+              "style": {
+                "paddingTop": 28,
+                "paddingBottom": 28
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Objects with a point of view.",
+                "subtitle": "Current exhibition — oil, ink and found objects, 2024–2026.",
+                "imageAssetId": "seed_hero_7",
+                "alt": "A still life of tulips and roses in a dark interior",
+                "variant": "stack"
+              },
+              "style": {
+                "fontSize": 60,
+                "paddingTop": 8,
+                "paddingBottom": 48,
+                "borderRadius": 0
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 36
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "works",
+          "type": "section",
+          "children": [
+            {
+              "id": "wall",
+              "type": "columns",
+              "props": {
+                "variant": "wideRight"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 56,
+                "paddingTop": 24,
+                "paddingBottom": 24
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "w1",
+                  "type": "text",
+                  "props": {
+                    "headline": "On view",
+                    "text": "No. 07 — Still life with tulips, after the old masters.\nOil on panel, 2025.\n\nA study in how little light it takes to make a room feel full."
+                  },
+                  "style": {
+                    "fontSize": 28
+                  }
+                },
+                {
+                  "id": "w2",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_21",
+                    "alt": "Still life with tulips and roses",
+                    "caption": "No. 07 — Oil on panel, 2025",
+                    "variant": "framed"
+                  },
+                  "style": {
+                    "aspectRatio": "3:4",
+                    "borderRadius": 0,
+                    "borderColor": "#1B1A1F",
+                    "maxWidth": 520
+                  }
+                }
+              ]
+            },
+            {
+              "id": "wall2",
+              "type": "columns",
+              "props": {
+                "variant": "wideLeft"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 56,
+                "paddingTop": 24,
+                "paddingBottom": 48
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "w3",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_22",
+                    "alt": "An English pastoral landscape with sheep",
+                    "caption": "No. 12 — Pastoral, oil on canvas, 2024",
+                    "variant": "framed"
+                  },
+                  "style": {
+                    "aspectRatio": "4:3",
+                    "borderRadius": 0,
+                    "borderColor": "#1B1A1F",
+                    "maxWidth": 620
+                  }
+                },
+                {
+                  "id": "w4",
+                  "type": "text",
+                  "props": {
+                    "headline": "Also showing",
+                    "text": "No. 12 — Pastoral.\nOil on canvas, 2024.\n\nPrints available on request."
+                  },
+                  "style": {
+                    "fontSize": 28
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rule",
+              "type": "divider",
+              "props": {
+                "variant": "line"
+              },
+              "style": {
+                "borderColor": "#1B1A1F",
+                "paddingTop": 8,
+                "paddingBottom": 8
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The catalogue",
+                "source": "all",
+                "limit": 10,
+                "variant": "list"
+              },
+              "style": {
+                "fontSize": 34,
+                "paddingTop": 40,
+                "paddingBottom": 40
+              }
+            },
+            {
+              "id": "price",
+              "type": "button",
+              "props": {
+                "label": "Request the price list",
+                "url": "#products",
+                "variant": "link"
+              },
+              "style": {
+                "paddingBottom": 72
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "candy-counter",
+    "name": "Candy Counter",
+    "description": "A pick-and-mix boutique: polka dots, bubblegum pink, pill-shaped photos and a swipeable shelf.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_candy-counter",
+      "theme": {
+        "fontHeading": "Caprasimo",
+        "fontBody": "Trebuchet MS",
+        "colors": {
+          "background": "#FFF4F9",
+          "surface": "#FFFFFF",
+          "text": "#4A1D46",
+          "accent": "#D0206F",
+          "muted": "#8A4F86"
+        },
+        "contentWidth": 1120,
+        "radius": 32
+      },
+      "sections": [
+        {
+          "id": "shop",
+          "type": "section",
+          "children": [
+            {
+              "id": "ticker",
+              "type": "announcement",
+              "props": {
+                "text": "Sweet things ✦ Small batch ✦ Pick & mix ✦ Gift wrapped free",
+                "variant": "marquee"
+              },
+              "style": {
+                "backgroundColor": "#FFD3EC",
+                "textColor": "#4A1D46",
+                "fontSize": 13,
+                "fontWeight": 700,
+                "paddingTop": 11,
+                "paddingBottom": 11,
+                "paddingLeft": 0,
+                "paddingRight": 0
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "banner"
+              },
+              "style": {
+                "paddingTop": 28,
+                "paddingBottom": 20,
+                "fontSize": 40
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Pick a little something sweet.",
+                "subtitle": "Tiny treats and pretty things, wrapped like presents.",
+                "imageAssetId": "seed_product_20",
+                "alt": "A pink perfume bottle against a blue sky",
+                "cta": {
+                  "label": "Fill your bag",
+                  "url": "#products"
+                },
+                "variant": "split"
+              },
+              "style": {
+                "fontSize": 66,
+                "gradient": "candy",
+                "paddingTop": 40,
+                "paddingBottom": 40,
+                "paddingLeft": 44,
+                "paddingRight": 44,
+                "borderRadius": 48,
+                "shape": "circle"
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 40,
+                    "paddingLeft": 22,
+                    "paddingRight": 22
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "Pick & mix",
+                "source": "all",
+                "limit": 7,
+                "variant": "mosaic"
+              },
+              "style": {
+                "gap": 20,
+                "paddingTop": 44,
+                "paddingBottom": 24,
+                "fontSize": 44
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 30
+                  }
+                }
+              }
+            },
+            {
+              "id": "wave",
+              "type": "divider",
+              "props": {
+                "variant": "wave"
+              },
+              "style": {
+                "borderColor": "#D0206F",
+                "paddingTop": 12,
+                "paddingBottom": 12
+              }
+            },
+            {
+              "id": "treats",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_product_20",
+                    "alt": "Pink bottle, blue sky"
+                  },
+                  {
+                    "imageAssetId": "seed_product_8",
+                    "alt": "Blossom on a white table"
+                  },
+                  {
+                    "imageAssetId": "seed_product_11",
+                    "alt": "Golden chain on a magazine"
+                  }
+                ],
+                "headline": "Sprinkles",
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 18,
+                "aspectRatio": "3:4",
+                "shape": "pill",
+                "fontSize": 40,
+                "paddingTop": 20,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            },
+            {
+              "id": "notes",
+              "type": "columns",
+              "props": {
+                "variant": "even"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 20,
+                "paddingBottom": 40
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "props": {
+                    "headline": "Gift wrapping",
+                    "text": "Free tissue, ribbon and a handwritten card on every order.",
+                    "variant": "note"
+                  },
+                  "style": {
+                    "backgroundColor": "#FFE98A",
+                    "fontSize": 26
+                  }
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "props": {
+                    "headline": "Pick-up parties",
+                    "text": "Come by on Saturdays for samples, stickers and sweet tea.",
+                    "variant": "note"
+                  },
+                  "style": {
+                    "backgroundColor": "#C8F2E0",
+                    "fontSize": 26
+                  }
+                }
+              ]
+            },
+            {
+              "id": "social",
+              "type": "socialLinks",
+              "props": {
+                "links": [
+                  {
+                    "label": "Instagram",
+                    "url": "https://instagram.com"
+                  },
+                  {
+                    "label": "TikTok",
+                    "url": "https://tiktok.com"
+                  }
+                ],
+                "variant": "chips"
+              },
+              "style": {
+                "paddingBottom": 56,
+                "textAlign": "center"
+              }
+            }
+          ],
+          "style": {
+            "backgroundColor": "#FFF4F9",
+            "pattern": "dots",
+            "patternColor": "#F7C3DE"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "photocopy-zine",
+    "name": "Photocopy Zine",
+    "description": "Black ink on newsprint: monospaced type, hazard tape, taped-up notes and polaroid snaps.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_photocopy-zine",
+      "theme": {
+        "fontHeading": "Space Mono",
+        "fontBody": "Space Mono",
+        "colors": {
+          "background": "#F2EFE6",
+          "surface": "#FFFFFF",
+          "text": "#111111",
+          "accent": "#2438FF",
+          "muted": "#4B4B47"
+        },
+        "contentWidth": 1000,
+        "radius": 0
+      },
+      "sections": [
+        {
+          "id": "issue",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "row"
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 16,
+                "uppercase": true,
+                "letterSpacing": 1
+              }
+            },
+            {
+              "id": "tape",
+              "type": "announcement",
+              "props": {
+                "text": "Issue 07 — printed on a photocopier that should have been retired years ago",
+                "variant": "bar"
+              },
+              "style": {
+                "backgroundColor": "#FFE600",
+                "textColor": "#111111",
+                "pattern": "stripes",
+                "patternColor": "#E6CF00",
+                "fontSize": 12,
+                "fontWeight": 700,
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "textAlign": "center",
+                "uppercase": true
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Make. Copy. Share.",
+                "subtitle": "Small runs, loud opinions and clothes you can't buy anywhere else.",
+                "imageAssetId": "seed_product_15",
+                "alt": "A black-and-white style snapshot of a worn tee",
+                "cta": {
+                  "label": "Get the zine",
+                  "url": "#products"
+                },
+                "variant": "split"
+              },
+              "style": {
+                "fontSize": 64,
+                "backgroundColor": "#111111",
+                "textColor": "#F2EFE6",
+                "paddingTop": 44,
+                "paddingBottom": 44,
+                "paddingLeft": 36,
+                "paddingRight": 36,
+                "uppercase": true,
+                "fontWeight": 700,
+                "marginTop": 24
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 34,
+                    "paddingLeft": 18,
+                    "paddingRight": 18
+                  }
+                }
+              }
+            },
+            {
+              "id": "snaps",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_product_5",
+                    "alt": "Fig. 1 — the shirt, pressed"
+                  },
+                  {
+                    "imageAssetId": "seed_product_4",
+                    "alt": "Fig. 2 — the bag, with opinions"
+                  },
+                  {
+                    "imageAssetId": "seed_product_17",
+                    "alt": "Fig. 3 — the tote, empty"
+                  }
+                ],
+                "headline": "Fig. 1–3",
+                "variant": "polaroid"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 24,
+                "aspectRatio": "4:5",
+                "fontSize": 28,
+                "uppercase": true,
+                "paddingTop": 44,
+                "paddingBottom": 24
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            },
+            {
+              "id": "notes",
+              "type": "columns",
+              "props": {
+                "variant": "even"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 24,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "n1",
+                  "type": "text",
+                  "props": {
+                    "headline": "Rule no. 1",
+                    "text": "If it doesn't make you laugh or cringe, it doesn't go in the zine.",
+                    "variant": "note"
+                  },
+                  "style": {
+                    "backgroundColor": "#FFE600",
+                    "fontSize": 22
+                  }
+                },
+                {
+                  "id": "n2",
+                  "type": "text",
+                  "props": {
+                    "headline": "Rule no. 2",
+                    "text": "Everything is photocopied until it falls apart.",
+                    "variant": "note"
+                  },
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "fontSize": 22
+                  }
+                }
+              ]
+            },
+            {
+              "id": "stars",
+              "type": "divider",
+              "props": {
+                "variant": "stars"
+              },
+              "style": {
+                "paddingTop": 12,
+                "paddingBottom": 12
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "Table of contents",
+                "source": "all",
+                "limit": 6,
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 22,
+                "uppercase": true,
+                "fontSize": 28,
+                "paddingTop": 24,
+                "paddingBottom": 32
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              }
+            },
+            {
+              "id": "order",
+              "type": "button",
+              "props": {
+                "label": "Order the zine",
+                "url": "#products",
+                "variant": "outline"
+              },
+              "style": {
+                "paddingBottom": 64
+              }
+            }
+          ],
+          "style": {
+            "backgroundColor": "#F2EFE6",
+            "pattern": "dots",
+            "patternColor": "#DAD6CB"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "atelier",
+    "name": "Atelier",
+    "description": "A fashion lookbook in oatmeal and olive: letterspaced wordmark, tall spreads and wide-left stories.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_atelier",
+      "theme": {
+        "fontHeading": "DM Serif Display",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#F4F0EA",
+          "surface": "#FFFFFF",
+          "text": "#1D1B19",
+          "accent": "#3E4A33",
+          "muted": "#6A655D"
+        },
+        "contentWidth": 1280,
+        "radius": 0
+      },
+      "sections": [
+        {
+          "id": "opening",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "centered"
+              },
+              "style": {
+                "paddingTop": 44,
+                "paddingBottom": 20,
+                "fontSize": 18,
+                "uppercase": true,
+                "letterSpacing": 8,
+                "fontWeight": 400
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "The Autumn Collection",
+                "subtitle": "Tailoring for ordinary days. Cut long, worn often.",
+                "imageAssetId": "seed_product_16",
+                "alt": "A pressed white shirt and patterned tie",
+                "cta": {
+                  "label": "View the looks",
+                  "url": "#products"
+                },
+                "variant": "flip"
+              },
+              "style": {
+                "fontSize": 76,
+                "minHeight": 560,
+                "paddingTop": 24,
+                "paddingBottom": 24,
+                "aspectRatio": "4:5",
+                "borderRadius": 0
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 40,
+                    "minHeight": 0
+                  }
+                },
+                "tablet": {
+                  "style": {
+                    "fontSize": 56
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "looks",
+          "type": "section",
+          "children": [
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "Looks",
+                "source": "all",
+                "limit": 4,
+                "variant": "lookbook"
+              },
+              "style": {
+                "gap": 48,
+                "paddingTop": 72,
+                "paddingBottom": 72
+              }
+            },
+            {
+              "id": "story",
+              "type": "columns",
+              "props": {
+                "variant": "wideLeft"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 56,
+                "paddingBottom": 72
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "s1",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_hero_5",
+                    "alt": "A model in a white tee in a bright room"
+                  },
+                  "style": {
+                    "aspectRatio": "4:3",
+                    "borderRadius": 0
+                  }
+                },
+                {
+                  "id": "s2",
+                  "type": "text",
+                  "props": {
+                    "headline": "Made to be worn on repeat.",
+                    "text": "Natural fibres, honest seams and cuts that outlast the season."
+                  },
+                  "style": {
+                    "fontSize": 40
+                  }
+                }
+              ]
+            },
+            {
+              "id": "details",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_product_15",
+                    "alt": "A relaxed tee"
+                  },
+                  {
+                    "imageAssetId": "seed_product_5",
+                    "alt": "A pressed shirt"
+                  },
+                  {
+                    "imageAssetId": "seed_product_10",
+                    "alt": "A fine pendant"
+                  },
+                  {
+                    "imageAssetId": "seed_product_4",
+                    "alt": "A structured bag"
+                  }
+                ],
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 4,
+                "gap": 10,
+                "aspectRatio": "3:4",
+                "borderRadius": 0,
+                "paddingBottom": 64
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            },
+            {
+              "id": "ship",
+              "type": "announcement",
+              "props": {
+                "text": "Complimentary shipping & returns across Malaysia",
+                "variant": "bar"
+              },
+              "style": {
+                "backgroundColor": "#3E4A33",
+                "textColor": "#F4F0EA",
+                "fontSize": 11,
+                "uppercase": true,
+                "letterSpacing": 3,
+                "paddingTop": 14,
+                "paddingBottom": 14,
+                "textAlign": "center"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "night-market",
+    "name": "Night Market",
+    "description": "Midnight navy and lantern amber: a full-bleed night scene, a swipeable stall and round medallions.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_night-market",
+      "theme": {
+        "fontHeading": "Caprasimo",
+        "fontBody": "Inter",
+        "colors": {
+          "background": "#0F1B2D",
+          "surface": "#172A45",
+          "text": "#FFF2DD",
+          "accent": "#FFB23E",
+          "muted": "#A9B7CB"
+        },
+        "contentWidth": 1100,
+        "radius": 24
+      },
+      "sections": [
+        {
+          "id": "night",
+          "type": "section",
+          "children": [
+            {
+              "id": "ticker",
+              "type": "announcement",
+              "props": {
+                "text": "Night market ✦ Open till late ✦ Cash, QR & smiles ✦",
+                "variant": "marquee"
+              },
+              "style": {
+                "backgroundColor": "#FFB23E",
+                "textColor": "#0F1B2D",
+                "fontSize": 12,
+                "fontWeight": 800,
+                "paddingTop": 10,
+                "paddingBottom": 10,
+                "paddingLeft": 0,
+                "paddingRight": 0
+              }
+            },
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "row"
+              },
+              "style": {
+                "paddingTop": 24,
+                "paddingBottom": 16
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Open till late.",
+                "subtitle": "Lanterns on, kettle hot, stall stocked with small good things.",
+                "imageAssetId": "seed_hero_4",
+                "alt": "A white pendant lamp glowing against a deep teal wall",
+                "cta": {
+                  "label": "Wander the stalls",
+                  "url": "#products"
+                },
+                "variant": "overlay"
+              },
+              "style": {
+                "fontSize": 84,
+                "minHeight": 520,
+                "borderRadius": 36,
+                "textColor": "#FFF2DD",
+                "textAlign": "right"
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 48,
+                    "minHeight": 440
+                  }
+                }
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "The stalls",
+                "source": "all",
+                "limit": 8,
+                "variant": "carousel"
+              },
+              "style": {
+                "gap": 20,
+                "paddingTop": 56,
+                "paddingBottom": 32
+              }
+            },
+            {
+              "id": "stars",
+              "type": "divider",
+              "props": {
+                "variant": "stars"
+              },
+              "style": {
+                "borderColor": "#FFB23E",
+                "paddingTop": 12,
+                "paddingBottom": 12
+              }
+            },
+            {
+              "id": "tonight",
+              "type": "columns",
+              "props": {
+                "variant": "wideRight"
+              },
+              "style": {
+                "columns": 2,
+                "gap": 40,
+                "paddingTop": 24,
+                "paddingBottom": 40
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "t1",
+                  "type": "text",
+                  "props": {
+                    "headline": "Tonight's special",
+                    "text": "Candles poured this afternoon, still warm when we wrap them. Ask for the one that smells like rain on a hot road.",
+                    "variant": "letter"
+                  },
+                  "style": {
+                    "fontSize": 34
+                  }
+                },
+                {
+                  "id": "t2",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_19",
+                    "alt": "A candle glowing among fairy lights",
+                    "variant": "framed"
+                  },
+                  "style": {
+                    "aspectRatio": "4:5",
+                    "borderRadius": 28,
+                    "borderColor": "#FFB23E"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "lanterns",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_product_19",
+                    "alt": "A candle among fairy lights"
+                  },
+                  {
+                    "imageAssetId": "seed_product_18",
+                    "alt": "An amber bottle in warm light"
+                  },
+                  {
+                    "imageAssetId": "seed_product_12",
+                    "alt": "A pendant lamp in teal"
+                  }
+                ],
+                "headline": "Lanterns",
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 24,
+                "aspectRatio": "1:1",
+                "shape": "circle",
+                "fontSize": 40,
+                "paddingBottom": 56
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "seaside-studio",
+    "name": "Seaside Studio",
+    "description": "Breezy blues: a wide ocean-gradient cover, a row of arched windows and a gentle wave.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_seaside-studio",
+      "theme": {
+        "fontHeading": "DM Serif Display",
+        "fontBody": "Trebuchet MS",
+        "colors": {
+          "background": "#F1F9FC",
+          "surface": "#FFFFFF",
+          "text": "#0F3550",
+          "accent": "#17699E",
+          "muted": "#4C6F85"
+        },
+        "contentWidth": 1100,
+        "radius": 28
+      },
+      "sections": [
+        {
+          "id": "shore",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "row"
+              },
+              "style": {
+                "paddingTop": 28,
+                "paddingBottom": 20
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Salt air, slow mornings.",
+                "subtitle": "Homeware for rooms with open windows.",
+                "imageAssetId": "seed_hero_4",
+                "alt": "A pendant lamp against a teal wall",
+                "cta": {
+                  "label": "Step inside",
+                  "url": "#products"
+                },
+                "variant": "centered"
+              },
+              "style": {
+                "fontSize": 60,
+                "gradient": "ocean",
+                "borderRadius": 44,
+                "paddingTop": 52,
+                "paddingBottom": 52,
+                "paddingLeft": 40,
+                "paddingRight": 40,
+                "textAlign": "center"
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 38,
+                    "paddingLeft": 20,
+                    "paddingRight": 20
+                  }
+                }
+              }
+            },
+            {
+              "id": "hello",
+              "type": "announcement",
+              "props": {
+                "text": "Free delivery on orders over RM150",
+                "variant": "pill"
+              },
+              "style": {
+                "fontSize": 13,
+                "paddingTop": 32,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "postcard",
+              "type": "image",
+              "props": {
+                "imageAssetId": "seed_product_8",
+                "alt": "White vases with blossoms against a sky-blue chair",
+                "caption": "Postcard from the studio",
+                "variant": "polaroid"
+              },
+              "style": {
+                "aspectRatio": "4:5",
+                "maxWidth": 340,
+                "paddingTop": 12,
+                "paddingBottom": 40
+              }
+            },
+            {
+              "id": "windows",
+              "type": "gallery",
+              "props": {
+                "images": [
+                  {
+                    "imageAssetId": "seed_product_1",
+                    "alt": "Blue plates on a timber shelf"
+                  },
+                  {
+                    "imageAssetId": "seed_product_2",
+                    "alt": "A black lamp against a sage wall"
+                  },
+                  {
+                    "imageAssetId": "seed_product_12",
+                    "alt": "A pendant lamp against teal"
+                  }
+                ],
+                "headline": "Through the windows",
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 24,
+                "aspectRatio": "3:4",
+                "shape": "arch",
+                "fontSize": 40,
+                "paddingBottom": 40
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            },
+            {
+              "id": "wave",
+              "type": "divider",
+              "props": {
+                "variant": "wave"
+              },
+              "style": {
+                "borderColor": "#17699E",
+                "paddingTop": 8,
+                "paddingBottom": 24
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "Washed ashore",
+                "source": "all",
+                "limit": 6,
+                "variant": "grid"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 22,
+                "fontSize": 40,
+                "paddingBottom": 48
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 2
+                  }
+                }
+              }
+            },
+            {
+              "id": "visit",
+              "type": "button",
+              "props": {
+                "label": "Visit the studio",
+                "url": "#products",
+                "variant": "outline"
+              },
+              "style": {
+                "paddingBottom": 72,
+                "textAlign": "center"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "terrazzo-studio",
+    "name": "Terrazzo Studio",
+    "description": "Cut-paper colour blocks: arch, circle and pill photos on mustard, terracotta and teal.",
+    "document": {
+      "schemaVersion": 1,
+      "shopId": "template",
+      "pageId": "page_terrazzo-studio",
+      "theme": {
+        "fontHeading": "Archivo Black",
+        "fontBody": "Georgia",
+        "colors": {
+          "background": "#FFF3E2",
+          "surface": "#FFFFFF",
+          "text": "#2A1F1A",
+          "accent": "#00796B",
+          "muted": "#6B5A4F"
+        },
+        "contentWidth": 1160,
+        "radius": 36
+      },
+      "sections": [
+        {
+          "id": "blocks",
+          "type": "section",
+          "children": [
+            {
+              "id": "identity",
+              "type": "profileHeader",
+              "props": {
+                "headline": "Your space",
+                "subtitle": "A little introduction goes here.",
+                "variant": "banner"
+              },
+              "style": {
+                "paddingTop": 28,
+                "paddingBottom": 20,
+                "fontSize": 38
+              }
+            },
+            {
+              "id": "hero",
+              "type": "hero",
+              "props": {
+                "headline": "Colour is a very good idea.",
+                "subtitle": "Paint-splattered prints, bright objects and gifts that look like confetti.",
+                "imageAssetId": "seed_product_23",
+                "alt": "Bright paint and a brush on white paper",
+                "cta": {
+                  "label": "See what's new",
+                  "url": "#products"
+                },
+                "variant": "split"
+              },
+              "style": {
+                "fontSize": 60,
+                "backgroundColor": "#F5B83D",
+                "borderRadius": 52,
+                "shape": "pill",
+                "paddingTop": 44,
+                "paddingBottom": 44,
+                "paddingLeft": 44,
+                "paddingRight": 44,
+                "minHeight": 420
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 38,
+                    "paddingLeft": 22,
+                    "paddingRight": 22
+                  }
+                }
+              }
+            },
+            {
+              "id": "shapes",
+              "type": "columns",
+              "props": {
+                "variant": "even"
+              },
+              "style": {
+                "columns": 3,
+                "gap": 20,
+                "paddingTop": 24,
+                "paddingBottom": 24
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "columns": 1
+                  }
+                }
+              },
+              "children": [
+                {
+                  "id": "a",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_8",
+                    "alt": "White vases with blossoms"
+                  },
+                  "style": {
+                    "aspectRatio": "3:4",
+                    "shape": "arch",
+                    "backgroundColor": "#F7C6C0",
+                    "paddingLeft": 0,
+                    "paddingRight": 0
+                  }
+                },
+                {
+                  "id": "b",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_20",
+                    "alt": "A perfume bottle against blue sky"
+                  },
+                  "style": {
+                    "aspectRatio": "1:1",
+                    "shape": "circle",
+                    "paddingLeft": 0,
+                    "paddingRight": 0
+                  }
+                },
+                {
+                  "id": "c",
+                  "type": "image",
+                  "props": {
+                    "imageAssetId": "seed_product_1",
+                    "alt": "Blue plates on timber"
+                  },
+                  "style": {
+                    "aspectRatio": "3:4",
+                    "shape": "pill",
+                    "paddingLeft": 0,
+                    "paddingRight": 0
+                  }
+                }
+              ]
+            },
+            {
+              "id": "ticker",
+              "type": "announcement",
+              "props": {
+                "text": "Colour-blocked ✦ Cut-paper ✦ Handmade in small batches ✦",
+                "variant": "marquee"
+              },
+              "style": {
+                "backgroundColor": "#E4572E",
+                "textColor": "#FFF3E2",
+                "fontSize": 13,
+                "fontWeight": 700,
+                "paddingTop": 12,
+                "paddingBottom": 12,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "marginTop": 16
+              }
+            },
+            {
+              "id": "products",
+              "type": "productGrid",
+              "props": {
+                "headline": "Fresh cuts",
+                "source": "all",
+                "limit": 6,
+                "variant": "mosaic"
+              },
+              "style": {
+                "gap": 22,
+                "paddingTop": 48,
+                "paddingBottom": 32,
+                "fontSize": 36
+              },
+              "responsive": {
+                "mobile": {
+                  "style": {
+                    "fontSize": 28
+                  }
+                }
+              }
+            },
+            {
+              "id": "note",
+              "type": "text",
+              "props": {
+                "headline": "A studio full of scraps",
+                "text": "Every colour starts as an offcut. We cut, sort and re-glue them into things that make small rooms feel louder.",
+                "variant": "note"
+              },
+              "style": {
+                "backgroundColor": "#BFE6DE",
+                "fontSize": 34,
+                "paddingBottom": 48
+              }
+            },
+            {
+              "id": "dots",
+              "type": "divider",
+              "props": {
+                "variant": "dots"
+              },
+              "style": {
+                "borderColor": "#E4572E",
+                "paddingBottom": 56
+              }
+            }
+          ],
+          "style": {
+            "backgroundColor": "#FFF3E2",
+            "pattern": "checker",
+            "patternColor": "#FBE7C6"
+          }
+        }
+      ]
+    }
+  }
+]

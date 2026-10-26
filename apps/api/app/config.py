@@ -3,7 +3,11 @@ from typing import Literal
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ROOT = Path(__file__).resolve().parents[3]
+API_DIR = Path(__file__).resolve().parents[1]
+# The repository root when running from a checkout; unused (and harmless) once the API is deployed on its own.
+ROOT = Path(__file__).resolve().parents[min(3, len(Path(__file__).resolve().parents) - 1)]
+# The storefront schema and starter templates are shipped inside the API so it can be deployed without the monorepo.
+CONTRACT = API_DIR / "contract"
 
 
 class Settings(BaseSettings):
@@ -23,6 +27,8 @@ class Settings(BaseSettings):
     # "files" keeps uploads on local disk (development); "database" keeps them in PostgreSQL so a host
     # with an ephemeral disk (a free web service, a serverless function) never loses them.
     storage_backend: Literal["files", "database"] = "files"
+    # Run migrations and load the sample catalog into an empty database on start (serverless hosts have no release step).
+    auto_migrate: bool = False
 
     @field_validator("database_url")
     @classmethod

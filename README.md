@@ -99,7 +99,7 @@ The mobile client uses Expo **57.0.30**, React Native **0.86.3** and React **19.
 
 ## Background removal
 
-The API bundles the Apache-2.0 U²-Net-P model (`apps/api/models/u2netp.onnx`, about 4.6 MB) and runs it with onnxruntime on CPU, so no external service or API key is needed. Set `CUTOUT_MODEL_PATH` to use a different ONNX saliency model. If onnxruntime or the model is missing, `POST /api/v1/shops/{shop_id}/cutouts` answers 503 and sellers can still upload an already-transparent PNG. It needs `numpy` and `onnxruntime` (both in `apps/api/requirements.txt`; re-run setup or `pip install -r apps/api/requirements.txt`) and migration `0004` (`pnpm db:migrate`). To give an existing local database the new sample cut-out scenes, re-run `pnpm db:seed`. Cut-outs are an AI-assisted approximation: fine hair, glass and busy backgrounds may need a retouched photo uploaded as "already cut out".
+The API bundles the Apache-2.0 U²-Net-P model (`apps/api/models/u2netp.onnx`, about 4.6 MB) and runs it with onnxruntime on CPU, so no external service or API key is needed. Set `CUTOUT_MODEL_PATH` to use a different ONNX saliency model. If onnxruntime or the model is missing, `POST /api/v1/shops/{shop_id}/cutouts` answers 503 and sellers can still upload an already-transparent PNG. It needs `numpy` and `onnxruntime` (both in `apps/api/requirements.txt`; re-run setup or `pip install -r apps/api/requirements-dev.txt`) and migration `0004` (`pnpm db:migrate`). To give an existing local database the new sample cut-out scenes, re-run `pnpm db:seed`. Cut-outs are an AI-assisted approximation: fine hair, glass and busy backgrounds may need a retouched photo uploaded as "already cut out".
 
 ## Sample assets
 

@@ -8,7 +8,15 @@ class Base(DeclarativeBase):
     pass
 
 
-engine = create_engine(settings.database_url, pool_size=5, max_overflow=5, pool_pre_ping=True)
+# prepare_threshold=None keeps psycopg from using server-side prepared statements, which pooled hosted databases
+# (PgBouncer in transaction mode, as Neon offers) do not support.
+engine = create_engine(
+    settings.database_url,
+    pool_size=5,
+    max_overflow=5,
+    pool_pre_ping=True,
+    connect_args={"prepare_threshold": None},
+)
 SessionLocal = sessionmaker(engine, expire_on_commit=False)
 
 

@@ -8,7 +8,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
 from sqlalchemy import select, text
-from .config import settings, ROOT
+from .config import settings, CONTRACT
 from .db import get_db, SessionLocal
 from .models import Profile, Shop, Draft, SessionToken
 
@@ -89,9 +89,7 @@ def current_user(db: DB, credentials: Annotated[HTTPAuthorizationCredentials | N
             shop = Shop(owner_user_id=user.id, slug=handle, name=display_name)
             db.add(shop)
             db.flush()
-            doc = copy.deepcopy(
-                json.loads((ROOT / "packages/storefront-schema/fixtures/themes.json").read_text())[0]["document"]
-            )
+            doc = copy.deepcopy(json.loads((CONTRACT / "themes.json").read_text())[0]["document"])
             doc["shopId"] = shop.id
             doc["sections"][0]["children"][0]["props"]["headline"] = display_name
             db.add(Draft(shop_id=shop.id, document=doc))

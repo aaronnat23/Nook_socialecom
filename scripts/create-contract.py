@@ -1,6 +1,7 @@
 """Writes packages/storefront-schema/storefront.v1.json.
 
-The template fixtures (themes.json) are built by scripts/build-templates.py."""
+The template fixtures (themes.json) are built by scripts/build-templates.py. Both are copied into apps/api/contract.
+Run `pnpm exec prettier --write packages/storefront-schema/storefront.v1.json apps/api/contract/storefront.v1.json` afterwards."""
 import json
 from pathlib import Path
 
@@ -274,6 +275,7 @@ schema = {
     ),
     "$defs": {"style": style, "block": {"oneOf": block_schemas}},
 }
-(root / "packages/storefront-schema/storefront.v1.json").write_text(
-    json.dumps(schema, indent=2)
-)
+text = json.dumps(schema, indent=2)
+# The API ships its own copy so it can be deployed without the rest of the repository.
+for target in ("packages/storefront-schema/storefront.v1.json", "apps/api/contract/storefront.v1.json"):
+    (root / target).write_text(text)

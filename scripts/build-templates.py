@@ -1064,6 +1064,8 @@ T.append(
     )
 )
 
-out = ROOT / "packages/storefront-schema/fixtures/themes.json"
-out.write_text(json.dumps(T, indent=2, ensure_ascii=False) + "\n")
+text = json.dumps(T, indent=2, ensure_ascii=False) + "\n"
+# The API ships its own copy so it can be deployed without the rest of the repository.
+for out in (ROOT / "packages/storefront-schema/fixtures/themes.json", ROOT / "apps/api/contract/themes.json"):
+    out.write_text(text)
 print(f"wrote {len(T)} templates")

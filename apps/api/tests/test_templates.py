@@ -1,4 +1,5 @@
 import copy
+from app.config import CONTRACT, ROOT
 
 P = "/api/v1"
 
@@ -23,3 +24,10 @@ def test_unknown_layout_variants_and_patterns_are_rejected(client, user):
             json={"document": doc, "baseRevision": draft["revision"], "clientMutationId": "bad"},
         )
         assert r.status_code == 422, r.text
+
+
+def test_bundled_contract_matches_the_shared_package():
+    """The API ships copies of the schema and templates; they must never drift from packages/storefront-schema."""
+    shared = ROOT / "packages/storefront-schema"
+    assert (CONTRACT / "storefront.v1.json").read_text() == (shared / "storefront.v1.json").read_text()
+    assert (CONTRACT / "themes.json").read_text() == (shared / "fixtures/themes.json").read_text()

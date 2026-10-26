@@ -21,7 +21,7 @@ if not Path(".env").exists():
 if not Path(".venv").exists():
     run([sys.executable, "-m", "venv", ".venv"])
 python = root / ".venv/bin/python"
-run([str(python), "-m", "pip", "install", "-r", "apps/api/requirements.txt"])
+run([str(python), "-m", "pip", "install", "-r", "apps/api/requirements-dev.txt"])
 run(["pnpm", "install", "--frozen-lockfile"])
 if not shutil.which("pg_ctl"):
     raise SystemExit(

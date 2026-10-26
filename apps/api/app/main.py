@@ -1,9 +1,10 @@
 from __future__ import annotations
-import copy, hashlib, io, json, re, time
+import copy, hashlib, io, json, logging, re, time
+from contextlib import asynccontextmanager
 from collections import defaultdict, deque
 from datetime import timedelta
 from typing import Any, Annotated
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
 from sqlalchemy.orm import Session
 from uuid import uuid4
 import httpx
@@ -17,7 +18,7 @@ from sqlalchemy import select, func, update, delete, or_, text, Text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import IntegrityError
 from .auth import DB, User, passwords, token_for
-from .config import settings, ROOT
+from .config import settings, CONTRACT
 from .contracts import (
     AuthInput,
     ProfileInput,
@@ -59,8 +60,20 @@ from .models import (
 from .validation import validate_document
 from .payments import provider
 from . import storage, cutout
+from .bootstrap import bootstrap
 
-app = FastAPI(title=f"{settings.app_name} Commerce API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    if settings.auto_migrate:
+        try:
+            bootstrap()
+        except Exception:  # keep serving so /health can report the database problem instead of every route failing
+            logging.getLogger("nook").exception("Database bootstrap failed")
+    yield
+
+
+app = FastAPI(title=f"{settings.app_name} Commerce API", version="1.0.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -70,7 +83,7 @@ app.add_middleware(
     expose_headers=["ETag"],
 )
 P = "/api/v1"
-THEMES = json.loads((ROOT / "packages/storefront-schema/fixtures/themes.json").read_text())
+THEMES = json.loads((CONTRACT / "themes.json").read_text())
 Image.MAX_IMAGE_PIXELS = 36000000
 rate_buckets: dict[str, deque[float]] = defaultdict(deque)
 

@@ -3,10 +3,10 @@ from typing import Any
 from jsonschema import Draft7Validator
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-from .config import ROOT
+from .config import CONTRACT
 from .models import Asset, Product, Collection
 
-SCHEMA = json.loads((ROOT / "packages/storefront-schema/storefront.v1.json").read_text())
+SCHEMA = json.loads((CONTRACT / "storefront.v1.json").read_text())
 validator = Draft7Validator(SCHEMA)
 
 
