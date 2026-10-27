@@ -62,6 +62,8 @@ Environment variables (Production and Preview):
 
 The web build does not call the API, so it succeeds even while the API has no database yet.
 
+`API_URL` is read at build time (the `/api` and `/media` rewrites are baked into the build), so changing it needs a redeploy. `turbo.json` lists `API_URL` and `NEXT_PUBLIC_SITE_URL` under the build task's `env`; without that, Turborepo hides them from `next build` and the rewrites point at `127.0.0.1`, which shows up as `DNS_HOSTNAME_RESOLVED_PRIVATE` on every browser call to `/api`.
+
 ## Option B: the API and database on Render
 
 `render.yaml` is a blueprint for the API and a free PostgreSQL database. In Render choose **New → Blueprint**, pick this repository and branch, and confirm. It builds `infra/Dockerfile.api` (which migrates, loads the sample catalog and starts the server on `$PORT`) and wires `DATABASE_URL`, `STORAGE_BACKEND=database` and generated secrets. Use the service's address as `API_URL` for the Vercel web project above.
