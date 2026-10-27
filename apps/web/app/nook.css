@@ -3001,7 +3001,10 @@ input[type='checkbox'] {
 }
 .auth-needed {
   min-height: 520px;
-  margin: 56px 0;
+  /* centred, with a gutter on phones; the older globals.css rule caps the width but its auto margins were lost */
+  width: min(calc(100% - 32px), 680px);
+  max-width: none;
+  margin: 56px auto;
 }
 .settings-menu {
   gap: 6px;
