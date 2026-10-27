@@ -81,6 +81,16 @@ const labels: Record<BlockType, string> = {
   socialLinks: 'Social links',
   announcement: 'Announcement',
 };
+/** Friendly names for the rich-text pieces a seller can add to a story. */
+const nodeLabels: Record<string, string> = {
+  paragraph: 'Paragraph',
+  h2: 'Big heading',
+  h3: 'Small heading',
+  bold: 'Bold line',
+  italic: 'Italic line',
+  listItem: 'List item',
+  link: 'Link',
+};
 const icons: Record<BlockType, typeof Type> = {
   hero: GalleryHorizontal,
   profileHeader: UserRound,
@@ -1721,7 +1731,7 @@ function ContentInspector({
               }}
             >
               <label>
-                {node.type}
+                {nodeLabels[node.type] || node.type}
                 <textarea
                   value={node.text}
                   maxLength={5000}
@@ -1777,7 +1787,7 @@ function ContentInspector({
                     ])
                   }
                 >
-                  + {type}
+                  + {nodeLabels[type]}
                 </button>
               ),
             )}

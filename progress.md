@@ -72,16 +72,16 @@ Latest implementation commit: `5a8f490`; handoff commit: `4139cfe`.
 
 All eight documents now have distinct block hierarchies, ordering, sections, image placement and grids:
 
-| Template | Layout |
-| --- | --- |
-| Minimal Studio | Split hero, open three-column product grid, centered story and gallery |
-| Dark Editorial | Oversized text masthead, cinematic image, accent strip, editorial side column |
-| Botanical | Image-first cover, two-part story, single featured-product spotlight |
-| Y2K Diary | Centered profile, two-column mobile scrapbook, photo cards and colored notes |
-| Vintage Film | Photo contact sheet, centered title, mobile archive product list |
-| Handmade Market | Maker letter, paired portraits, promise strip and worktable story |
-| Streetwear Drop | Oversized typography, products before campaign, full-width campaign imagery |
-| Art Gallery | Asymmetric exhibition cover, paired art wall, curator columns and captions |
+| Template        | Layout                                                                        |
+| --------------- | ----------------------------------------------------------------------------- |
+| Minimal Studio  | Split hero, open three-column product grid, centered story and gallery        |
+| Dark Editorial  | Oversized text masthead, cinematic image, accent strip, editorial side column |
+| Botanical       | Image-first cover, two-part story, single featured-product spotlight          |
+| Y2K Diary       | Centered profile, two-column mobile scrapbook, photo cards and colored notes  |
+| Vintage Film    | Photo contact sheet, centered title, mobile archive product list              |
+| Handmade Market | Maker letter, paired portraits, promise strip and worktable story             |
+| Streetwear Drop | Oversized typography, products before campaign, full-width campaign imagery   |
+| Art Gallery     | Asymmetric exhibition cover, paired art wall, curator columns and captions    |
 
 - All use the existing safe schema/block types; no custom HTML/JS/CSS was added.
 - `TemplateArtwork` now renders each actual Storefront document at a scaled size, replacing generic decorative thumbnails.
@@ -141,12 +141,12 @@ All eight documents now have distinct block hierarchies, ordering, sections, ima
 
 Verified listening at handoff; PIDs/session handles are ephemeral. Check existing listeners before starting duplicates.
 
-| Service | Address | PID at handoff |
-| --- | --- | --- |
-| Web production server | `http://127.0.0.1:3000` | 66405 |
-| FastAPI | `http://127.0.0.1:8000`; `/docs`; `/health` | 66667 |
-| Expo Metro | LAN port 8081 | 55526 |
-| PostgreSQL 17 | `127.0.0.1:55432` | 20908 |
+| Service               | Address                                     | PID at handoff |
+| --------------------- | ------------------------------------------- | -------------- |
+| Web production server | `http://127.0.0.1:3000`                     | 66405          |
+| FastAPI               | `http://127.0.0.1:8000`; `/docs`; `/health` | 66667          |
+| Expo Metro            | LAN port 8081                               | 55526          |
+| PostgreSQL 17         | `127.0.0.1:55432`                           | 20908          |
 
 From repository root (commands are separate processes):
 
@@ -275,3 +275,19 @@ User request: deploy to Vercel so a reviewer can see it.
 - **Bug found by that check:** Turborepo hid `API_URL` from `next build`, so the web app's `/api` rewrite pointed at `127.0.0.1` and every browser call to `/api` failed (server-rendered pages still worked because they read the variable at runtime). Fixed by declaring `API_URL`, `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_APP_NAME` under the build task's `env` in `turbo.json`.
 - **Limits.** Both projects were deployed from this branch; their Vercel production branch is still `main`, which lacks this work, so a push to `main` would replace the live build. The test photo and cut-out from the check remain as private assets on the demo shop.
 
+## Customisation walkthrough on desktop, phone and the live site (round 5)
+
+User request: click "Open your space" and test that a seller can easily customise their page and add all their design and style.
+
+- **Method.** Scripted Playwright journeys as a brand-new seller (create account, open the editor): hero text, fonts, colours, gradient, pattern, shape, layout style, spacing, phone-only text size, image upload, page-wide palette and fonts, all 13 block types, search, duplicate, reorder, delete, undo/redo, starter templates ("Colors & fonts only" and "Replace layout" with undo), device previews, Preview, product creation with cut-out and scene, publish, and the public page on desktop and phone. Run on a local production build and then on the live Vercel site with a throwaway account (never published there, because a published shop appears on Discover).
+- **Worked first time.** Every one of the controls above; published pages matched the editor, the uploaded photo loaded publicly, and phones had no sideways scroll.
+- **Bugs found and fixed.**
+  1. **Draft saves failed on Vercel (412).** Vercel's edge consumes `If-Match`: the unquoted revision the editor sent was rejected before it reached the API, and a quoted one never arrived. `baseRevision` in the body already drives an atomic compare-and-set, so `If-Match` is now optional on the API (it must agree when sent) and neither the web nor the native editor sends it. Test: `test_draft_saves_on_the_revision_in_the_body_without_if_match`.
+  2. **Colour code boxes could not be typed in** (the box reset on every key, so only paste or the swatch worked). They now keep a draft, add the `#`, expand `#abc` and snap back if unfinished. E2e test added; native was already fine.
+  3. The block library kept its last search, so reopening it showed one block; it now resets and explains an empty search.
+  4. Page-wide colours and fonts were only at the bottom of each block's panel; there is now a "Your space style" row at the top of the layers list, and the block tabs hide when nothing is selected.
+  5. The Poster hero ignored a seller's smaller phone text size (a hard-coded clamp); the seller's size now wins when smaller.
+  6. The signed-out My Space card sat on the left (an older rule's auto margins were overridden).
+  7. Phone editor: removed a blank band under the header and the double bottom bar (the app nav steps aside while editing).
+  8. The products page linked nowhere for "enable sandbox selling", and rich-text buttons showed `+ listItem`; both reworded.
+- **Known limits.** On a 1440px screen the editor's "Desktop" preview is about 870px wide (the side panels take the rest), so it shows the layout for that width rather than a true 1280px; tiny cut-out leftovers around fine objects depend on the model. The dev-mode Next.js badge covers the first phone tool button in dev builds only.
