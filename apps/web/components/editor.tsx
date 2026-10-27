@@ -138,6 +138,9 @@ function Editor() {
   const [collections, setCollections] = useState<{ id: string; title: string }[]>([]);
   const [catalog, setCatalog] = useState(false);
   const [catalogSearch, setCatalogSearch] = useState('');
+  useEffect(() => {
+    if (!catalog) setCatalogSearch('');
+  }, [catalog]);
   const [versionModal, setVersionModal] = useState(false);
   const [versions, setVersions] = useState<
     { id: string; versionNo: number; note: string; created_at: string }[]
@@ -518,6 +521,19 @@ function Editor() {
                   {all.length} blocks
                 </span>
               </div>
+              <button
+                className={`layer-item page-style ${selected === '' ? 'selected' : ''}`}
+                aria-pressed={selected === ''}
+                onClick={() => {
+                  setSelected('');
+                  setMobileRight(true);
+                }}
+              >
+                <Paintbrush size={13} />
+                <span>
+                  Your space style <small className="muted">colours &amp; fonts</small>
+                </span>
+              </button>
               {all.map((b) => {
                 const Icon = icons[b.type];
                 return (
@@ -693,17 +709,19 @@ function Editor() {
               </button>
             </div>
           </div>
-          <div className="panel-tabs">
-            {['Content', 'Style', 'Layout', 'Responsive'].map((t) => (
-              <button
-                key={t}
-                className={inspectorTab === t ? 'active' : ''}
-                onClick={() => setInspectorTab(t)}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
+          {block && (
+            <div className="panel-tabs">
+              {['Content', 'Style', 'Layout', 'Responsive'].map((t) => (
+                <button
+                  key={t}
+                  className={inspectorTab === t ? 'active' : ''}
+                  onClick={() => setInspectorTab(t)}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
           {block ? (
             inspectorTab === 'Content' ? (
               <>
@@ -1267,8 +1285,15 @@ function Editor() {
             />
           </label>
           <div className="block-library">
+            {!blockTypes.some((t) =>
+              labels[t].toLowerCase().includes(catalogSearch.trim().toLowerCase()),
+            ) && (
+              <p className="muted" style={{ gridColumn: '1 / -1' }}>
+                No block matches “{catalogSearch.trim()}”. Try “text”, “photo” or “button”.
+              </p>
+            )}
             {blockTypes
-              .filter((t) => labels[t].toLowerCase().includes(catalogSearch.toLowerCase()))
+              .filter((t) => labels[t].toLowerCase().includes(catalogSearch.trim().toLowerCase()))
               .map((t) => {
                 const Icon = icons[t];
                 return (
@@ -1438,6 +1463,11 @@ function ColorField({
   value: string;
   onChange: (v: string) => void;
 }) {
+  // The box keeps what the seller is typing; the colour is applied as soon as it is a full code.
+  const [draft, setDraft] = useState(value);
+  useEffect(() => setDraft(value), [value]);
+  const full = /^#[a-f\d]{6}$/i;
+  const short = /^#([a-f\d])([a-f\d])([a-f\d])$/i;
   return (
     <label>
       {label}
@@ -1450,11 +1480,22 @@ function ColorField({
         />
         <input
           type="text"
-          value={value}
+          value={draft}
           aria-label={`${label} hex value`}
           maxLength={7}
+          spellCheck={false}
+          autoComplete="off"
+          autoCapitalize="characters"
           onChange={(e) => {
-            if (/^#[a-f\d]{6}$/i.test(e.target.value)) onChange(e.target.value);
+            let next = e.target.value.trim();
+            if (next && !next.startsWith('#')) next = `#${next}`;
+            setDraft(next);
+            if (full.test(next)) onChange(next);
+          }}
+          onBlur={() => {
+            const m = draft.match(short);
+            if (m) onChange(`#${m[1]}${m[1]}${m[2]}${m[2]}${m[3]}${m[3]}`.toUpperCase());
+            else setDraft(value);
           }}
         />
       </span>

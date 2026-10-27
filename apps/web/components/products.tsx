@@ -89,7 +89,12 @@ function Products() {
         </div>
       </div>
       {!me!.seller_enabled && (
-        <p className="warning">Enable sandbox selling in My Space to add products.</p>
+        <p className="warning">
+          Turn on sandbox selling to add products.{' '}
+          <Link href="/me" style={{ textDecoration: 'underline', fontWeight: 700 }}>
+            Go to My Space to switch it on
+          </Link>
+        </p>
       )}
       {error && <p className="error">{error}</p>}
       <div className="list-table">

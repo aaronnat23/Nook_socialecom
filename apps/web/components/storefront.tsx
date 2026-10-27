@@ -255,6 +255,7 @@ function BlockView({
             {
               minHeight: s.minHeight,
               '--ov-color': s.textColor || '#FFFFFF',
+              '--hero-size': `${s.fontSize || 48}px`,
             } as CSSProperties
           }
         >

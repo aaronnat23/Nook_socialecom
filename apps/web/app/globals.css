@@ -997,6 +997,19 @@ select:focus {
   border-color: #e6d9be;
   color: #4a4158;
 }
+.layer-item.page-style {
+  width: 100%;
+  text-align: left;
+  font-size: 10px;
+  margin-bottom: 10px;
+  border-style: dashed;
+  border-color: #e6d9be;
+  color: #4a4158;
+}
+.layer-item.page-style small {
+  display: block;
+  font-size: 9px;
+}
 .layer-item > button:first-of-type {
   display: flex;
   align-items: center;
@@ -1408,7 +1421,7 @@ select:focus {
     min-height: calc(100dvh - 142px);
   }
   .editor-toolbar {
-    top: 72px;
+    top: 0;
     padding: 12px 16px;
   }
   .editor-layout {
@@ -1418,7 +1431,7 @@ select:focus {
   .editor-panel.right {
     position: fixed;
     right: 0;
-    bottom: 70px;
+    bottom: calc(51px + env(safe-area-inset-bottom));
     top: 143px;
     width: 280px;
     box-shadow: -5px 0 30px #211a2e14;
@@ -1645,7 +1658,7 @@ select:focus {
     font-size: 12px;
   }
   .editor-toolbar {
-    top: 65px;
+    top: 0;
     padding: 10px 13px;
     gap: 7px;
   }
@@ -1690,7 +1703,7 @@ select:focus {
     display: none;
     position: fixed;
     top: 125px;
-    bottom: 118px;
+    bottom: calc(51px + env(safe-area-inset-bottom));
     left: 0;
     height: auto;
     z-index: 24;
@@ -1704,7 +1717,7 @@ select:focus {
     display: none;
     position: fixed;
     top: auto;
-    bottom: 118px;
+    bottom: calc(51px + env(safe-area-inset-bottom));
     left: 0;
     right: 0;
     width: 100%;
@@ -1753,15 +1766,15 @@ select:focus {
   .editor-mobile-tools {
     display: flex;
     position: fixed;
-    bottom: 67px;
+    bottom: 0;
     left: 0;
     right: 0;
     justify-content: space-around;
     background: var(--card);
     border-top: 1px solid var(--line);
-    padding: 6px 10px;
-    z-index: 30;
-    height: 51px;
+    padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+    z-index: 80;
+    height: calc(51px + env(safe-area-inset-bottom));
   }
   .editor-mobile-tools button {
     display: flex;
@@ -1777,8 +1790,12 @@ select:focus {
     height: 18px;
   }
   .editor-main {
-    height: calc(100dvh - 132px);
+    height: calc(100dvh - 66px);
     overflow: hidden;
+  }
+  /* the editor has its own tool bar, so the app's floating nav steps aside while editing */
+  body:has(.editor-mobile-tools) .bottom-nav {
+    display: none;
   }
   .editor-issue {
     font-size: 9px;

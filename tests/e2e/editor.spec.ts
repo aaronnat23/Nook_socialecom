@@ -170,3 +170,56 @@ test('layout style, pattern, shape and the new fonts restyle the selected block'
   await expect(page.locator('.sf-hero')).toHaveClass(/sfv-hero-poster/);
   await expect(page.locator('.sf-hero')).toHaveAttribute('data-shape', 'arch');
 });
+
+test('colour codes can be typed, edited and shortened by hand', async ({ page }, info) => {
+  test.skip(info.project.name === 'mobile', 'Same field; the desktop flow is enough.');
+  await signIn(page);
+  await page.getByRole('button', { name: 'Style', exact: true }).click();
+  const hex = page.getByLabel('background hex value').first();
+  const hero = page.locator('[data-block-type="hero"]');
+  await hex.click();
+  await hex.press('End');
+  await hex.press('Backspace');
+  await expect(hex).toHaveValue(/^#[0-9a-f]{5}$/i);
+  await hex.press('Control+A');
+  await page.keyboard.type('336699');
+  await expect(hero).toHaveCSS('background-color', 'rgb(51, 102, 153)');
+  await expect(hex).toHaveValue('#336699');
+  await hex.press('Control+A');
+  await page.keyboard.type('#0af');
+  await hex.press('Tab');
+  await expect(hero).toHaveCSS('background-color', 'rgb(0, 170, 255)');
+  await expect(hex).toHaveValue('#00AAFF');
+  await hex.press('Control+A');
+  await page.keyboard.type('#12');
+  await hex.press('Tab');
+  await expect(hex).toHaveValue('#00AAFF');
+  await expect(page.getByRole('status').first()).toContainText('All changes saved');
+});
+
+test('the block library forgets its last search and explains an empty one', async ({
+  page,
+}, info) => {
+  test.skip(info.project.name === 'mobile', 'Same dialog; the desktop flow is enough.');
+  await signIn(page);
+  const search = page.getByPlaceholder('Search blocks…');
+  const library = page.getByRole('dialog');
+  await page.getByRole('button', { name: 'Add a block', exact: true }).click();
+  await search.fill('social');
+  await expect(library.getByRole('button', { name: 'Hero banner', exact: true })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Close dialog' }).click();
+  await page.getByRole('button', { name: 'Add a block', exact: true }).click();
+  await expect(search).toHaveValue('');
+  await expect(library.getByRole('button', { name: 'Hero banner', exact: true })).toBeVisible();
+  await search.fill('zzz');
+  await expect(library.getByText(/No block matches/)).toBeVisible();
+});
+
+test('"Your space style" opens page-wide colours and fonts', async ({ page }, info) => {
+  test.skip(info.project.name === 'mobile', 'The layers list is a sheet on phones.');
+  await signIn(page);
+  await page.getByRole('button', { name: /Your space style/ }).click();
+  await expect(page.getByRole('heading', { name: 'Your space style' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Content', exact: true })).toHaveCount(0);
+  await expect(page.getByLabel('Heading font')).toBeVisible();
+});

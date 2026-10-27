@@ -148,3 +148,14 @@ test('sandbox purchase completes and buyer can request a refund', async ({ page 
     page.getByRole('heading', { name: 'Your sandbox order is refunded.' }),
   ).toBeVisible();
 });
+
+test('the signed-out My Space card sits in the middle of the page', async ({ page }) => {
+  await page.goto('/me');
+  const card = page.locator('.auth-needed');
+  await expect(card).toBeVisible();
+  await page.waitForTimeout(800);
+  const box = (await card.boundingBox())!;
+  const width = await page.evaluate(() => document.documentElement.clientWidth);
+  expect(Math.abs(box.x - (width - box.x - box.width))).toBeLessThanOrEqual(1);
+  expect(box.x).toBeGreaterThan(8);
+});

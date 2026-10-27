@@ -656,8 +656,9 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
     gap: 18px 22px;
   }
+  /* cap giant poster type so it fits a narrow container, but let a smaller size the seller chose win */
   .sfv-hero-poster h1 {
-    font-size: clamp(36px, 13vw, 64px) !important;
+    font-size: min(var(--hero-size, 64px), clamp(36px, 13cqi, 64px)) !important;
   }
   .sfv-hero-stack .sf-hero-copy {
     grid-template-columns: minmax(0, 1fr);
