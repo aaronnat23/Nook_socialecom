@@ -291,3 +291,13 @@ User request: click "Open your space" and test that a seller can easily customis
   7. Phone editor: removed a blank band under the header and the double bottom bar (the app nav steps aside while editing).
   8. The products page linked nowhere for "enable sandbox selling", and rich-text buttons showed `+ listItem`; both reworded.
 - **Known limits.** On a 1440px screen the editor's "Desktop" preview is about 870px wide (the side panels take the rest), so it shows the layout for that width rather than a true 1280px; tiny cut-out leftovers around fine objects depend on the model. The dev-mode Next.js badge covers the first phone tool button in dev builds only.
+
+## Believable sample catalogue (round 6)
+
+User request: two shops on Discover showed the same photo; make the sample images and other placeholders more believable. They also asked to remove the "8 nooks open right now" pill from the Discover hero.
+
+- **Root cause.** The photo list in `scripts/download-assets.py` repeated Unsplash IDs, so several products and shop covers were the same picture, and some photos did not match their titles. It now holds 24 unique free-licence photos (three per shop, matched to each shop's theme) and the shop covers are different photos too. Nine product photos and two covers were replaced; cut-outs were regenerated for the ones that changed.
+- **Believable copy.** `apps/api/app/catalog.py` holds the 24 products: specific titles, a description of what the photo shows, real-sounding options (glaze, size, shade, condition, length), price steps and stock counts. The product page now labels the option picker with the product's own option name instead of a fixed "Choose your finish", and the filler lines "A small-batch find from …" and "· Independent find" were removed.
+- **Templates.** Starter templates reference photo IDs with alt text, so they were remapped to photos that match their captions (`scripts/build-templates.py`, regenerated `themes.json`).
+- **Existing databases.** Migration `0006` calls `refresh_sample_catalog`, which updates the sample products, variants and untouched starter pages in place, including the live Neon database on its next cold start. It leaves accounts, orders, carts and any page a user published or edited alone. The cut-out allow-list in `app/validation.py` was updated; tests in `apps/api/tests/test_catalog.py` cover unique photos, matching assets, catalogue shape and the refresh being safe to run twice.
+- **Pill removed.** The "nooks open right now" pill is gone from the web and native Discover heroes, along with its CSS and styles.

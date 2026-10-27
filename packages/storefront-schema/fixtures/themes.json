@@ -473,8 +473,8 @@
                     "alt": "new bracelet, who dis"
                   },
                   {
-                    "imageAssetId": "seed_product_20",
-                    "alt": "the prettiest bottle"
+                    "imageAssetId": "seed_product_6",
+                    "alt": "the prettiest cup"
                   }
                 ],
                 "headline": "scrapbook",
@@ -1361,7 +1361,7 @@
                     "alt": "A lamp against a sage wall"
                   },
                   {
-                    "imageAssetId": "seed_product_12",
+                    "imageAssetId": "seed_product_1",
                     "alt": "A lamp against deep teal"
                   }
                 ],
@@ -1696,8 +1696,8 @@
               "props": {
                 "headline": "Pick a little something sweet.",
                 "subtitle": "Tiny treats and pretty things, wrapped like presents.",
-                "imageAssetId": "seed_product_20",
-                "alt": "A pink perfume bottle against a blue sky",
+                "imageAssetId": "seed_product_6",
+                "alt": "A pink and white glazed cup on its saucer",
                 "cta": {
                   "label": "Fill your bag",
                   "url": "#products"
@@ -1765,8 +1765,8 @@
               "props": {
                 "images": [
                   {
-                    "imageAssetId": "seed_product_20",
-                    "alt": "Pink bottle, blue sky"
+                    "imageAssetId": "seed_product_7",
+                    "alt": "A sheet of doodle stickers"
                   },
                   {
                     "imageAssetId": "seed_product_8",
@@ -1986,7 +1986,7 @@
                     "alt": "Fig. 2 — the bag, with opinions"
                   },
                   {
-                    "imageAssetId": "seed_product_17",
+                    "imageAssetId": "seed_product_3",
                     "alt": "Fig. 3 — the tote, empty"
                   }
                 ],
@@ -2164,7 +2164,7 @@
               "props": {
                 "headline": "The Autumn Collection",
                 "subtitle": "Tailoring for ordinary days. Cut long, worn often.",
-                "imageAssetId": "seed_product_16",
+                "imageAssetId": "seed_product_5",
                 "alt": "A pressed white shirt and patterned tie",
                 "cta": {
                   "label": "View the looks",
@@ -2384,7 +2384,7 @@
               "props": {
                 "headline": "Open till late.",
                 "subtitle": "Lanterns on, kettle hot, stall stocked with small good things.",
-                "imageAssetId": "seed_hero_4",
+                "imageAssetId": "seed_product_1",
                 "alt": "A white pendant lamp glowing against a deep teal wall",
                 "cta": {
                   "label": "Wander the stalls",
@@ -2497,8 +2497,8 @@
                     "alt": "An amber bottle in warm light"
                   },
                   {
-                    "imageAssetId": "seed_product_12",
-                    "alt": "A pendant lamp in teal"
+                    "imageAssetId": "seed_product_2",
+                    "alt": "A black lamp against a sage wall"
                   }
                 ],
                 "headline": "Lanterns",
@@ -2570,7 +2570,7 @@
               "props": {
                 "headline": "Salt air, slow mornings.",
                 "subtitle": "Homeware for rooms with open windows.",
-                "imageAssetId": "seed_hero_4",
+                "imageAssetId": "seed_product_1",
                 "alt": "A pendant lamp against a teal wall",
                 "cta": {
                   "label": "Step inside",
@@ -2633,7 +2633,7 @@
               "props": {
                 "images": [
                   {
-                    "imageAssetId": "seed_product_1",
+                    "imageAssetId": "seed_product_14",
                     "alt": "Blue plates on a timber shelf"
                   },
                   {
@@ -2642,7 +2642,7 @@
                   },
                   {
                     "imageAssetId": "seed_product_12",
-                    "alt": "A pendant lamp against teal"
+                    "alt": "Glazed bowls and a slim vase"
                   }
                 ],
                 "headline": "Through the windows",
@@ -2762,9 +2762,9 @@
               "type": "hero",
               "props": {
                 "headline": "Colour is a very good idea.",
-                "subtitle": "Paint-splattered prints, bright objects and gifts that look like confetti.",
-                "imageAssetId": "seed_product_23",
-                "alt": "Bright paint and a brush on white paper",
+                "subtitle": "Speckled prints, bright objects and gifts that look like confetti.",
+                "imageAssetId": "seed_product_7",
+                "alt": "A sheet of doodle stickers on bright yellow",
                 "cta": {
                   "label": "See what's new",
                   "url": "#products"
@@ -2831,8 +2831,8 @@
                   "id": "b",
                   "type": "image",
                   "props": {
-                    "imageAssetId": "seed_product_20",
-                    "alt": "A perfume bottle against blue sky"
+                    "imageAssetId": "seed_product_6",
+                    "alt": "A pink glazed cup and saucer"
                   },
                   "style": {
                     "aspectRatio": "1:1",
@@ -2845,7 +2845,7 @@
                   "id": "c",
                   "type": "image",
                   "props": {
-                    "imageAssetId": "seed_product_1",
+                    "imageAssetId": "seed_product_14",
                     "alt": "Blue plates on timber"
                   },
                   "style": {

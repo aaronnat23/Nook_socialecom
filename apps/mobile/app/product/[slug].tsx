@@ -70,6 +70,7 @@ export default function Page() {
   const slides = staged ? 2 : 1;
   const saved = !!me?.favorites.includes(p.id);
   const unit = v?.price_minor ?? p.price_minor;
+  const optionName = Object.keys(p.variants[0]?.options ?? {}).join(' / ') || 'Options';
   const heroWidth = width - 28;
   const heroHeight = Math.min(heroWidth * 1.14, 560);
 
@@ -333,7 +334,7 @@ export default function Page() {
 
           <Reveal style={{ marginTop: 26 }}>
             <Text style={{ fontSize: 13, fontWeight: '800', letterSpacing: 1.4, color: C.ink }}>
-              CHOOSE YOUR FINISH
+              {optionName.toUpperCase()}
             </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginTop: 12 }}>
               {p.variants.map((x) => {

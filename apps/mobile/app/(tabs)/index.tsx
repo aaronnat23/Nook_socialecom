@@ -227,15 +227,7 @@ function Hero({
 }) {
   return (
     <View style={{ paddingHorizontal: 20, paddingTop: 22 }}>
-      <Reveal pop>
-        <View style={styles.pill}>
-          <View style={styles.liveDot} />
-          <Text style={{ fontSize: 13.5, color: C.ink }}>
-            <Text style={{ fontWeight: '800' }}>{shops.length} nooks</Text> open right now
-          </Text>
-        </View>
-      </Reveal>
-      <View style={{ marginTop: 24 }}>
+      <View>
         <Reveal delay={80} from={46}>
           <Text style={styles.h1}>Every shop</Text>
         </Reveal>
@@ -640,19 +632,6 @@ const styles = StyleSheet.create({
     color: C.ink,
   },
   hl: { backgroundColor: C.butter },
-  pill: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 9,
-    backgroundColor: C.card,
-    borderWidth: 2,
-    borderColor: C.ink,
-    borderRadius: 24,
-    paddingVertical: 7,
-    paddingHorizontal: 14,
-  },
-  liveDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#1FA862' },
   big: {
     minHeight: 58,
     paddingHorizontal: 26,

@@ -70,7 +70,7 @@ def validate_document(doc: dict[str, Any], shop_id: str, db: Session, publish: b
                 if ref.startswith("seed_"):
                     valid = bool(
                         re.fullmatch(
-                            r"seed_(hero_[0-7]|product_([0-9]|1[0-9]|2[0-3])|cutout_(0|1|2|3|4|8|9|12|18|20))", ref
+                            r"seed_(hero_[0-7]|product_([0-9]|1[0-9]|2[0-3])|cutout_(0|1|2|3|4|6|8|9|13|16|18|20))", ref
                         )
                     )
                     if not valid:

@@ -33,6 +33,7 @@ export function ProductDetail({ product: p }: { product: Product }) {
   const [tab, setTab] = useState<'Description' | 'Details' | 'Shipping & returns'>('Description');
   const v = p.variants.find((x) => x.id === variant);
   const label = (x: Variant) => Object.values(x.options).join(' / ') || x.sku;
+  const optionName = Object.keys(p.variants[0]?.options ?? {}).join(' / ') || 'Options';
   const unit = v?.price_minor ?? p.price_minor;
   const share = async () => {
     const url = window.location.href;
@@ -93,7 +94,6 @@ export function ProductDetail({ product: p }: { product: Product }) {
             <h1>{p.title}</h1>
             {v && <span className="pd-variant">{label(v)}</span>}
           </div>
-          <p className="pd-sub">A small-batch find from {p.shop_name}.</p>
           <div className="pd-tabs" role="tablist" aria-label="About this find">
             {(['Description', 'Details', 'Shipping & returns'] as const).map((t) => (
               <button
@@ -150,7 +150,7 @@ export function ProductDetail({ product: p }: { product: Product }) {
           </div>
           <div className="pd-choose">
             <span className="pd-label" id="finish-label">
-              Choose your finish
+              {optionName}
             </span>
             <div className="chip-row" role="radiogroup" aria-labelledby="finish-label">
               {p.variants.map((x) => (

@@ -1,12 +1,14 @@
 """Idempotent, explicitly fictional sandbox catalog."""
 
 import copy, hashlib, json
+from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from .db import SessionLocal
 from .auth import passwords
 from .models import Profile, Shop, Draft, Version, Publication, Product, Variant, Collection, Order, now
 from .config import CONTRACT
+from .catalog import PRODUCTS, slugify
 from datetime import timedelta
 
 THEMES = json.loads((CONTRACT / "themes.json").read_text())
@@ -48,32 +50,6 @@ SHOPS = [
     ("Fern & Form", "fern-and-form", "A little closer to nature.", "Beauty", "Ipoh", "Botanical"),
     ("Paper & Pause", "paper-and-pause", "Art to make room for.", "Art & prints", "Melaka", "Art Gallery"),
 ]
-PRODUCTS = [
-    ("Cloud ceramic mug", 6800),
-    ("The everyday vessel", 12800),
-    ("Quiet corner table lamp", 8900),
-    ("Weekend canvas tote", 4800),
-    ("The archive carryall", 9600),
-    ("Soft linen shirt", 11900),
-    ("Everyday linen tote", 5800),
-    ("Little moments pouch", 3500),
-    ("The daily companion", 7900),
-    ("Everyday gold hoops", 8900),
-    ("Golden hour necklace", 12800),
-    ("Tiny treasures ring", 6900),
-    ("Hand-thrown coffee cup", 7800),
-    ("The morning ritual set", 14800),
-    ("Speckled studio vase", 9800),
-    ("Off-duty essential tee", 9900),
-    ("Weekend overshirt", 18900),
-    ("Everyday canvas carry", 6900),
-    ("Botanical body oil", 8800),
-    ("Slow morning candle", 5800),
-    ("Calm ritual mist", 6800),
-    ("Sunday light art print", 4500),
-    ("A quiet corner print", 6500),
-    ("Little things postcard set", 2800),
-]
 
 
 def sample_stage(index: int) -> dict[str, object] | None:
@@ -81,15 +57,17 @@ def sample_stage(index: int) -> dict[str, object] | None:
     scenes: dict[int, tuple[str, str, str, str, float, float, bool]] = {
         # index: (backdrop kind, a, b, ribbon text, scale, y offset, die-cut outline)
         0: ("arch", "#CDB8FF", "#FFFBF3", "", 0.86, 0.1, False),
-        1: ("stripes", "#B8DAFF", "#FFFBF3", "", 0.84, 0.02, True),
+        1: ("stripes", "#B8DAFF", "#FFFBF3", "", 0.82, 0.02, True),
         2: ("gradient", "#FFD15C", "#FF8A6E", "", 0.7, 0.0, False),
         3: ("ribbon", "#D6F56B", "#FFFFFF", "SMALL SHOPS", 0.8, 0.04, True),
         4: ("sunburst", "#FFB5CC", "#FFD9E6", "", 0.8, 0.03, False),
+        6: ("dots", "#FFC9D9", "#FFFBF3", "", 0.84, 0.04, False),
         8: ("color", "#B7E4C7", "#FFFBF3", "", 0.8, 0.04, False),
         9: ("dots", "#211A2E", "#4A4158", "", 0.78, 0.0, False),
-        12: ("arch", "#FFD15C", "#FFFBF3", "", 0.7, 0.04, False),
+        13: ("stripes", "#CFE9D9", "#FFFBF3", "", 0.84, 0.0, False),
+        16: ("arch", "#FFD15C", "#FFFBF3", "", 0.86, 0.04, False),
         18: ("gradient", "#FFC9A8", "#FFFBF3", "", 0.84, 0.02, False),
-        20: ("ribbon", "#FFB5CC", "#FFFFFF", "GOLDEN HOUR", 0.82, 0.03, True),
+        20: ("ribbon", "#FFB5CC", "#FFFFFF", "SMALL BATCH", 0.82, 0.03, True),
     }
     if index not in scenes:
         return None
@@ -114,6 +92,81 @@ def stage_samples(db: Session) -> int:
         if stage and product.stage is None:
             product.stage = stage
             changed += 1
+    db.commit()
+    return changed
+
+
+def sample_document(i: int, shop_id: str) -> dict[str, Any]:
+    """The starter page a sample shop begins with: its template, with the shop's own name and tagline."""
+    name, _, bio = SHOPS[i][:3]
+    doc: dict[str, Any] = copy.deepcopy(THEMES[i]["document"])
+    doc["shopId"] = shop_id
+    for sec in doc["sections"]:
+        for b in sec["children"]:
+            if b["type"] == "profileHeader":
+                b["props"].update({"headline": name, "subtitle": bio})
+    return doc
+
+
+def sample_draft(i: int, doc: dict[str, Any]) -> dict[str, Any]:
+    draft = copy.deepcopy(doc)
+    if i == 0:
+        draft["sections"][0]["children"][1]["props"]["subtitle"] = "A few new favorites, fresh from the studio."
+    return draft
+
+
+def checksum(doc: dict[str, Any]) -> str:
+    return hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()
+
+
+def refresh_sample_catalog(db: Session) -> int:
+    """Brings an existing database's sample shops up to the current catalogue (photos, names, descriptions,
+    options, staged looks and untouched starter pages) without touching accounts, orders or edited pages."""
+    changed = 0
+    for i, (_, slug, _, _, _, _) in enumerate(SHOPS):
+        shop = db.scalar(select(Shop).where(Shop.slug == slug))
+        if not shop:
+            continue
+        for j in range(3):
+            index = i * 3 + j
+            sample = PRODUCTS[index]
+            product = db.scalar(
+                select(Product).where(Product.shop_id == shop.id, Product.image == f"seed_product_{index}")
+            )
+            if not product:
+                continue
+            wanted = slugify(sample.title)
+            taken = db.scalar(
+                select(Product.id).where(Product.shop_id == shop.id, Product.slug == wanted, Product.id != product.id)
+            )
+            product.title = sample.title
+            product.slug = product.slug if taken else wanted
+            product.description = sample.description
+            product.price_minor = sample.price_minor
+            product.tags = list(sample.tags)
+            if product.stage is None or str(product.stage.get("cutout", "")).startswith("seed_cutout_"):
+                product.stage = sample_stage(index)
+            for k, (value, extra, stock) in enumerate(sample.values):
+                variant = db.scalar(
+                    select(Variant).where(
+                        Variant.product_id == product.id, Variant.sku == f"{slug[:8].upper()}-{j + 1}-{k + 1}"
+                    )
+                )
+                if variant:
+                    variant.options = {sample.option: value}
+                    variant.price_minor = sample.price_minor + extra
+                    variant.stock = stock
+            changed += 1
+        # The starter page is replaced only if its owner has never published or saved anything of their own.
+        first = db.scalar(select(Version).where(Version.shop_id == shop.id, Version.version_no == 1))
+        publication = db.get(Publication, shop.id)
+        draft = db.get(Draft, shop.id)
+        if first and first.note.startswith("First collection") and publication and publication.version_id == first.id:
+            doc = sample_document(i, shop.id)
+            first.document = doc
+            first.checksum = checksum(doc)
+            if draft and draft.revision == 1:
+                draft.document = sample_draft(i, doc)
     db.commit()
     return changed
 
@@ -147,54 +200,46 @@ def seed() -> None:
             )
             db.add(s)
             db.flush()
-            doc = copy.deepcopy(THEMES[i]["document"])
-            doc["shopId"] = s.id
-            for sec in doc["sections"]:
-                for b in sec["children"]:
-                    if b["type"] == "profileHeader":
-                        b["props"].update({"headline": name, "subtitle": bio})
+            doc = sample_document(i, s.id)
             v = Version(
                 shop_id=s.id,
                 version_no=1,
                 document=doc,
-                checksum=hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest(),
+                checksum=checksum(doc),
                 author_id=u.id,
                 note="First collection — sandbox sample",
             )
             db.add(v)
             db.flush()
             db.add(Publication(shop_id=s.id, version_id=v.id))
-            draft = copy.deepcopy(doc)
-            if i == 0:
-                draft["sections"][0]["children"][1]["props"]["subtitle"] = "A few new favorites, fresh from the studio."
-            db.add(Draft(shop_id=s.id, document=draft))
+            db.add(Draft(shop_id=s.id, document=sample_draft(i, doc)))
             ids = []
             for j in range(3):
                 index = i * 3 + j
-                title, price = PRODUCTS[index]
+                sample = PRODUCTS[index]
                 p = Product(
                     shop_id=s.id,
-                    slug=title.lower().replace(" ", "-"),
-                    title=title,
-                    description=f"{title}, thoughtfully selected by {name}. Designed for the small moments that make a day feel like yours. This is a sample product in the Nook sandbox catalog.",
-                    price_minor=price,
+                    slug=slugify(sample.title),
+                    title=sample.title,
+                    description=sample.description,
+                    price_minor=sample.price_minor,
                     image=f"seed_product_{index}",
                     category=category,
                     status="published",
-                    tags=["independent", "malaysia"],
+                    tags=list(sample.tags),
                     stage=sample_stage(index),
                 )
                 db.add(p)
                 db.flush()
                 ids.append(p.id)
-                for k in range(2):
+                for k, (value, extra, stock) in enumerate(sample.values):
                     db.add(
                         Variant(
                             product_id=p.id,
                             sku=f"{slug[:8].upper()}-{j + 1}-{k + 1}",
-                            options={"Finish": "Original" if k == 0 else "Soft lilac"},
-                            price_minor=price + (k * 500),
-                            stock=12 if k == 0 else 6,
+                            options={sample.option: value},
+                            price_minor=sample.price_minor + extra,
+                            stock=stock,
                         )
                     )
             db.add(Collection(shop_id=s.id, title="Everyday favorites", product_ids=ids))

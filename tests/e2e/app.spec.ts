@@ -34,20 +34,20 @@ test('profile changes persist and saved items are server-backed', async ({ page 
   await expect(page.getByRole('status')).toContainText('Your profile is looking good');
   await page.goto('/');
   await expect(page.getByRole('link', { name: 'Open your space', exact: true })).toBeVisible();
-  const favorite = page.getByRole('button', { name: /^(Unsave|Save) Cloud ceramic mug$/ });
+  const favorite = page.getByRole('button', { name: /^(Unsave|Save) Speckled stoneware cups, set of four$/ });
   await expect(favorite).toBeEnabled();
   if ((await favorite.getAttribute('aria-pressed')) === 'true') {
     await favorite.click();
     await expect(
-      page.getByRole('button', { name: 'Save Cloud ceramic mug', exact: true }),
+      page.getByRole('button', { name: 'Save Speckled stoneware cups, set of four', exact: true }),
     ).toBeEnabled();
   }
-  await page.getByRole('button', { name: 'Save Cloud ceramic mug', exact: true }).click();
+  await page.getByRole('button', { name: 'Save Speckled stoneware cups, set of four', exact: true }).click();
   await expect(
-    page.getByRole('button', { name: 'Unsave Cloud ceramic mug', exact: true }),
+    page.getByRole('button', { name: 'Unsave Speckled stoneware cups, set of four', exact: true }),
   ).toBeVisible();
   await page.goto('/me?saved=1');
-  await expect(page.getByRole('heading', { name: 'Cloud ceramic mug' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Speckled stoneware cups, set of four' })).toBeVisible();
 });
 test('editor edits, autosaves, undoes, previews, publishes and restores', async ({
   page,
@@ -88,11 +88,11 @@ test('editor edits, autosaves, undoes, previews, publishes and restores', async 
 test('product page shows the staged scene, the original photo and tabbed details', async ({
   page,
 }, info) => {
-  await page.goto('/product/cloud-ceramic-mug');
-  await expect(page.getByRole('heading', { name: 'Cloud ceramic mug', level: 1 })).toBeVisible();
+  await page.goto('/product/speckled-stoneware-cups-set-of-four');
+  await expect(page.getByRole('heading', { name: 'Speckled stoneware cups, set of four', level: 1 })).toBeVisible();
   const hero = page.locator('.pd-hero');
   await expect(hero.locator('.stage.is-staged')).toHaveCount(1);
-  await expect(hero.getByRole('img', { name: 'Cloud ceramic mug' }).first()).toBeVisible();
+  await expect(hero.getByRole('img', { name: 'Speckled stoneware cups, set of four' }).first()).toBeVisible();
   await page.getByRole('button', { name: 'Show the original photo' }).click();
   await expect(page.getByRole('button', { name: 'Show the original photo' })).toHaveAttribute(
     'aria-current',
@@ -131,7 +131,7 @@ test('a seller can cut out a product photo and set its scene', async ({ page }) 
 });
 test('sandbox purchase completes and buyer can request a refund', async ({ page }) => {
   await login(page);
-  await page.goto('/product/cloud-ceramic-mug');
+  await page.goto('/product/speckled-stoneware-cups-set-of-four');
   await page.getByRole('button', { name: 'Add to bag', exact: true }).click();
   await page.goto('/cart');
   await page.getByRole('link', { name: 'Sandbox checkout', exact: true }).first().click();

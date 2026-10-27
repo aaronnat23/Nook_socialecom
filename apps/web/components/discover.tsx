@@ -316,13 +316,6 @@ function Hero({ shops, products }: { shops: Shop[]; products: Product[] }) {
   return (
     <section className="nk-hero" ref={stage}>
       <div className="hero-copy">
-        <span className="hero-pill">
-          <span className="live-dot" aria-hidden="true" />
-          <strong>
-            <CountUp value={shops.length} /> nooks
-          </strong>{' '}
-          open right now
-        </span>
         <h1>
           <Words text="Every shop" />
           <br />

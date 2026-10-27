@@ -138,7 +138,7 @@ export function ProductCard({
         {product.shop_name}
         <ArrowUpRight size={12} />
       </Link>
-      <p className="product-meta">{product.category} · Independent find</p>
+      <p className="product-meta">{product.category}</p>
     </>
   );
   if (plain) return <article className="product-card plain">{body}</article>;
