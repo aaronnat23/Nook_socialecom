@@ -266,3 +266,9 @@ User request: deploy to Vercel so a reviewer can see it.
 - **Verified.** The Docker start sequence (migrate, seed, serve) was run against a fresh database with a `postgres://` URL and the database backend; `/health` and sign-up worked. `next build` succeeds with the API unreachable. A real Vercel/Render deploy was **not** run; the Dockerfile itself was not built because no Docker daemon runs in this sandbox (the app was imported with only the runtime requirements instead).
 - **Limits.** Preview auth is the development mode (anyone with the link can sign up); free Render services sleep when idle and the free database is time-limited.
 
+### Deployed to Vercel (round 4, continued)
+
+- A Vercel connector was added, so two projects now exist in the user's Vercel account: `nook-web` (Next.js, root `apps/web`) and `nook-api` (FastAPI, root `apps/api`), both built from this branch with Vercel Authentication off.
+- Making the API a Vercel function needed: the schema and templates bundled inside `apps/api/contract` (a test keeps them identical to `packages/storefront-schema`), `app/bootstrap.py` (migrate and seed an empty database once, under an advisory lock, when `AUTO_MIGRATE=true`), `index.py` as the entrypoint, dependencies declared in `pyproject.toml` plus `uv.lock`, and `installCommand: uv sync --frozen` in `apps/api/vercel.json` because Turborepo detection made Vercel run `pnpm install` and leave Python packages uninstalled.
+- Verified on Vercel: both deployments build; the API function starts and imports. The database is not attached yet (the connector can't create a Marketplace Postgres), so `/health` returns 500 until a Neon database is added to `nook-api` and the API is redeployed. See `docs/DEPLOY.md`.
+

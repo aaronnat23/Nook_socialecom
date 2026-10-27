@@ -1,76 +1,83 @@
 # Deploying a preview of Nook
 
-This gets the web app onto a public link so someone else can click through it and review it. It is a **preview**, not a production launch: sign-in is the development mode (anyone with the link can create an account), payments are the sandbox, and every shop and product is fictional.
+This puts Nook on a public link so someone else can click through it and review it. It is a **preview**, not a production launch: sign-in is the development mode (anyone with the link can create an account), payments are the sandbox, and every shop and product is fictional.
 
-Nook has two halves, and Vercel only runs one of them:
+Nook has two halves that talk to each other:
 
-| Half           | What it is                        | Where it goes                                                                             |
-| -------------- | --------------------------------- | ----------------------------------------------------------------------------------------- |
-| Web            | Next.js app in `apps/web`         | **Vercel**                                                                                |
-| API + database | FastAPI in `apps/api`, PostgreSQL | **Render** (free plan, one click with `render.yaml`) or any host that runs a Docker image |
+| Half           | What it is                        | Where it can go                                                                                          |
+| -------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Web            | Next.js app in `apps/web`         | **Vercel**                                                                                               |
+| API + database | FastAPI in `apps/api`, PostgreSQL | **Vercel** too (a Python function plus a Postgres from the Vercel Marketplace), or **Render**, or Docker |
 
-The web app never talks to the API from the browser directly. It rewrites `/api/*` and `/media/*` to the API's address (`API_URL`), so there is no CORS to configure and the API needs no public hostname in the web bundle.
+The web app never calls the API from the browser directly. It rewrites `/api/*` and `/media/*` to the API's address (`API_URL`), so there is no CORS to configure.
 
-Do the API first, because Vercel needs its address.
+## Option A: everything on Vercel (two projects and a database)
 
-## 1. The API and database on Render
+Create two Vercel projects from the same repository and branch.
 
-1. Sign in at [render.com](https://render.com) with GitHub and allow it to read this repository.
-2. **New → Blueprint**, pick this repository and the branch you want to show, and confirm. Render reads `render.yaml` and creates:
-   - `nook-api`, a Docker web service built from `infra/Dockerfile.api` (health check `/health`),
-   - `nook-db`, a free PostgreSQL database wired in as `DATABASE_URL`.
-3. Wait for the first deploy. On start the container runs the migrations, loads the sample shops and products, and starts the server. The first build takes several minutes.
-4. Open `https://<your-service>.onrender.com/health`. You should see `{"status":"ok","database":"postgresql",...}`. Copy that base address (no trailing slash) for the next step.
+### 1. `nook-api` (the FastAPI backend)
 
-What the blueprint sets, in case you use another host:
+| Setting                    | Value                                    |
+| -------------------------- | ---------------------------------------- |
+| Root Directory             | `apps/api`                               |
+| Framework preset           | FastAPI                                  |
+| Production branch / source | the branch you want to show              |
+| Vercel Authentication      | **off** (the web project calls this one) |
 
-| Variable                 | Value                                     | Why                                                                                                                                                        |
-| ------------------------ | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `DATABASE_URL`           | the database's connection string          | `postgres://` and `postgresql://` URLs are accepted and rewritten to the psycopg driver                                                                    |
-| `ENVIRONMENT`            | `development`                             | the only mode that allows built-in email/password sign-in                                                                                                  |
-| `AUTH_MODE`              | `local`                                   | built-in sign-in, no Supabase needed                                                                                                                       |
-| `STORAGE_BACKEND`        | `database`                                | keeps uploaded photos in PostgreSQL, because a free web service loses its disk on every restart. Leave it unset (`files`) on a host with a persistent disk |
-| `LOCAL_AUTH_SECRET`      | random, generated                         | signs session tokens                                                                                                                                       |
-| `SANDBOX_WEBHOOK_SECRET` | random, at least 32 characters, generated | signs the sandbox payment webhooks                                                                                                                         |
+`apps/api/vercel.json` pins the install command to `uv sync --frozen` and `apps/api/pyproject.toml` lists the dependencies. That matters: this is a Turborepo, and without the override Vercel runs `pnpm install` for the Python project and the function starts without any packages.
 
-Any host works if it can run `infra/Dockerfile.api` (build context: the repository root) and give it a PostgreSQL 15+ database. The container listens on `$PORT` (default 8000).
+Environment variables (Production and Preview):
 
-## 2. The web app on Vercel
+| Variable                 | Value                                      | Why                                                                                                     |
+| ------------------------ | ------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`           | added for you by the database (next step)  | `postgres://` and `postgresql://` URLs are accepted and rewritten to the psycopg driver                 |
+| `ENVIRONMENT`            | `development`                              | the only mode that allows built-in email/password sign-in                                               |
+| `AUTH_MODE`              | `local`                                    | built-in sign-in, no Supabase needed                                                                    |
+| `STORAGE_BACKEND`        | `database`                                 | a function has no persistent disk, so uploaded photos are kept in PostgreSQL                            |
+| `AUTO_MIGRATE`           | `true`                                     | on start, migrate an empty database and load the sample shops once (there is no release step on Vercel) |
+| `LOCAL_AUTH_SECRET`      | random string, mark it sensitive           | signs session tokens                                                                                    |
+| `SANDBOX_WEBHOOK_SECRET` | random string of 32+ characters, sensitive | signs the sandbox payment webhooks                                                                      |
 
-1. In Vercel choose **Add New → Project** and import this repository.
-2. Set **Root Directory** to `apps/web`. Leave the framework as **Next.js**. Keep "Include source files outside of the Root Directory" switched on, because the web app imports the workspace packages in `packages/`.
-3. Add these environment variables (Production, and Preview if you want preview deployments to work too):
+### 2. The database
 
-   | Variable                       | Value                                                                                                                                                     |
-   | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-   | `API_URL`                      | the API address from step 1, for example `https://nook-api.onrender.com`                                                                                  |
-   | `NEXT_PUBLIC_SITE_URL`         | the final Vercel address, for example `https://nook.vercel.app` (used for link previews and the sitemap; set it after the first deploy and redeploy once) |
-   | `ENABLE_EXPERIMENTAL_COREPACK` | `1` (this repository pins pnpm 11 in `package.json`; this makes Vercel use that exact version)                                                            |
+In the `nook-api` project open **Storage → Create Database** and pick a Postgres provider from the Marketplace (Neon has a free plan). Connect it to the project for Production and Preview so it adds `DATABASE_URL`. Then redeploy `nook-api`: the first request migrates the database and loads the sample catalog.
 
-4. Deploy.
-5. Pick which branch is the live one: **Settings → Git → Production Branch**, or merge the branch into the default branch. Other branches get preview URLs that sit behind Vercel sign-in unless you turn **Settings → Deployment Protection** off, which matters if the person reviewing does not have a Vercel account.
+Check `https://<nook-api-domain>/health`. You should see `{"status":"ok","database":"postgresql",...}`.
 
-The web build does not call the API, so it succeeds even while the API is asleep.
+### 3. `nook-web` (the Next.js app)
 
-## 3. Check it
+| Setting               | Value                                                                     |
+| --------------------- | ------------------------------------------------------------------------- |
+| Root Directory        | `apps/web` (keep "Include source files outside of the Root Directory" on) |
+| Framework preset      | Next.js                                                                   |
+| Vercel Authentication | **off**, if the reviewer does not have a Vercel account                   |
 
-1. Open the Vercel address. Discover should show the sample shops and photos.
+Environment variables (Production and Preview):
+
+| Variable                       | Value                                                                                                |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `API_URL`                      | the `nook-api` address, for example `https://nook-api.vercel.app`, with no trailing slash            |
+| `NEXT_PUBLIC_SITE_URL`         | the web address, for example `https://nook-web.vercel.app` (link previews and the sitemap; optional) |
+| `ENABLE_EXPERIMENTAL_COREPACK` | `1` (this repository pins pnpm 11 in `package.json`; this makes Vercel use that exact version)       |
+
+The web build does not call the API, so it succeeds even while the API has no database yet.
+
+## Option B: the API and database on Render
+
+`render.yaml` is a blueprint for the API and a free PostgreSQL database. In Render choose **New → Blueprint**, pick this repository and branch, and confirm. It builds `infra/Dockerfile.api` (which migrates, loads the sample catalog and starts the server on `$PORT`) and wires `DATABASE_URL`, `STORAGE_BACKEND=database` and generated secrets. Use the service's address as `API_URL` for the Vercel web project above.
+
+Any host that can run `infra/Dockerfile.api` (build context: the repository root) with a PostgreSQL 15+ database works the same way.
+
+## Check it
+
+1. Open the web address. Discover should show the sample shops and photos.
 2. **My Space → Open your space → Continue as demo shop owner** signs in as the fictional demo seller (`demo@lilac.local`). Open the page editor to try the 14 templates, and add a product with a photo to cut out its background.
-3. If Discover is empty or shows an error, open `API_URL/health` directly. A free Render service sleeps after a period without traffic and takes up to a minute to wake, so the first request after a break is slow.
+3. If Discover shows an error, open `API_URL/health` directly. The first request after the API has been idle is slower, because the function starts cold and imports the image libraries.
 
 ## Things to know before sharing the link
 
-- **Anyone with the link can sign up** and create shops, because this is development authentication. Keep the link between the people reviewing it, use fictional data, and don't enter real payment details (checkout is a sandbox and charges nothing). For anything public, switch to Supabase Auth: set `AUTH_MODE=supabase`, `ENVIRONMENT=production` and the `SUPABASE_*` variables, and see [PILOT_READINESS.md](PILOT_READINESS.md).
-- **Free plans have limits.** Render's free web service sleeps when idle, and its free database is time-limited and small. Check Render's current terms, and move to a paid plan or another database such as Neon if the preview needs to live on. Photos stored in the database count toward its size limit.
-- **Large uploads.** The first request after a sleep is slow, and Vercel limits request sizes. Keep photos to a few megabytes when trying uploads on the preview.
+- **Anyone with the link can sign up** and create shops, because this is development authentication, and with Vercel Authentication off anyone can open the API too. Keep the link between the people reviewing it, use fictional data, and don't enter real payment details (checkout is a sandbox and charges nothing). For anything public, switch to Supabase Auth: set `AUTH_MODE=supabase`, `ENVIRONMENT=production` and the `SUPABASE_*` variables, and see [PILOT_READINESS.md](PILOT_READINESS.md).
+- **Free plans have limits.** Photos stored in the database count toward its size limit, Render's free service sleeps when idle, and Vercel limits request sizes (about 4.5 MB for a function), so keep photos small when trying uploads. Background removal runs the bundled model on the function's CPU and can be slow on the first call.
+- **Preview deployments and production.** Pushes to a connected branch create new deployments. Set the Production Branch in **Settings → Git** to the branch you want on the main address.
 - **The native app is not part of this.** Reviewers use the web app, which is fully responsive and has the same Discover, My Space and Settings tabs. The Expo app runs from `pnpm dev:mobile` or an EAS build.
-- **Resetting the data.** Delete the Render database and redeploy to start over; the sample data is loaded again on start.
-
-## Deploying from the command line instead
-
-```bash
-pnpm dlx vercel login
-pnpm dlx vercel link          # run at the repository root
-```
-
-Then open the new project's **Settings → General** and set **Root Directory** to `apps/web`, add the environment variables from step 2 (`pnpm dlx vercel env add API_URL production`), and run `pnpm dlx vercel deploy --prod` from the repository root.
+- **Resetting the data.** Empty the database (drop its tables, or delete and recreate it) and redeploy; the sample data is loaded again on start.
