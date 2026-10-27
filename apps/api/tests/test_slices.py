@@ -163,7 +163,7 @@ def test_unsafe_content_and_missing_preconditions(client, user):
     assert (
         client.patch(
             f"{P}/shops/{shop}/draft",
-            headers=user["headers"],
+            headers={**user["headers"], "If-Match": "99"},
             json={"document": d["document"], "baseRevision": 1, "clientMutationId": "x"},
         ).status_code
         == 428
@@ -450,3 +450,16 @@ def test_cart_scopes_shops_and_provider_rejects_invalid_amount(client, user, oth
     )
     assert r.status_code == 422
     assert client.get(f"{P}/orders/{o['id']}", headers=user["headers"]).json()["state"] == "pending_payment"
+
+
+def test_draft_saves_on_the_revision_in_the_body_without_if_match(client, user):
+    """Hosts such as Vercel consume If-Match at their edge, so baseRevision alone must be enough and still safe."""
+    d = draft(client, user)
+    shop = user["user"]["shop"]["id"]
+    body = {"document": d["document"], "baseRevision": d["revision"], "clientMutationId": "no-header"}
+    first = client.patch(f"{P}/shops/{shop}/draft", headers=user["headers"], json=body)
+    assert first.status_code == 200, first.text
+    assert first.json()["revision"] == d["revision"] + 1
+    stale = client.patch(f"{P}/shops/{shop}/draft", headers=user["headers"], json=body)
+    assert stale.status_code == 409
+    assert stale.json()["error"]["details"]["currentRevision"] == d["revision"] + 1

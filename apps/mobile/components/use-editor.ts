@@ -119,7 +119,6 @@ export function useEditor(shopId: string) {
       try {
         const r = await api<Draft>(`/shops/${shopId}/draft`, {
           method: 'PATCH',
-          headers: { 'If-Match': String(revision.current) },
           body: JSON.stringify({
             document: snapshot,
             baseRevision: revision.current,

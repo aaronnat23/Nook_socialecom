@@ -472,8 +472,10 @@ def save_draft(
     if_match: Annotated[str | None, Header()] = None,
 ) -> dict[str, Any]:
     owned(db, user, shop_id)
-    if if_match is None or if_match.strip('"') != str(data.baseRevision):
-        raise HTTPException(428, "Send the draft revision in If-Match.")
+    # baseRevision in the body is the real precondition: the update below only applies to that exact revision.
+    # Some hosts (Vercel among them) consume If-Match at their edge, so the header is optional; when sent it must agree.
+    if if_match is not None and if_match.strip('"') != str(data.baseRevision):
+        raise HTTPException(428, "If-Match must match baseRevision.")
     warnings = validate_document(data.document, shop_id, db)
     d = db.scalar(
         update(Draft)
